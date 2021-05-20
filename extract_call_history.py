@@ -1,4 +1,4 @@
-from database_extraction import get_call_history
+from database import get_call_history
 from models.call_history import CallHistory
 
 

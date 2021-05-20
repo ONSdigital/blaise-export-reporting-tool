@@ -3,7 +3,8 @@ from dataclasses import asdict
 from flask import Flask, jsonify
 from google.cloud import datastore
 
-from extract_call_history import get_call_history, get_events
+from database import get_events
+from extract_call_history import get_call_history
 from import_call_history import import_call_history_data
 from models.config import Config
 
@@ -21,7 +22,7 @@ def upload_call_history():
     task_batch = []
 
     call_history_batches = [
-        merged_call_history[i : i + 400]
+        merged_call_history[i: i + 400]
         for i in range(0, len(merged_call_history), 400)
     ]
 
