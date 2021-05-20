@@ -1,0 +1,5 @@
+/requirements.txt
+/venv/
+/app.yaml
+.pytest_cache
+/.idea/

@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "blasie-export-reporting-tool"
+version = "0.1.0"
+description = ""
+authors = ["Matthew Palmer <38406765+matthewandrewpalmer@users.noreply.github.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Flask = "^2.0.0"
+google-cloud-datastore = "^2.1.2"
+mysql-connector-python = "^8.0.25"
+requests = "^2.25.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.4"
+coverage = "^5.5"
+black = "^21.5b1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
