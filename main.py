@@ -14,6 +14,13 @@ config = Config.from_env()
 config.log()
 
 
+def split_into_batches(merged_call_history, length):
+    return [
+        merged_call_history[i: i + length]
+        for i in range(0, len(merged_call_history), length)
+    ]
+
+
 @app.route("/upload_call_history")
 def upload_call_history():
     client = datastore.Client()
@@ -21,10 +28,7 @@ def upload_call_history():
     merged_call_history = import_call_history_data(config)
     task_batch = []
 
-    call_history_batches = [
-        merged_call_history[i: i + 400]
-        for i in range(0, len(merged_call_history), 400)
-    ]
+    call_history_batches = split_into_batches(merged_call_history, 500)
 
     for call_history_batch in call_history_batches:
         for call_history in call_history_batch:
@@ -64,7 +68,7 @@ def find():
     client = datastore.Client()
 
     query = client.query(kind="CallHistory")
-    query.add_filter("interviewer", "=", "Edwin")
+    query.add_filter("interviewer", "=", "matpal")
 
     results = list(query.fetch())
 

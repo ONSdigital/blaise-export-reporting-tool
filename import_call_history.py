@@ -20,7 +20,7 @@ def get_matching_case(serial_number, questionnaire_name, case_list_to_query):
         case
         for case in case_list_to_query
         if case.get("qiD.Serial_Number") == serial_number
-           and case["questionnaire_name"] == questionnaire_name
+        and case["questionnaire_name"] == questionnaire_name
     ]
     if len(case_data) != 1:
         return None
@@ -44,14 +44,4 @@ def import_call_history_data(config):
     return merged_call_history
 
 
-# For testing the data extraction locally
-if __name__ == "__main__":
-    config = Config(
-        mysql_host="REDACTED_SECRET",
-        mysql_user="blaise",
-        mysql_password="DUMMY_PASSWORD",
-        mysql_database="cati",
-        blaise_api_url="http://localhost:90",
-    )
-    config.log()
-    import_call_history_data(config)
+
