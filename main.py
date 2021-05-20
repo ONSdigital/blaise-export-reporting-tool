@@ -4,7 +4,7 @@ from flask import Flask, jsonify
 from google.cloud import datastore
 
 from extract_call_history import get_call_history, get_events
-from extract import import_call_history_data
+from import_call_history import import_call_history_data
 from models.config import Config
 
 app = Flask(__name__)

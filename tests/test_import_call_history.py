@@ -1,6 +1,6 @@
 import pytest
 
-from extract import append_case_data_to_dials
+from import_call_history import append_case_data_to_dials
 from models.call_history import CallHistory
 
 
