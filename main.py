@@ -4,6 +4,7 @@ from flask import Flask, jsonify
 from google.cloud import datastore
 
 from database import get_events
+from datastore import add_call_history_to_datastore
 from extract_call_history import get_call_history
 from import_call_history import import_call_history_data
 from models.config import Config
@@ -14,39 +15,12 @@ config = Config.from_env()
 config.log()
 
 
-def split_into_batches(merged_call_history, length):
-    return [
-        merged_call_history[i: i + length]
-        for i in range(0, len(merged_call_history), length)
-    ]
-
-
 @app.route("/upload_call_history")
 def upload_call_history():
-    client = datastore.Client()
-
     merged_call_history = import_call_history_data(config)
     task_batch = []
 
-    call_history_batches = split_into_batches(merged_call_history, 500)
-
-    for call_history_batch in call_history_batches:
-        for call_history in call_history_batch:
-            task1 = datastore.Entity(
-                client.key(
-                    "CallHistory",
-                    f"{call_history.serial_number}-{call_history.call_start_time}",
-                )
-            )
-
-            task1.update(asdict(call_history))
-
-            task_batch.append(task1)
-
-        client.put_multi(task_batch)
-        task_batch = []
-
-    status = f"Uploaded {len(merged_call_history)} call history items"
+    status = add_call_history_to_datastore(merged_call_history, task_batch)
     print(status)
 
     return status

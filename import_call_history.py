@@ -1,6 +1,5 @@
 from extract_blaise_data import get_questionnaire_list, load_case_data
 from extract_call_history import load_cati_dial_history
-from models.config import Config
 
 
 def append_case_data_to_dials(case_history_data, cases):
@@ -42,6 +41,3 @@ def import_call_history_data(config):
     print(f"Merged case history data with case data")
 
     return merged_call_history
-
-
-
