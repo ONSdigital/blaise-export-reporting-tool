@@ -1,10 +1,8 @@
-from dataclasses import asdict
-
 from flask import Flask, jsonify
-from google.cloud import datastore
 
-from database import get_events
-from datastore import add_call_history_to_datastore
+from data_sources.database import get_events
+from data_sources.datastore import get_call_history_records, get_call_history_records_by_interviewer
+from upload_call_history import add_call_history_to_datastore
 from extract_call_history import get_call_history
 from import_call_history import import_call_history_data
 from models.config import Config
@@ -18,9 +16,8 @@ config.log()
 @app.route("/upload_call_history")
 def upload_call_history():
     merged_call_history = import_call_history_data(config)
-    task_batch = []
 
-    status = add_call_history_to_datastore(merged_call_history, task_batch)
+    status = add_call_history_to_datastore(merged_call_history)
     print(status)
 
     return status
@@ -28,23 +25,14 @@ def upload_call_history():
 
 @app.route("/")
 def get_all():
-    client = datastore.Client()
+    records = get_call_history_records()
 
-    query = client.query(kind="CallHistory")
-
-    results = list(query.fetch())
-
-    return jsonify(results)
+    return jsonify(records)
 
 
 @app.route("/find")
 def find():
-    client = datastore.Client()
-
-    query = client.query(kind="CallHistory")
-    query.add_filter("interviewer", "=", "matpal")
-
-    results = list(query.fetch())
+    results = get_call_history_records_by_interviewer("matpal")
 
     return jsonify(results)
 
