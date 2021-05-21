@@ -4,7 +4,7 @@ import requests
 def get_questionnaire_list(config):
     print("Get Questionnaire list")
     response = requests.get(
-        f"{config.blaise_api_url}/api/v1/serverparks/gusty/instruments"
+        f"http://{config.blaise_api_url}/api/v1/serverparks/gusty/instruments"
     )
     questionnaire_list = response.json()
     print(f"{len(questionnaire_list)} questionnaires installed")
@@ -22,7 +22,7 @@ def load_case_data(questionnaire_name, config):
 
     try:
         response = requests.get(
-            f"{config.blaise_api_url}/api/v1/serverparks/gusty/instruments/{questionnaire_name}/report",
+            f"http://{config.blaise_api_url}/api/v1/serverparks/gusty/instruments/{questionnaire_name}/report",
             params=fields_to_get,
         )
         data = response.json()

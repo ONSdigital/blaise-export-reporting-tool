@@ -3,3 +3,4 @@
 /app.yaml
 .pytest_cache
 /.idea/
+/.coverage
