@@ -18,22 +18,22 @@ def add_call_history_to_datastore(merged_call_history, task_batch):
 
     call_history_batches = split_into_batches(new_call_history_entries, 500)
     for call_history_batch in call_history_batches:
-        for call_history in call_history_batch:
+        for call_history_record in call_history_batch:
             task1 = datastore.Entity(
                 client.key(
                     "CallHistory",
-                    f"{call_history.serial_number}-{call_history.call_start_time}",
+                    f"{call_history_record.serial_number}-{call_history_record.call_start_time}",
                 )
             )
 
-            task1.update(asdict(call_history))
+            task1.update(asdict(call_history_record))
 
             task_batch.append(task1)
 
         client.put_multi(task_batch)
         task_batch = []
 
-    return f"Uploaded {len(new_call_history_entries)} call history items"
+    return f"Uploaded {len(new_call_history_entries)} call history records"
 
 
 def split_into_batches(merged_call_history, length):
@@ -61,11 +61,11 @@ def filter_out_existing_records(client, merged_call_history):
     current_call_history = list([entity.key.id_or_name for entity in query.fetch()])
 
     return [
-        call_history
-        for call_history in merged_call_history
+        call_history_record
+        for call_history_record in merged_call_history
         if (
             does_record_already_exist(
-                call_history,
+                call_history_record,
                 current_call_history,
             )
             is False
