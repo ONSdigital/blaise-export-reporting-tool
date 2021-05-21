@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 from data_sources.database import get_events
 from data_sources.datastore import get_call_history_records, get_call_history_records_by_interviewer
@@ -32,7 +32,8 @@ def get_all():
 
 @app.route("/find")
 def find():
-    results = get_call_history_records_by_interviewer("matpal")
+    interviewer = request.args.get("interviewer", "")
+    results = get_call_history_records_by_interviewer(interviewer)
 
     return jsonify(results)
 

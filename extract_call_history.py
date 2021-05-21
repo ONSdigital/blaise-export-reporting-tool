@@ -19,7 +19,7 @@ def load_cati_dial_history(config, questionnaire_list):
         questionnaire_name = get_questionnaire_name_from_id(
             call_history.questionnaire_id, questionnaire_list
         )
-        if questionnaire_name is not "":
+        if questionnaire_name != "":
             call_history.generate_questionnaire_details(questionnaire_name)
         call_history_list.append(call_history)
 
