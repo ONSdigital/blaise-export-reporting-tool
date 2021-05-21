@@ -18,7 +18,7 @@ def get_call_history(config):
         "BusyDials , "
         "StartTime , "
         "EndTime , "
-        "TIME_FORMAT(TIMEDIFF(EndTime, StartTime), '%H hours %i minutes %s seconds') as dialsecs, "
+        "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dialsecs, "
         "Status , "
         "Interviewer , "
         "DialResult , "
