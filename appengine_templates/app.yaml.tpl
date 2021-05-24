@@ -1,4 +1,4 @@
-service: bert-ui
+service: bert
 runtime: python37
 
 vpc_access_connector:
