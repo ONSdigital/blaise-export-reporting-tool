@@ -1,3 +1,4 @@
+import datetime
 from dataclasses import asdict
 
 from google.cloud import datastore
@@ -11,10 +12,18 @@ def get_call_history_records():
 
 
 def get_call_history_records_by_interviewer(interviewer_name):
+    start_date = datetime.datetime(2021, 5, 19)
+    end_date = datetime.datetime(2021, 5, 19, 23, 59, 59)
+
     client = datastore.Client()
     query = client.query(kind="CallHistory")
     query.add_filter("interviewer", "=", interviewer_name)
+    query.add_filter("call_start_time", ">=", start_date)
+    query.add_filter("call_start_time", "<=", end_date)
+    query.order = ["call_start_time"]
+
     results = list(query.fetch())
+    print(f"Cases found {len(results)}")
     return results
 
 
