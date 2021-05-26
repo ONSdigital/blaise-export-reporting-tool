@@ -10,6 +10,7 @@ Flask = "^2.0.0"
 google-cloud-datastore = "^2.1.2"
 mysql-connector-python = "^8.0.25"
 requests = "^2.25.1"
+functions-framework = "^2.2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
