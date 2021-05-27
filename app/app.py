@@ -34,7 +34,8 @@ def find(interviewer):
     error, results = get_call_history_records_by_interviewer(interviewer, start_date, end_date)
 
     if error:
-        return '{"error": "Invalid request missing required filter properties"}', error
+        message, error_code = error
+        return message, error_code
 
     return jsonify(results)
 
