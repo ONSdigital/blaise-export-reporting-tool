@@ -31,7 +31,7 @@ def find(interviewer):
     if start_date is None or end_date is None:
         print("Invalid request missing required filter properties ")
         return '{"error": "Invalid request missing required filter properties"}', 400
-    results = get_call_history_records_by_interviewer(interviewer)
+    results = get_call_history_records_by_interviewer(interviewer, start_date, end_date)
 
     return jsonify(results)
 
