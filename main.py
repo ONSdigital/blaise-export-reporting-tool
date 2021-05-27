@@ -1,20 +1,14 @@
-from flask import Flask, jsonify, request
 
-from data_sources.database import get_events
-from data_sources.datastore import get_call_history_records, get_call_history_records_by_interviewer
+from app.app import app, load_config
 from upload_call_history import add_call_history_to_datastore
-from extract_call_history import get_call_history
 from import_call_history import import_call_history_data
 from models.config import Config
 
-app = Flask(__name__)
 
-config = Config.from_env()
-config.log()
+def upload_call_history(_event, _context):
+    config = Config.from_env()
+    config.log()
 
-
-@app.route("/upload_call_history")
-def upload_call_history():
     merged_call_history = import_call_history_data(config)
 
     status = add_call_history_to_datastore(merged_call_history)
@@ -23,37 +17,7 @@ def upload_call_history():
     return status
 
 
-@app.route("/")
-def get_all():
-    records = get_call_history_records()
-
-    return jsonify(records)
-
-
-@app.route("/api/reports/call-history/<interviewer>")
-def find(interviewer):
-    start_date = request.args.get("start-date", None)
-    end_date = request.args.get("end-date", None)
-
-    print(f"Call history for interviewer: {interviewer} between {start_date} and {end_date}")
-
-    if start_date is None or end_date is None:
-        print("Invalid request missing required filter properties ")
-        return "Eh", 400
-    results = get_call_history_records_by_interviewer(interviewer)
-
-    return jsonify(results)
-
-
-@app.route("/call_history")
-def get_cati_db():
-    return jsonify(get_call_history(config))
-
-
-@app.route("/events")
-def get_events_cati_db():
-    return jsonify(get_events(config))
-
+load_config(app)
 
 if __name__ == "__main__":
-    app.run(port=5011)
+    app.run(host="0.0.0.0", port=5011)
