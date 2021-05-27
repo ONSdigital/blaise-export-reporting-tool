@@ -5,7 +5,6 @@ from data_sources.database import get_events
 from data_sources.datastore import get_call_history_records, get_call_history_records_by_interviewer
 from extract_call_history import get_call_history
 
-
 app = Flask(__name__)
 
 
@@ -31,7 +30,11 @@ def find(interviewer):
     if start_date is None or end_date is None:
         print("Invalid request missing required filter properties ")
         return '{"error": "Invalid request missing required filter properties"}', 400
-    results = get_call_history_records_by_interviewer(interviewer, start_date, end_date)
+
+    error, results = get_call_history_records_by_interviewer(interviewer, start_date, end_date)
+
+    if error:
+        return error, '{"error": "Invalid request missing required filter properties"}', 500
 
     return jsonify(results)
 

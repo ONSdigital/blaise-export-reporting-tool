@@ -1,4 +1,5 @@
 import datetime
+import re
 from dataclasses import asdict
 
 from google.cloud import datastore
@@ -12,6 +13,10 @@ def get_call_history_records():
 
 
 def date_string_to_datetime(date_string, end_of_day=False):
+    x = re.search("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$", date_string)
+    if not x:
+        return None
+
     date_split = date_string.split('-')
 
     if end_of_day:
@@ -24,6 +29,9 @@ def get_call_history_records_by_interviewer(interviewer_name, start_date_string,
     start_date = date_string_to_datetime(start_date_string)
     end_date = date_string_to_datetime(end_date_string, True)
 
+    if start_date is None or end_date is None:
+        return 400, []
+
     client = datastore.Client()
     query = client.query(kind="CallHistory")
     query.add_filter("interviewer", "=", interviewer_name)
@@ -33,7 +41,7 @@ def get_call_history_records_by_interviewer(interviewer_name, start_date_string,
 
     results = list(query.fetch())
     print(f"Cases found {len(results)}")
-    return results
+    return None, results
 
 
 def get_call_history_keys():
