@@ -23,6 +23,8 @@ jobs:
       run: |
         pip install poetry
         poetry install
+    - name: Run pytest
+      run: |
         poetry run coverage xml -i
     - name: Codecov
       uses: codecov/codecov-action@v1
