@@ -1,4 +1,4 @@
-from data_sources.datastore import get_call_history_keys, bulk_upload_call_history
+from data_sources.datastore import get_call_history_keys, bulk_upload_call_history, update_call_history_report_status
 
 
 def add_call_history_to_datastore(merged_call_history):
@@ -13,6 +13,7 @@ def add_call_history_to_datastore(merged_call_history):
         return "No new records to add, Existing."
 
     bulk_upload_call_history(new_call_history_entries)
+    update_call_history_report_status()
 
     return f"Uploaded {len(new_call_history_entries)} call history records"
 

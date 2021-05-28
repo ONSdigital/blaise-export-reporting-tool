@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, current_app
 
 from models.config import Config
 from data_sources.database import get_events
-from data_sources.datastore import get_call_history_records, get_call_history_records_by_interviewer
+from data_sources.datastore import get_call_history_records, get_call_history_records_by_interviewer, get_call_history_report_status
 from extract_call_history import get_call_history
 
 app = Flask(__name__)
@@ -18,6 +18,11 @@ def get_all():
     records = get_call_history_records()
 
     return jsonify(records)
+
+
+@app.route("/api/reports/call-history-status")
+def call_history_report_status():
+    return jsonify(get_call_history_report_status())
 
 
 @app.route("/api/reports/call-history/<interviewer>")

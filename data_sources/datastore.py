@@ -44,6 +44,30 @@ def get_call_history_records_by_interviewer(interviewer_name, start_date_string,
     return None, results
 
 
+def update_call_history_report_status():
+    client = datastore.Client()
+
+    complete_key = client.key("Status", "call_history")
+    task = datastore.Entity(key=complete_key)
+
+    task.update(
+        {
+            "last_updated": datetime.datetime.utcnow(),
+        }
+    )
+
+    client.put(task)
+
+    return
+
+
+def get_call_history_report_status():
+    client = datastore.Client()
+    key = client.key("Status", "call_history")
+    status = client.get(key)
+    return status
+
+
 def get_call_history_keys():
     client = datastore.Client()
     query = client.query(kind="CallHistory")
