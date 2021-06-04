@@ -49,7 +49,7 @@ def test_date_string_to_datetime_returns_valid_date_with_end_time(date_string, e
 def test_date_string_to_datetime_returns_none_if_date_is_invalid(date_string):
     date_time = date_string_to_datetime(date_string)
 
-    assert date_time == None
+    assert date_time is None
 
 
 @pytest.mark.parametrize(
