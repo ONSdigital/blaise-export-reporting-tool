@@ -4,6 +4,7 @@ from unittest.mock import patch
 from extract_call_history import load_cati_dial_history
 from models.call_history import CallHistory
 from models.config import Config
+from data_sources.database import connect_to_database, select_from
 
 
 @mock.patch.dict(
@@ -70,3 +71,24 @@ def test_load_cati_dial_history(mock_get_call_history):
             outcome_code=None,
         )
     ]
+
+
+def test_select_select_from():
+    db = connect_to_database(Config.from_env())
+    cursor = db.cursor()
+
+    fields = ("InstrumentId , "
+              "PrimaryKeyValue , "
+              "CallNumber , "
+              "DialNumber , "
+              "BusyDials , "
+              "StartTime , "
+              "EndTime , "
+              "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dialsecs, "
+              "Status , "
+              "Interviewer , "
+              "DialResult , "
+              "UpdateInfo , "
+              "AppointmentInfo ")
+    results = select_from("cati.DialHistory", cursor, fields)
+    print("foo")
