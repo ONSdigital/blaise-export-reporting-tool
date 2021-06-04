@@ -1,6 +1,23 @@
 import mysql.connector
 
 
+def connect_to_database(config):
+    return mysql.connector.connect(
+        host=config.mysql_host,
+        user=config.mysql_user,
+        password=config.mysql_password,
+        database=config.mysql_database,
+    )
+
+
+def select_from(table_name, cursor, fields):
+    cursor.execute(f"""SELECT {fields} FROM {table_name}""")
+    results = cursor.fetchall()
+    cursor.close()
+
+    return results
+
+
 def get_call_history(config):
     db = mysql.connector.connect(
         host=config.mysql_host,
