@@ -37,7 +37,7 @@ Content-Type: application/json
 Clone the project locally:
 
 ```shell
-git clone https://github.com/ONSdigital/blaise-publish-bucket-metadata.git
+git clone https://github.com/ONSdigital/blaise-export-reporting-tool.git
 ```
 
 Install poetry:
