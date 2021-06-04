@@ -32,3 +32,31 @@ Content-Type: application/json
 
 ```
 
+### Local Setup
+
+Clone the project locally:
+
+```shell
+git clone https://github.com/ONSdigital/blaise-publish-bucket-metadata.git
+```
+
+Install poetry:
+```shell
+pip install poetry
+```
+
+Run poetry install
+```shell
+poetry install
+```
+
+Run poetry install
+```shell
+poetry install
+```
+
+Run BERTs Flask application, this will run on [localhost:5011](http://localhost:5011) by default. 
+```shell
+python main.py
+```
+
