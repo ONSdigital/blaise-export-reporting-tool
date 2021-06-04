@@ -1,7 +1,7 @@
 import datetime
 import pytest
 
-from data_sources.datastore import date_string_to_datetime
+from data_sources.datastore import date_string_to_datetime, split_into_batches
 
 
 @pytest.mark.parametrize(
@@ -49,4 +49,24 @@ def test_date_string_to_datetime_returns_valid_date_with_end_time(date_string, e
 def test_date_string_to_datetime_returns_none_if_date_is_invalid(date_string):
     date_time = date_string_to_datetime(date_string)
 
-    assert date_time == None
+    assert date_time is None
+
+
+@pytest.mark.parametrize(
+    "list_to_split, number_to_split_by, expected_list_split",
+    [
+        (["item", "item", "item", "item", "item", "item", "item", "item", "item", "item"], 2, [2, 2, 2, 2, 2]),
+        (["item", "item", "item", "item", "item", "item", "item", "item", "item", "item", "item", "item", "item", "item", "item", "item", "item", "item", "item", "item"], 5, [5, 5, 5, 5]),
+        (["item", "item", "item"], 2, [2, 1]),
+        (["item", "item", "item"], 5, [3]),
+    ],
+)
+def test_split_into_batches(list_to_split, number_to_split_by, expected_list_split):
+    split_list = split_into_batches(list_to_split, number_to_split_by)
+
+    assert len(split_list) == len(expected_list_split)
+
+    i = 0
+    while i < len(split_list):
+        assert len(split_list[i]) == expected_list_split[i]
+        i += 1
