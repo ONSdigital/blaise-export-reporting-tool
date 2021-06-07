@@ -19,13 +19,11 @@ def query_dial_history_table(config, fields):
     db = connect_to_db(config)
     cursor = db.cursor()
 
-    query_str = (
-        f"SELECT {fields} FROM cati.DialHistory "
-    )
+    cursor.execute(f"SELECT {fields} FROM cati.DialHistory ")
 
-    cursor.execute(query_str)
     results = cursor.fetchall()
     cursor.close()
+    db.close()
 
     return results
 
