@@ -4,14 +4,7 @@ from unittest import mock
 from models.config import Config
 
 
-def test_config():
-    config = Config(
-        mysql_host="just-a-simple-host",
-        mysql_user="test",
-        mysql_password="unique-password",
-        mysql_database="DB_NAME",
-        blaise_api_url="a-legit-url",
-    )
+def test_config(config):
     assert config.mysql_host == "just-a-simple-host"
     assert config.mysql_user == "test"
     assert config.mysql_password == "unique-password"
