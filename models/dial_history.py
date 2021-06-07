@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 @dataclass
-class DialHistory:
+class MICallHistory:
     primary_key: str = ""
     internal_key: int = ""
     sample_month: str = ""

@@ -1,7 +1,7 @@
-from models.dial_history import DialHistory
+from models.dial_history import MICallHistory
 
 
-def test_generate_questionnaire_details_opn():
-    dial_history = DialHistory()
-    assert dial_history is not None
+def test_mi_call_history():
+    mi_call_history = MICallHistory()
+    assert mi_call_history is not None
 
