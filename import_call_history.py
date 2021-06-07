@@ -9,8 +9,8 @@ def append_case_data_to_dials(case_history_data, cases):
         )
         if case_data is not None:
             # Get additional field data from the case and append to dial
-            case.number_of_interviews = case_data.get("qHousehold.QHHold.HHSize")
-            case.outcome_code = case_data.get("qhAdmin.HOut")
+            case.number_of_interviews = case_data.get("qHousehold.QHHold.HHSize", "")
+            case.outcome_code = case_data.get("qhAdmin.HOut", "")
     return case_history_data
 
 
@@ -19,7 +19,7 @@ def get_matching_case(serial_number, questionnaire_name, case_list_to_query):
         case
         for case in case_list_to_query
         if case.get("qiD.Serial_Number") == serial_number
-        and case["questionnaire_name"] == questionnaire_name
+           and case["questionnaire_name"] == questionnaire_name
     ]
     if len(case_data) != 1:
         return None
@@ -32,9 +32,15 @@ def import_call_history_data(config):
     case_history_data = load_cati_dial_history(config, questionnaire_list)
     print(f"Read {len(case_history_data)} case history data")
 
+    blaise_fields_to_get = [
+        "QID.Serial_Number",
+        "QHAdmin.HOut",
+        "QHousehold.QHHold.HHSize"
+    ]
+
     cases = []
     for questionnaire in questionnaire_list:
-        cases.extend(load_case_data(questionnaire.get("name"), config))
+        cases.extend(load_case_data(questionnaire.get("name"), config, blaise_fields_to_get))
     print(f"Read {len(cases)} cases")
 
     merged_call_history = append_case_data_to_dials(case_history_data, cases)

@@ -15,11 +15,11 @@ def connect_to_db(config):
         print("MySQL Connection Issue")
 
 
-def query_dial_history_table(config, fields):
+def select_from(config, table_name, fields):
     db = connect_to_db(config)
     cursor = db.cursor()
 
-    cursor.execute(f"SELECT {fields} FROM cati.DialHistory ")
+    cursor.execute(f"""SELECT {fields} FROM {table_name}""")
 
     results = cursor.fetchall()
     cursor.close()
@@ -42,19 +42,33 @@ def get_call_history(config):
                      "DialResult , "
                      "UpdateInfo , "
                      "AppointmentInfo")
-    results = query_dial_history_table(config, fields_to_get)
+    results = select_from(config, "cati.DialHistory", fields_to_get)
+
+    return results
+
+
+def get_mi_call_history(config):
+    fields_to_get = ("InstrumentId , "
+                     "PrimaryKeyValue , "
+                     "Id , "
+                     "StartTime , "
+                     "CallNumber , "
+                     "DialNumber , "
+                     "Interviewer , "
+                     "DialResult , "
+                     "DialedNumber , "
+                     "AppointmentInfo, "
+                     "EndTime, "
+                     "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dialsecs ")
+    results = select_from(config, "cati.DialHistory", fields_to_get)
 
     return results
 
 
 def get_events(config):
-    db = connect_to_db(config)
-    print("Starting get_events ")
-    cursor = db.cursor()
-
-    cursor.execute("SELECT * FROM Events")
-    result = cursor.fetchall()
+    result = select_from(config, "cati.Events", "*")
     print(f"Results {len(result)}")
-    cursor.close()
 
     return result
+
+
