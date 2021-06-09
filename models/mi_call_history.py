@@ -48,3 +48,25 @@ class MICallHistory:
     #     seconds_dial: datetime = ""   -- dialsecs count-
     #     seconds_interview: datetime = ""   -- ?
     #     outcome_code: int = ""   -- HOUT
+
+
+@dataclass
+class ImportDialHistoryTable:
+    InstrumentId: str
+    PrimaryKeyValue: str
+    Id: int
+    StartTime: datetime
+    CallNumber: int
+    DialNumber: int
+    Interviewer: str
+    DialResult: str
+    DialedNumber: str
+    AppointmentInfo: str
+    EndTime: datetime
+
+    def get_dialsecs(self):
+        return (self.EndTime - self.StartTime).total_seconds()
+
+    @classmethod
+    def fields(cls):
+        return [field.name for field in fields(cls)]

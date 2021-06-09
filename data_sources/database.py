@@ -1,4 +1,5 @@
 import mysql.connector
+from models.mi_call_history import ImportDialHistoryTable
 
 
 def connect_to_db(config):
@@ -47,20 +48,16 @@ def get_call_history(config):
     return results
 
 
+def convert_list_to_string(fields_to_get):
+    return ", ".join(fields_to_get)
+
+
 def get_mi_call_history(config):
-    fields_to_get = ("InstrumentId , "
-                     "PrimaryKeyValue , "
-                     "Id , "
-                     "StartTime , "
-                     "CallNumber , "
-                     "DialNumber , "
-                     "Interviewer , "
-                     "DialResult , "
-                     "DialedNumber , "
-                     "AppointmentInfo, "
-                     "EndTime, "
-                     "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dialsecs ")
-    results = select_from(config, "cati.DialHistory", fields_to_get)
+    dialsecs = "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dialsecs"
+    fields_to_get = ImportDialHistoryTable.fields()
+    fields_to_get.append(dialsecs)
+
+    results = select_from(config, "cati.DialHistory", convert_list_to_string(fields_to_get))
 
     return results
 
