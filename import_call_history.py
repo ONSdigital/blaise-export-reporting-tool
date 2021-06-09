@@ -1,4 +1,4 @@
-from extract_blaise_data import get_questionnaire_list, load_case_data
+from data_sources.blaise_api import get_questionnaire_list, load_case_data
 from extract_call_history import load_cati_dial_history
 
 
