@@ -16,7 +16,9 @@ def import_mi_call_history(config):
 
     cases = []
     for questionnaire in questionnaire_list:
-        cases.extend(load_case_data(questionnaire.get("name"), config, blaise_fields_to_get))
+        cases.extend(
+            load_case_data(questionnaire.get("name"), config, blaise_fields_to_get)
+        )
     print(f"Read {len(cases)} cases")
 
     merged_call_history = append_case_data_to_dials(case_history_data, cases)

@@ -46,7 +46,7 @@ def load_mi_cati_dial_history(config, questionnaire_list):
             interviewer=item[6],
             dial_result=item[7],
             dial_line_number=item[8],
-            seconds_dial=item[11]
+            seconds_dial=item[11],
         )
         call_history.generate_dial_date_and_time_fields(item[3], item[10])
 

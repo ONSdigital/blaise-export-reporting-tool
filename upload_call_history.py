@@ -1,4 +1,8 @@
-from data_sources.datastore import get_call_history_keys, bulk_upload_call_history, update_call_history_report_status
+from data_sources.datastore import (
+    get_call_history_keys,
+    bulk_upload_call_history,
+    update_call_history_report_status,
+)
 
 
 def add_call_history_to_datastore(merged_call_history):
@@ -36,10 +40,10 @@ def filter_out_existing_records(merged_call_history):
         call_history_record
         for call_history_record in merged_call_history
         if (
-                record_already_exists(
-                    call_history_record,
-                    current_call_history,
-                )
-                is False
+            record_already_exists(
+                call_history_record,
+                current_call_history,
+            )
+            is False
         )
     ]

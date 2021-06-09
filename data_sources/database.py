@@ -30,19 +30,21 @@ def select_from(config, table_name, fields):
 
 
 def get_call_history(config):
-    fields_to_get = ("InstrumentId , "
-                     "PrimaryKeyValue , "
-                     "CallNumber , "
-                     "DialNumber , "
-                     "BusyDials , "
-                     "StartTime , "
-                     "EndTime , "
-                     "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dialsecs, "
-                     "Status , "
-                     "Interviewer , "
-                     "DialResult , "
-                     "UpdateInfo , "
-                     "AppointmentInfo")
+    fields_to_get = (
+        "InstrumentId , "
+        "PrimaryKeyValue , "
+        "CallNumber , "
+        "DialNumber , "
+        "BusyDials , "
+        "StartTime , "
+        "EndTime , "
+        "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dialsecs, "
+        "Status , "
+        "Interviewer , "
+        "DialResult , "
+        "UpdateInfo , "
+        "AppointmentInfo"
+    )
     results = select_from(config, "cati.DialHistory", fields_to_get)
 
     return results
@@ -57,7 +59,9 @@ def get_mi_call_history(config):
     fields_to_get = ImportDialHistoryTable.fields()
     fields_to_get.append(dialsecs)
 
-    results = select_from(config, "cati.DialHistory", convert_list_to_string(fields_to_get))
+    results = select_from(
+        config, "cati.DialHistory", convert_list_to_string(fields_to_get)
+    )
 
     return results
 
@@ -67,5 +71,3 @@ def get_events(config):
     print(f"Results {len(result)}")
 
     return result
-
-

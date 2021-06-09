@@ -14,9 +14,7 @@ def get_questionnaire_list(config):
 def load_case_data(questionnaire_name, config, fields):
     fields_to_get = []
     for field in fields:
-        fields_to_get.append(
-            ("fieldIds", field)
-        )
+        fields_to_get.append(("fieldIds", field))
 
     print(f"Get reporting data for questionnaire {questionnaire_name}")
 
