@@ -20,7 +20,7 @@ class DBBase:
     @classmethod
     def select_from(cls, config):
         db = cls.connect_to_db(config)
-        cursor = db.cursor()
+        cursor = db.cursor(dictionary=True)
 
         cursor.execute(f"""SELECT {cls.fields()} FROM {cls.table_name()}""")
 
