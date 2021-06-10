@@ -31,5 +31,4 @@ def mi_call_history(_event, _context):
 load_config(app)
 
 if __name__ == "__main__":
-    mi_call_history(None, None)
-    # app.run(host="0.0.0.0", port=5011)
+    app.run(host="0.0.0.0", port=5011)
