@@ -25,19 +25,19 @@ def test_load_cati_dial_history(mock_get_call_history):
 
     mock_get_call_history.return_value = [
         {
-            'InstrumentId': "05cf69af-3a4e-47df-819a-928350fdda5a",
-            'PrimaryKeyValue': "1001011",
-            'CallNumber': 1,
-            'DialNumber': 1,
-            'BusyDials': 0,
-            'StartTime': "2021/05/19 14:59:01",
-            'EndTime': "2021/05/19 14:59:17",
-            'dialsecs': 16,
-            'Status': "Finished (Non response)",
-            'Interviewer': "matpal",
-            'DialResult': "NonRespons",
-            'UpdateInfo': None,
-            'AppointmentInfo': None,
+            "InstrumentId": "05cf69af-3a4e-47df-819a-928350fdda5a",
+            "PrimaryKeyValue": "1001011",
+            "CallNumber": 1,
+            "DialNumber": 1,
+            "BusyDials": 0,
+            "StartTime": "2021/05/19 14:59:01",
+            "EndTime": "2021/05/19 14:59:17",
+            "dialsecs": 16,
+            "Status": "Finished (Non response)",
+            "Interviewer": "matpal",
+            "DialResult": "NonRespons",
+            "UpdateInfo": None,
+            "AppointmentInfo": None,
         }
     ]
     config = Config.from_env()
