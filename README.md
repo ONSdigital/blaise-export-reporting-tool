@@ -38,6 +38,15 @@ Clone the project locally:
 git clone https://github.com/ONSdigital/blaise-export-reporting-tool.git
 ```
 
+On MacOS
+
+{drive}:\{workspace}> python3 -m venv venv  
+{drive}:\{workspace}> source venv/bin/activate (this will run a .bat file)
+On Windows
+
+{drive}:\{workspace}> python -m venv venv  
+{drive}:\{workspace}> venv\Scripts\activate (this will run a .bat file)
+
 Install poetry:
 ```shell
 pip install poetry
@@ -48,10 +57,10 @@ Run poetry install
 poetry install
 ```
 
-Run poetry install
-```shell
-poetry install
-```
+gcloud config set project
+
+gcloud auth application-default login
+
 
 Run BERTs Flask application, this will run on [localhost:5011](http://localhost:5011) by default. 
 ```shell

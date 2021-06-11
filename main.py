@@ -4,6 +4,10 @@ from upload_call_history import add_call_history_to_datastore
 from import_call_history import import_call_history_data
 from models.config import Config
 
+# todo remove or setup local env switch or something
+import os
+os.environ["GCLOUD_PROJECT"] = "ons-blaise-v2-dev-matt02"
+
 
 def upload_call_history(_event, _context):
     config = Config.from_env()
