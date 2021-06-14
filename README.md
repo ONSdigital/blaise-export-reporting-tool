@@ -1,8 +1,8 @@
-# Blaise Export Reporting Tool
+# Blaise Export Reporting Tool ![Ernie](.github/bert.png)
 
 [![codecov](https://codecov.io/gh/ONSdigital/blaise-export-reporting-tool/branch/main/graph/badge.svg)](https://codecov.io/gh/ONSdigital/blaise-export-reporting-tool)
 [![CI status](https://github.com/ONSdigital/blaise-export-reporting-tool/workflows/Test%20coverage%20report/badge.svg)](https://github.com/ONSdigital/blaise-export-reporting-tool/workflows/Test%20coverage%20report/badge.svg)
-<img src="https://img.shields.io/github/release/ONSdigital/blaise-export-reporting-tool.svg?style=flat-square" alt="Nisra Case Mover release verison">
+<img src="https://img.shields.io/github/release/ONSdigital/blaise-export-reporting-tool.svg?style=flat-square">
 [![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/ONSdigital/blaise-export-reporting-tool.svg)](https://github.com/ONSdigital/blaise-export-reporting-tool/pulls)
 [![Github last commit](https://img.shields.io/github/last-commit/ONSdigital/blaise-export-reporting-tool.svg)](https://github.com/ONSdigital/blaise-export-reporting-tool/commits)
 [![Github contributors](https://img.shields.io/github/contributors/ONSdigital/blaise-export-reporting-tool.svg)](https://github.com/ONSdigital/blaise-export-reporting-tool/graphs/contributors)
@@ -11,8 +11,6 @@ Extract data from Blaise CATI database and [Blaise API](https://github.com/ONSdi
 
 Accompanying service [Ernie Reporting UI](https://github.com/ONSdigital/blaise-management-information-reports) for users to fill in form for queries and display results from this service.
 
-![Bert from sesame street](https://vignette.wikia.nocookie.net/vsbattles/images/c/c2/Bert.gif/revision/latest?cb=20160922094917)
-
 ### Services
 
 This repository has two services.
@@ -20,7 +18,7 @@ This repository has two services.
 - CloudFunction python service to extract the CATI data and Blaise data and store in Firestore in Datastore.
 - App engine Flask application to query Datastore for reports to be displayed in [Ernie Reporting UI](https://github.com/ONSdigital/blaise-management-information-reports)
 
-![Process flow diagram of Bert and Ernie](https://user-images.githubusercontent.com/38406765/120787780-9e96a000-c527-11eb-9065-a91efb0b24b5.png)
+![Flow](.github/bert-ernie-flow.png)
 
 ### Queries
 
