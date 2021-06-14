@@ -11,12 +11,10 @@ def get_questionnaire_list(config):
     return questionnaire_list
 
 
-def load_case_data(questionnaire_name, config):
-    fields_to_get = [
-        ("fieldIds", "QID.Serial_Number"),
-        ("fieldIds", "QHAdmin.HOut"),
-        ("fieldIds", "QHousehold.QHHold.HHSize"),
-    ]
+def load_case_data(questionnaire_name, config, fields):
+    fields_to_get = []
+    for field in fields:
+        fields_to_get.append(("fieldIds", field))
 
     print(f"Get reporting data for questionnaire {questionnaire_name}")
 

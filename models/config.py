@@ -23,5 +23,8 @@ class Config:
     def log(self):
         print(f"Configuration: mysql_host: {self.mysql_host}")
         print(f"Configuration: mysql_user: {self.mysql_user}")
-        print(f"Configuration: mysql_password: {self.mysql_password}")
+        if self.mysql_password is None:
+            print(f"Configuration: mysql_password: IS NONE")
+        else:
+            print(f"Configuration: mysql_password: Provided")
         print(f"Configuration: mysql_database: {self.mysql_database}")

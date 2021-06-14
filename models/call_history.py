@@ -1,5 +1,6 @@
 import datetime
 from dataclasses import dataclass
+from models.db_base import DBBase
 
 
 @dataclass
@@ -34,3 +35,27 @@ class CallHistory:
             self.cohort: str = self.questionnaire_name[
                 len(self.questionnaire_name) - 3 : -1
             ]
+
+
+@dataclass
+class CatiCallHistoryTable(DBBase):
+    InstrumentId: str
+    PrimaryKeyValue: str
+    CallNumber: int
+    DialNumber: int
+    BusyDials: int
+    StartTime: datetime
+    EndTime: datetime
+    Status: str
+    Interviewer: str
+    DialResult: str
+    UpdateInfo: str
+    AppointmentInfo: str
+
+    @classmethod
+    def table_name(cls):
+        return "cati.DialHistory"
+
+    @classmethod
+    def extra_fields(cls):
+        return ["ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dialsecs"]
