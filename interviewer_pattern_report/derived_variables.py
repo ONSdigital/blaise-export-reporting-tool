@@ -14,7 +14,8 @@ def get_hours_worked(results):
     df_last_calls.index.names = ["date"]
     df_last_calls.columns = ["last_call_time"]
     df_first_and_last_calls = df_first_calls.merge(df_last_calls, on="date", how="inner")
-    df_first_and_last_calls["time_worked"] = df_first_and_last_calls["last_call_time"] - df_first_and_last_calls["first_call_time"]
+    df_first_and_last_calls["time_worked"] = df_first_and_last_calls["last_call_time"] - df_first_and_last_calls[
+        "first_call_time"]
     total_time_worked = df_first_and_last_calls["time_worked"].sum()
     print(df_first_and_last_calls)
     print(str(datetime.timedelta(seconds=total_time_worked.total_seconds())))
