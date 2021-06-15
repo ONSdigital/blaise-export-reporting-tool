@@ -1,7 +1,7 @@
 import datetime
 import pytest
 
-from data_sources.datastore import date_string_to_datetime, split_into_batches
+from data_sources.datastore import date_string_to_datetime, split_into_batches, get_hours_worked
 
 
 @pytest.mark.parametrize(

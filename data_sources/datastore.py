@@ -53,45 +53,6 @@ def get_call_history_records_by_interviewer(
     return None, results
 
 
-def get_call_pattern_records_by_interviewer(interviewer_name, start_date_string, end_date_string):
-    start_date = date_string_to_datetime(start_date_string)
-    end_date = date_string_to_datetime(end_date_string, True)
-
-    if start_date is None or end_date is None:
-        return ("Invalid format for date properties provided", 400), []
-
-    client = datastore.Client()
-    query = client.query(kind="CallHistory")
-    query.add_filter("interviewer", "=", interviewer_name)
-    query.add_filter("call_start_time", ">=", start_date)
-    query.add_filter("call_start_time", "<=", end_date)
-    query.order = ["call_start_time"]
-
-    results = list(query.fetch())
-    print(f"Cases found {len(results)}")
-
-    df_results = pd.DataFrame(results)
-    df_call_start_times = df_results[["call_start_time"]]
-    df_call_end_times = df_results[["call_end_time"]]
-    df_first_calls = df_call_start_times.groupby([df_call_start_times['call_start_time'].dt.date], as_index=True).min()
-    df_last_calls = df_call_end_times.groupby([df_call_end_times['call_end_time'].dt.date], as_index=True).max()
-    df_first_calls.index.names = ["date"]
-    df_first_calls.columns = ["first_call_time"]
-    df_last_calls.index.names = ["date"]
-    df_last_calls.columns = ["last_call_time"]
-    df_first_and_last_calls = df_first_calls.merge(df_last_calls, on="date", how="inner")
-    df_first_and_last_calls["time_worked"] = df_first_and_last_calls["last_call_time"] - df_first_and_last_calls["first_call_time"]
-    total_time_worked = df_first_and_last_calls["time_worked"].sum()
-    print(df_first_and_last_calls)
-    print(str(datetime.timedelta(seconds=total_time_worked.total_seconds())))
-
-
-    return None, results
-
-# TODO: remove this just for quick runs locally
-if __name__ == "__main__":
-    get_call_pattern_records_by_interviewer("matpal", "2021-01-01", "2021-06-11")
-
 def update_call_history_report_status():
     client = datastore.Client()
 
