@@ -1,13 +1,8 @@
 import datetime
 import re
 from dataclasses import asdict
-from google.cloud import datastore
-import numpy as np
-import pandas as pd
 
-# todo remove or setup local env switch or something
-import os
-os.environ["GCLOUD_PROJECT"] = "ons-blaise-v2-dev-matt02"
+from google.cloud import datastore
 
 
 def get_call_history_records():
@@ -33,7 +28,7 @@ def date_string_to_datetime(date_string, end_of_day=False):
 
 
 def get_call_history_records_by_interviewer(
-    interviewer_name, start_date_string, end_date_string
+        interviewer_name, start_date_string, end_date_string
 ):
     start_date = date_string_to_datetime(start_date_string)
     end_date = date_string_to_datetime(end_date_string, True)
@@ -110,6 +105,6 @@ def bulk_upload_call_history(new_call_history_entries):
 
 def split_into_batches(merged_call_history, length):
     return [
-        merged_call_history[i : i + length]
+        merged_call_history[i: i + length]
         for i in range(0, len(merged_call_history), length)
     ]
