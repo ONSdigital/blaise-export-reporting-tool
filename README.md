@@ -7,27 +7,26 @@
 [![Github last commit](https://img.shields.io/github/last-commit/ONSdigital/blaise-export-reporting-tool.svg)](https://github.com/ONSdigital/blaise-export-reporting-tool/commits)
 [![Github contributors](https://img.shields.io/github/contributors/ONSdigital/blaise-export-reporting-tool.svg)](https://github.com/ONSdigital/blaise-export-reporting-tool/graphs/contributors)
 
-Extract data from Blaise CATI database and [Blaise API](https://github.com/ONSdigital/blaise-api-rest) and store in [GCP Firestore in Datastore](https://cloud.google.com/datastore/docs/) to generate reports for Telephone Operations.
-
-Accompanying service [Ernie Reporting UI](https://github.com/ONSdigital/blaise-management-information-reports) for users to fill in form for queries and display results from this service.
+This project extracts management information data from the Blaise CATI database and via calls to our [RESTful API](https://github.com/ONSdigital/blaise-api-rest). Persists data in [Datastore](https://cloud.google.com/datastore/docs/) if necessary. Reports can be generated from this data and delivered to an on-prem share or via the [Management Information Reports "Ernie" UI](https://github.com/ONSdigital/blaise-management-information-reports).
 
 ### Services
 
 This repository has two services.
 
-- CloudFunction python service to extract the CATI data and Blaise data and store in Firestore in Datastore.
-- App engine Flask application to query Datastore for reports to be displayed in [Ernie Reporting UI](https://github.com/ONSdigital/blaise-management-information-reports)
+- Cloud Function Python application to extract the CATI data and Blaise response data and store it in Datastore.
+- App Engine Python Flask application to query Datastore for reports to be displayed in the [Management Information Reports "Ernie" UI](https://github.com/ONSdigital/blaise-management-information-reports).
 
 ![Flow](.github/bert-ernie-flow.png)
 
-### Queries
+### Reports
 
-#### Get interviewer call history report
-Get call history for specified interview (interviewer login name) within a date range provided in the url. Returns JSON list of call history entries.
+#### Interviewer Call History
+
+Get call history for a specified interviewer (interviewer login name) within a date range provided in the URL parameters. Returns a JSON list of call history entries.
+
 ```http request
 GET /api/reports/call-history/<interviewer>?start-date=2021-05-01&end-date=2021-06-01
 Content-Type: application/json
-
 ```
 
 ### Local Setup
@@ -38,36 +37,43 @@ Clone the project locally:
 git clone https://github.com/ONSdigital/blaise-export-reporting-tool.git
 ```
 
-On MacOS
+Setup virtual environment:
 
-{drive}:\{workspace}> python3 -m venv venv  
-{drive}:\{workspace}> source venv/bin/activate (this will run a .bat file)
-On Windows
-
-{drive}:\{workspace}> python -m venv venv  
-{drive}:\{workspace}> venv\Scripts\activate (this will run a .bat file)
+macOS:
+```shell
+python3 -m venv venv  
+source venv/bin/activate
+```
+Windows:
+```shell
+python -m venv venv  
+venv\Scripts\activate
+```
 
 Install poetry:
 ```shell
 pip install poetry
 ```
 
-Run poetry install
+Install dependencies:
 ```shell
 poetry install
 ```
 
-gcloud config set project
-
+Authenticate application with GCP project:
+```shell
 gcloud auth application-default login
+```
 
-
-Run BERTs Flask application, this will run on [localhost:5011](http://localhost:5011) by default. 
+Run application:
 ```shell
 python main.py
 ```
 
-run tests
-poetry run python -m pytest
+You should now be able to call the application via [localhost:5011](http://localhost:5011). 
 
-# todo tidy this readme ;o
+### Run Tests
+
+```shell
+poetry run python -m pytest
+```

@@ -1,4 +1,3 @@
-import pandas as pd
 import datetime
 import re
 from dataclasses import asdict
@@ -13,6 +12,7 @@ def get_call_history_records():
     return results
 
 
+# TODO: verb!?
 def date_string_to_datetime(date_string, end_of_day=False):
     x = re.search("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$", date_string)
     if not x:
@@ -28,7 +28,7 @@ def date_string_to_datetime(date_string, end_of_day=False):
     return datetime.datetime(int(date_split[0]), int(date_split[1]), int(date_split[2]))
 
 
-def get_call_history_records_by_interviewer(
+def get_call_history_records_by_interviewer_and_date_range(
         interviewer_name, start_date_string, end_date_string
 ):
     start_date = date_string_to_datetime(start_date_string)
@@ -45,7 +45,7 @@ def get_call_history_records_by_interviewer(
     query.order = ["call_start_time"]
 
     results = list(query.fetch())
-    print(f"Cases found {len(results)}")
+    print(f"get_call_history_records_by_interviewer_and_date_range - {len(results)} records found")
     return None, results
 
 
@@ -83,7 +83,6 @@ def get_call_history_keys():
 
 def bulk_upload_call_history(new_call_history_entries):
     client = datastore.Client()
-
     datastore_tasks = []
 
     for call_history_record in new_call_history_entries:
@@ -93,9 +92,7 @@ def bulk_upload_call_history(new_call_history_entries):
                 f"{call_history_record.serial_number}-{call_history_record.call_start_time}",
             )
         )
-
         task1.update(asdict(call_history_record))
-
         datastore_tasks.append(task1)
 
     datastore_batches = split_into_batches(datastore_tasks, 500)

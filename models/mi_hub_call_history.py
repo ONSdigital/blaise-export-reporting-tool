@@ -4,7 +4,7 @@ from models.db_base import DBBase
 
 
 @dataclass
-class MICallHistory:
+class MiHubCallHistory:
     questionnaire_id: str
     serial_number: str
     internal_key: int
@@ -33,7 +33,7 @@ class MICallHistory:
 
 
 @dataclass
-class CatiMiCallHistoryTable(DBBase):
+class CatiMiHubCallHistoryTable(DBBase):
     InstrumentId: str
     PrimaryKeyValue: str
     Id: int
@@ -52,4 +52,4 @@ class CatiMiCallHistoryTable(DBBase):
 
     @classmethod
     def extra_fields(cls):
-        return ["ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dialsecs"]
+        return ["ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dial_secs"]

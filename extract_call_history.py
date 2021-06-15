@@ -1,6 +1,6 @@
-from data_sources.database import get_call_history, get_mi_call_history
+from data_sources.database import get_call_history, get_mi_hub_call_history
 from models.call_history import CallHistory
-from models.mi_call_history import MICallHistory
+from models.mi_hub_call_history import MiHubCallHistory
 
 
 def get_questionnaire_name_from_id(questionnaire_id, questionnaire_list):
@@ -24,7 +24,7 @@ def load_cati_dial_history(config, questionnaire_list):
             busy_dials=item.get("BusyDials"),
             call_start_time=item.get("StartTime"),
             call_end_time=item.get("EndTime"),
-            dial_secs=item.get("dialsecs"),
+            dial_secs=item.get("dial_secs"),
             status=item.get("Status"),
             interviewer=item.get("Interviewer"),
             call_result=item.get("DialResult"),
@@ -45,13 +45,13 @@ def load_cati_dial_history(config, questionnaire_list):
     return call_history_list
 
 
-def load_mi_cati_dial_history(config, questionnaire_list):
-    results = get_mi_call_history(config)
+def load_mi_hub_cati_dial_history(config, questionnaire_list):
+    results = get_mi_hub_call_history(config)
 
     call_history_list = []
 
     for item in results:
-        call_history = MICallHistory(
+        call_history = MiHubCallHistory(
             questionnaire_id=item.get("InstrumentId"),
             serial_number=item.get("PrimaryKeyValue"),
             internal_key=item.get("Id"),
@@ -60,7 +60,7 @@ def load_mi_cati_dial_history(config, questionnaire_list):
             interviewer=item.get("Interviewer"),
             dial_result=item.get("DialResult"),
             dial_line_number=item.get("DialedNumber"),
-            seconds_dial=item.get("dialsecs"),
+            seconds_dial=item.get("dial_secs"),
         )
         call_history.generate_dial_date_and_time_fields(item[3], item[10])
 

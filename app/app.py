@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, current_app
 
 from data_sources.database import get_events
-from data_sources.datastore import get_call_history_records, get_call_history_records_by_interviewer, \
+from data_sources.datastore import get_call_history_records, get_call_history_records_by_interviewer_and_date_range, \
     get_call_history_report_status
 from extract_call_history import get_call_history
 from models.config import Config
@@ -14,21 +14,13 @@ def load_config(application):
     application.configuration.log()
 
 
-@app.route("/")
-def get_all():
-    records = get_call_history_records()
-
-    return jsonify(records)
-
-
 @app.route("/api/reports/call-history-status")
 def call_history_report_status():
     return jsonify(get_call_history_report_status())
 
 
 @app.route("/api/reports/call-history/<interviewer>")
-# todo rename this funct ! :p
-def find(interviewer):
+def call_history(interviewer):
     start_date = request.args.get("start-date", None)
     end_date = request.args.get("end-date", None)
 
@@ -40,7 +32,7 @@ def find(interviewer):
         print("Invalid request missing required filter properties ")
         return '{"error": "Invalid request missing required filter properties"}', 400
 
-    error, results = get_call_history_records_by_interviewer(
+    error, results = get_call_history_records_by_interviewer_and_date_range(
         interviewer, start_date, end_date
     )
 
@@ -62,7 +54,7 @@ def call_pattern(interviewer):
         print("Invalid request missing required filter properties ")
         return '{"error": "Invalid request missing required filter properties"}', 400
 
-    error, results = get_call_history_records_by_interviewer(interviewer, start_date, end_date)
+    error, results = get_call_history_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
 
     if error:
         message, error_code = error

@@ -65,7 +65,7 @@ def test_cati_call_history_table_fields():
             "DialResult",
             "UpdateInfo",
             "AppointmentInfo",
-            "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dialsecs",
+            "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dial_secs",
         ]
     )
 
