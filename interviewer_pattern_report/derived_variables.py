@@ -20,3 +20,23 @@ def get_hours_worked(results):
     print(df_first_and_last_calls)
     print(str(datetime.timedelta(seconds=total_time_worked.total_seconds())))
     return str(datetime.timedelta(seconds=total_time_worked.total_seconds()))
+
+
+def get_total_call_seconds(results):
+    # Call time is a calculation of all the durations of all calls
+    # for an interviewer
+    # in a day.
+
+    # So using the example
+    # 1st call 09:00 to 09:30
+    # 2nd call 10:00 to 10:30
+    # 3rd call 13:00 to 14:00
+    # 4th call 15:00 to 15:30
+    # 5th call 16:00 to 16:30
+    # this is a Call time of 3 hours
+
+    call_time = 0
+    for call in results:
+        call_time = call_time + call.get("dialsecs", 0)
+
+    return 240

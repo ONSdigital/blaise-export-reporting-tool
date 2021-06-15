@@ -1,3 +1,4 @@
+import pandas as pd
 import datetime
 import re
 from dataclasses import asdict
