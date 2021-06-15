@@ -67,3 +67,7 @@ Run BERTs Flask application, this will run on [localhost:5011](http://localhost:
 python main.py
 ```
 
+run tests
+poetry run python -m pytest
+
+# todo tidy this readme ;o
