@@ -1,4 +1,4 @@
-from models.call_history import CallHistory
+from models.call_history import CallHistory, CatiCallHistoryTable
 
 
 def test_generate_questionnaire_details_lms():
@@ -47,3 +47,28 @@ def test_generate_questionnaire_details_opn():
     assert call_history.survey == "OPN"
     assert call_history.cohort is None
     assert call_history.wave is None
+
+
+def test_cati_call_history_table_fields():
+    fields = CatiCallHistoryTable.fields()
+    assert fields == ", ".join(
+        [
+            "InstrumentId",
+            "PrimaryKeyValue",
+            "CallNumber",
+            "DialNumber",
+            "BusyDials",
+            "StartTime",
+            "EndTime",
+            "Status",
+            "Interviewer",
+            "DialResult",
+            "UpdateInfo",
+            "AppointmentInfo",
+            "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dialsecs",
+        ]
+    )
+
+
+def test_cati_call_history_table_table_name():
+    assert CatiCallHistoryTable.table_name() == "cati.DialHistory"

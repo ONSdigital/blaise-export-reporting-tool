@@ -4,3 +4,6 @@
 .pytest_cache
 /.idea/
 /.coverage
+.env
+__pycache__
+.vscode

@@ -32,13 +32,17 @@ def find(interviewer):
     start_date = request.args.get("start-date", None)
     end_date = request.args.get("end-date", None)
 
-    print(f"Call history for interviewer: {interviewer} between {start_date} and {end_date}")
+    print(
+        f"Call history for interviewer: {interviewer} between {start_date} and {end_date}"
+    )
 
     if start_date is None or end_date is None:
         print("Invalid request missing required filter properties ")
         return '{"error": "Invalid request missing required filter properties"}', 400
 
-    error, results = get_call_history_records_by_interviewer(interviewer, start_date, end_date)
+    error, results = get_call_history_records_by_interviewer(
+        interviewer, start_date, end_date
+    )
 
     if error:
         message, error_code = error
