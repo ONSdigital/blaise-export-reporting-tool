@@ -23,3 +23,10 @@ def get_total_call_seconds(df):
     total_call_seconds = round(df_call_seconds["dial_secs"].sum())
     print("get_total_call_seconds - " + str(total_call_seconds))
     return total_call_seconds
+
+
+def get_percentage_of_time_on_calls(hours_worked, total_call_seconds):
+    print(hours_worked)
+    sec_test = sum(x * int(t) for x, t in zip([3600, 60, 1], hours_worked.split(":")))
+    print(sec_test)
+    return 100 * float(total_call_seconds)/float(sec_test)
