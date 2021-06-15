@@ -2,7 +2,7 @@ import datetime
 import pytest
 from google.api_core.datetime_helpers import DatetimeWithNanoseconds
 
-from data_sources.datastore import date_string_to_datetime, split_into_batches, get_hours_worked
+from data_sources.datastore import date_string_to_datetime, split_into_batches
 
 
 @pytest.mark.parametrize(
