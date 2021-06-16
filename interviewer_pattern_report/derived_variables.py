@@ -14,26 +14,33 @@ def get_hours_worked(call_history_dataframe):
     return str(datetime.timedelta(seconds=total_hours.total_seconds()))
 
 
-def get_call_time(call_history_dataframe):
+def get_call_time_in_seconds(call_history_dataframe):
     return str(round(call_history_dataframe['dial_secs'].sum()))
 
 
-def get_percentage_of_time_on_calls(hours_worked, total_call_seconds):
-    total_worked_seconds = sum(time_transformer * int(time_block) for time_transformer, time_block in zip([3600, 60, 1], hours_worked.split(":")))
-    return 100 * float(total_call_seconds)/float(total_worked_seconds)
+def get_total_seconds_from_string(hours_worked):
+    h, m, s = hours_worked.split(':')
+    return int(h) * 3600 + int(m) * 60 + int(s)
 
 
-def get_average_calls_per_hour(call_history_dataframe):
-    group_calls_by_hour = call_history_dataframe.groupby([call_history_dataframe['call_start_time'].dt.hour]).size().reset_index(name='count_by_hour')
+def get_percentage_of_hours_on_calls(hours_worked, total_call_seconds):
+    return 100 * float(total_call_seconds)/float(get_total_seconds_from_string(hours_worked))
 
-    return str(group_calls_by_hour['count_by_hour'].sum()/len(group_calls_by_hour.index))
+
+def get_average_calls_per_hour(call_history_dataframe, string_hours_worked):
+    integer_hours_worked = get_total_seconds_from_string(string_hours_worked)/3600
+    total_calls = len(call_history_dataframe.index)
+
+    return total_calls/integer_hours_worked
 
 
 def get_respondents_interviewed(call_history_dataframe):
+    # TODO: Review correct input fields
     return round(call_history_dataframe['number_of_interviews'].sum())
 
 
 def get_successfully_completed_households(call_history_dataframe):
+    # TODO: Mark said Numberwang
     pass
 
 
@@ -47,4 +54,6 @@ if __name__ == "__main__":
     from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range
     entities = get_call_history_records_by_interviewer_and_date_range("matpal", "2021-01-01", "2021-06-11")[1]
     df = pd.DataFrame(entities)
-    get_average_respondents_interviewed_per_hour(df)
+
+    hours_worked = get_hours_worked(df)
+    get_average_calls_per_hour(df, hours_worked)

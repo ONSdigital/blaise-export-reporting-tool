@@ -7,7 +7,7 @@ def test_get_hours_worked(mock_data):
 
 
 def test_get_call_time(mock_data):
-    assert get_call_time(mock_data) == "165"
+    assert get_call_time_in_seconds(mock_data) == "165"
 
 
 @pytest.mark.parametrize(
@@ -19,11 +19,19 @@ def test_get_call_time(mock_data):
     ],
 )
 def test_get_percentage_of_time_on_calls(hours_worked, total_call_seconds, expected):
-    assert get_percentage_of_time_on_calls(hours_worked, total_call_seconds) == expected
+    assert get_percentage_of_hours_on_calls(hours_worked, total_call_seconds) == expected
 
 
-def test_get_average_calls_per_hour(mock_data):
-    assert get_average_calls_per_hour(mock_data) == "2.6666666666666665"
+@pytest.mark.parametrize(
+    "hours_worked, expected",
+    [
+        ("08:00:00", 1.0),
+        ("04:00:00", 2.0),
+        ("16:00:00", 0.5),
+    ],
+)
+def test_get_average_calls_per_hour(hours_worked, expected, mock_data):
+    assert get_average_calls_per_hour(mock_data, hours_worked) == expected
 
 
 def test_get_respondents_interviewed(mock_data):

@@ -37,8 +37,10 @@ def mock_data():
             'status': 'Finished (Non response)',
             'survey': 'LMS',
             'update_info': None,
-            'wave': 1},
-        {   'appointment_info': None,
+            'wave': 1
+        },
+        {
+            'appointment_info': None,
             'busy_dials': 0,
             'call_end_time': DatetimeWithNanoseconds(2021, 5, 19, 14, 32, 43, tzinfo=datetime.timezone.utc),
             'call_number': 1,
@@ -56,8 +58,10 @@ def mock_data():
             'status': 'Finished (No contact)',
             'survey': 'LMS',
             'update_info': None,
-            'wave': 1},
-        {   'appointment_info': None,
+            'wave': 1
+        },
+        {
+            'appointment_info': None,
             'busy_dials': 1,
             'call_end_time': DatetimeWithNanoseconds(2021, 5, 19, 14, 33, 40, tzinfo=datetime.timezone.utc),
             'call_number': 1,
@@ -75,8 +79,10 @@ def mock_data():
             'status': 'Finished (Non response)',
             'survey': 'LMS',
             'update_info': None,
-            'wave': 1},
-        {   'appointment_info': None,
+            'wave': 1
+        },
+        {
+            'appointment_info': None,
             'busy_dials': 0,
             'call_end_time': DatetimeWithNanoseconds(2021, 5, 19, 14, 35, 34, tzinfo=datetime.timezone.utc),
             'call_number': 1,
@@ -94,8 +100,10 @@ def mock_data():
             'status': 'Finished (No contact)',
             'survey': 'LMS',
             'update_info': None,
-            'wave': 1},
-        {   'appointment_info': None,
+            'wave': 1
+        },
+        {
+            'appointment_info': None,
             'busy_dials': 1,
             'call_end_time': DatetimeWithNanoseconds(2021, 5, 19, 14, 36, 8, tzinfo=datetime.timezone.utc),
             'call_number': 1,
@@ -113,8 +121,10 @@ def mock_data():
             'status': 'Finished (No contact)',
             'survey': 'LMS',
             'update_info': None,
-            'wave': 1},
-        {   'appointment_info': None,
+            'wave': 1
+        },
+        {
+            'appointment_info': None,
             'busy_dials': 0,
             'call_end_time': DatetimeWithNanoseconds(2021, 5, 19, 14, 49, 55, tzinfo=datetime.timezone.utc),
             'call_number': 1,
@@ -132,8 +142,10 @@ def mock_data():
             'status': 'Finished (Non response)',
             'survey': 'LMS',
             'update_info': None,
-            'wave': 1},
-        {   'appointment_info': None,
+            'wave': 1
+        },
+        {
+            'appointment_info': None,
             'busy_dials': 0,
             'call_end_time': DatetimeWithNanoseconds(2021, 5, 19, 14, 59, 17, tzinfo=datetime.timezone.utc),
             'call_number': 1,
@@ -151,8 +163,10 @@ def mock_data():
             'status': 'Finished (Non response)',
             'survey': 'LMS',
             'update_info': None,
-            'wave': 1},
-        {   'appointment_info': None,
+            'wave': 1
+        },
+        {
+            'appointment_info': None,
             'busy_dials': 0,
             'call_end_time': DatetimeWithNanoseconds(2021, 5, 19, 15, 0, 13, tzinfo=datetime.timezone.utc),
             'call_number': 1,
@@ -170,7 +184,8 @@ def mock_data():
             'status': 'Finished (No contact)',
             'survey': 'LMS',
             'update_info': None,
-            'wave': 1},
+            'wave': 1
+        },
     ]
     return pd.DataFrame(results)
 
