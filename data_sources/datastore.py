@@ -12,8 +12,7 @@ def get_call_history_records():
     return results
 
 
-# TODO: verb!?
-def date_string_to_datetime(date_string, end_of_day=False):
+def parse_date_string_to_datetime(date_string, end_of_day=False):
     x = re.search("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$", date_string)
     if not x:
         return None
@@ -31,8 +30,8 @@ def date_string_to_datetime(date_string, end_of_day=False):
 def get_call_history_records_by_interviewer_and_date_range(
         interviewer_name, start_date_string, end_date_string
 ):
-    start_date = date_string_to_datetime(start_date_string)
-    end_date = date_string_to_datetime(end_date_string, True)
+    start_date = parse_date_string_to_datetime(start_date_string)
+    end_date = parse_date_string_to_datetime(end_date_string, True)
 
     if start_date is None or end_date is None:
         return ("Invalid format for date properties provided", 400), []

@@ -1,7 +1,7 @@
 import datetime
 import pytest
 
-from data_sources.datastore import date_string_to_datetime, split_into_batches
+from data_sources.datastore import parse_date_string_to_datetime, split_into_batches
 
 
 @pytest.mark.parametrize(
@@ -15,7 +15,7 @@ from data_sources.datastore import date_string_to_datetime, split_into_batches
 def test_date_string_to_datetime_returns_valid_date(date_string, expected_datetime):
     expected_datetime = datetime.datetime(*expected_datetime)
 
-    date_time = date_string_to_datetime(date_string)
+    date_time = parse_date_string_to_datetime(date_string)
 
     assert date_time == expected_datetime
 
@@ -33,7 +33,7 @@ def test_date_string_to_datetime_returns_valid_date_with_end_time(
 ):
     expected_datetime = datetime.datetime(*expected_datetime, 23, 59, 59)
 
-    date_time = date_string_to_datetime(date_string, True)
+    date_time = parse_date_string_to_datetime(date_string, True)
 
     assert date_time == expected_datetime
 
@@ -49,7 +49,7 @@ def test_date_string_to_datetime_returns_valid_date_with_end_time(
     ],
 )
 def test_date_string_to_datetime_returns_none_if_date_is_invalid(date_string):
-    date_time = date_string_to_datetime(date_string)
+    date_time = parse_date_string_to_datetime(date_string)
 
     assert date_time is None
 
