@@ -1,11 +1,5 @@
 import pytest
-import datetime
-
-import pandas as pd
-from google.api_core.datetime_helpers import DatetimeWithNanoseconds
-
-from interviewer_pattern_report.derived_variables import get_hours_worked, get_call_time, \
-    get_percentage_of_time_on_calls
+from interviewer_pattern_report.derived_variables import *
 
 
 def test_get_hours_worked(mock_data):
@@ -26,3 +20,7 @@ def test_get_call_time(mock_data):
 )
 def test_get_percentage_of_time_on_calls(hours_worked, total_call_seconds, expected):
     assert get_percentage_of_time_on_calls(hours_worked, total_call_seconds) == expected
+
+
+def test_get_average_calls_per_hour(mock_data):
+    assert get_average_calls_per_hour(mock_data) == 1.3333333333333333
