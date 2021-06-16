@@ -1,8 +1,6 @@
-import datetime
-import pandas as pd
 import pytest
 
-from interviewer_pattern import interviewer_pattern_data, richs_og_get_hours_worked, get_hours_worked, get_call_time, get_percentage_of_time_on_calls
+from interviewer_pattern import *
 
 
 def test_richs_og_get_hours_worked_against_refactored_get_hours_worked():
@@ -53,6 +51,11 @@ def test_get_call_time(mock_data):
 )
 def test_get_percentage_of_time_on_calls(hours_worked, total_call_seconds, expected):
     assert get_percentage_of_time_on_calls(hours_worked, total_call_seconds) == expected
+
+
+def test_get_average_calls_per_hour(mock_data):
+    x = get_average_calls_per_hour(mock_data)
+    assert True
 
 
 def test_interviewer_pattern_data():
