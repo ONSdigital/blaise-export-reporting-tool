@@ -20,3 +20,14 @@ def get_call_time(call_history_dataframe):
 def get_percentage_of_time_on_calls(hours_worked, total_call_seconds):
     total_worked_seconds = sum(time_transformer * int(time_block) for time_transformer, time_block in zip([3600, 60, 1], hours_worked.split(":")))
     return 100 * float(total_call_seconds)/float(total_worked_seconds)
+
+def get_average_calls_per_hour(call_history_dataframe):
+    # groupby and count by hour
+    group_by_hour = call_history_dataframe.groupby([call_history_dataframe['call_start_time'].dt.hour]).size().reset_index(name='count_by_hour')
+
+    # total calls an hour
+    total_calls_per_hour = len(group_by_hour.index)
+
+    sum_calls = group_by_hour['count_by_hour'].sum()
+
+    le_averahge = sum_calls/total_calls_per_hour
