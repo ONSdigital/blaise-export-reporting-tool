@@ -13,11 +13,8 @@ def get_hours_worked(call_history_dataframe):
     return str(datetime.timedelta(seconds=total_hours.total_seconds()))
 
 
-def get_total_call_seconds(df):
-    df_call_seconds = df[["dial_secs"]]
-    total_call_seconds = round(df_call_seconds["dial_secs"].sum())
-    print("get_total_call_seconds - " + str(total_call_seconds))
-    return total_call_seconds
+def get_call_time(call_history_dataframe):
+    return str(round(call_history_dataframe['dial_secs'].sum()))
 
 
 def get_percentage_of_time_on_calls(hours_worked, total_call_seconds):

@@ -1,7 +1,7 @@
 import pandas as pd
 
 from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range
-from interviewer_pattern_report.derived_variables import get_hours_worked, get_total_call_seconds, \
+from interviewer_pattern_report.derived_variables import get_hours_worked, get_call_time, \
     get_percentage_of_time_on_calls
 
 
@@ -16,7 +16,7 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
 
     interviewer_pattern_dict = {
         'Hours worked': get_hours_worked(call_history),
-        # 'Call time': get_call_time(call_history_dataframe),
+        'Call time': get_call_time(call_history),
         # '% Hours on calls': f"{get_percentage_of_time_on_calls(get_hours_worked(call_history_dataframe), get_call_time(call_history_dataframe))}%",
         # 'Ave calls per working hour': get_average_calls_per_hour,
     }
