@@ -1,3 +1,4 @@
+import pandas as pd
 import datetime
 
 
@@ -23,10 +24,27 @@ def get_percentage_of_time_on_calls(hours_worked, total_call_seconds):
 
 
 def get_average_calls_per_hour(call_history_dataframe):
-    group_by_hour = call_history_dataframe.groupby([call_history_dataframe['call_start_time'].dt.hour]).size().reset_index(name='count_by_hour')
+    group_calls_by_hour = call_history_dataframe.groupby([call_history_dataframe['call_start_time'].dt.hour]).size().reset_index(name='count_by_hour')
 
-    return str(group_by_hour['count_by_hour'].sum()/len(group_by_hour.index))
+    return str(group_calls_by_hour['count_by_hour'].sum()/len(group_calls_by_hour.index))
 
 
 def get_respondents_interviewed(call_history_dataframe):
-    return round(call_history_dataframe['number_of_interviews'].astype(int).sum())
+    return round(call_history_dataframe['number_of_interviews'].sum())
+
+
+def get_successfully_completed_households(call_history_dataframe):
+    pass
+
+
+def get_average_respondents_interviewed_per_hour(call_history_dataframe):
+    # group by hour
+    group_respondents_by_hour = call_history_dataframe.groupby([call_history_dataframe['call_start_time'].dt.hour]).agg({'number_of_interviews': 'sum'})
+    return group_respondents_by_hour['number_of_interviews'].sum()/len(group_respondents_by_hour.index)
+
+
+if __name__ == "__main__":
+    from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range
+    entities = get_call_history_records_by_interviewer_and_date_range("matpal", "2021-01-01", "2021-06-11")[1]
+    df = pd.DataFrame(entities)
+    get_average_respondents_interviewed_per_hour(df)

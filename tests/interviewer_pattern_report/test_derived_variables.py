@@ -28,3 +28,11 @@ def test_get_average_calls_per_hour(mock_data):
 
 def test_get_respondents_interviewed(mock_data):
     assert get_respondents_interviewed(mock_data) == 8
+
+
+def test_get_successfully_completed_households(mock_data):
+    pass
+
+
+def test_get_average_respondents_interviewed_per_hour(mock_data):
+    assert get_average_respondents_interviewed_per_hour(mock_data) == 2.6666666666666665
