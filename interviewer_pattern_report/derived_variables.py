@@ -18,7 +18,5 @@ def get_call_time(call_history_dataframe):
 
 
 def get_percentage_of_time_on_calls(hours_worked, total_call_seconds):
-    print(hours_worked)
-    sec_test = sum(x * int(t) for x, t in zip([3600, 60, 1], hours_worked.split(":")))
-    print(sec_test)
-    return 100 * float(total_call_seconds)/float(sec_test)
+    total_worked_seconds = sum(x * int(t) for x, t in zip([3600, 60, 1], hours_worked.split(":")))
+    return 100 * float(total_call_seconds)/float(total_worked_seconds)

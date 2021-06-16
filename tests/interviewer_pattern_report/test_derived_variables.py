@@ -1,3 +1,4 @@
+import pytest
 import datetime
 
 import pandas as pd
@@ -15,7 +16,13 @@ def test_get_call_time(mock_data):
     assert get_call_time(mock_data) == "64"
 
 
-def test_get_percentage_of_time_on_calls():
-    hours_worked = "1:00:30"
-    total_call_seconds = "1815"
-    assert get_percentage_of_time_on_calls(hours_worked, total_call_seconds) == 50
+@pytest.mark.parametrize(
+    "hours_worked, total_call_seconds, expected",
+    [
+        ("10:00:00", "18000", 50),
+        ("30:00:00", "16200", 15),
+        ("50:00:00", "135000", 75),
+    ],
+)
+def test_get_percentage_of_time_on_calls(hours_worked, total_call_seconds, expected):
+    assert get_percentage_of_time_on_calls(hours_worked, total_call_seconds) == expected

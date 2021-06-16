@@ -14,10 +14,11 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
         print(f"get_call_pattern_records_by_interviewer_and_date_range failed because {error}")
         return
 
+    hours_on_calls = f"{get_percentage_of_time_on_calls(get_hours_worked(call_history), get_call_time(call_history))}%"
     interviewer_pattern_dict = {
         'Hours worked': get_hours_worked(call_history),
         'Call time': get_call_time(call_history),
-        # '% Hours on calls': f"{get_percentage_of_time_on_calls(get_hours_worked(call_history_dataframe), get_call_time(call_history_dataframe))}%",
+        '% Hours on calls': hours_on_calls,
         # 'Ave calls per working hour': get_average_calls_per_hour,
     }
 
