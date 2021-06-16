@@ -25,4 +25,8 @@ def get_percentage_of_time_on_calls(hours_worked, total_call_seconds):
 def get_average_calls_per_hour(call_history_dataframe):
     group_by_hour = call_history_dataframe.groupby([call_history_dataframe['call_start_time'].dt.hour]).size().reset_index(name='count_by_hour')
 
-    return group_by_hour['count_by_hour'].sum()/len(group_by_hour.index)
+    return str(group_by_hour['count_by_hour'].sum()/len(group_by_hour.index))
+
+
+def get_respondents_interviewed(call_history_dataframe):
+    return round(call_history_dataframe['number_of_interviews'].astype(int).sum())

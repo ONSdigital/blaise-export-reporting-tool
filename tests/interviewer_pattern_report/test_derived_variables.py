@@ -24,3 +24,7 @@ def test_get_percentage_of_time_on_calls(hours_worked, total_call_seconds, expec
 
 def test_get_average_calls_per_hour(mock_data):
     assert get_average_calls_per_hour(mock_data) == "2.6666666666666665"
+
+
+def test_get_respondents_interviewed(mock_data):
+    assert get_respondents_interviewed(mock_data) == 8
