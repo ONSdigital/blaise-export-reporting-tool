@@ -1,3 +1,4 @@
+from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range
 from interviewer_pattern_report.derived_variables import *
 
 
@@ -8,22 +9,23 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
 
     if error:
         print(f"get_call_pattern_records_by_interviewer_and_date_range failed because {error}")
-        return
+        return error, []
 
     # TODO: handle the crap out of this
-    call_history['number_of_interviews'] = call_history['number_of_interviews'].astype('int')
+    call_history_dataframe = pd.DataFrame(data=call_history)
+    call_history_dataframe = call_history_dataframe.astype({'number_of_interviews': 'int32'})
 
-    hours_worked = get_hours_worked(call_history)
-    percentage_hours_on_calls = f"{get_percentage_of_hours_on_calls(get_hours_worked(call_history), get_call_time_in_seconds(call_history))}%"
+    hours_worked = get_hours_worked(call_history_dataframe)
+    percentage_hours_on_calls = f"{get_percentage_of_hours_on_calls(get_hours_worked(call_history_dataframe), get_call_time_in_seconds(call_history_dataframe))}%"
 
     interviewer_pattern_dict = {
         'Hours worked': hours_worked,
-        'Call time': get_call_time_in_seconds(call_history),
+        'Call time': get_call_time_in_seconds(call_history_dataframe),
         '% Hours on calls': percentage_hours_on_calls,
-        'Ave calls per working hour': get_average_calls_per_hour(call_history, hours_worked),
-        'Respondents interviewed': get_respondents_interviewed(call_history),
+        'Ave calls per working hour': get_average_calls_per_hour(call_history_dataframe, hours_worked),
+        'Respondents interviewed': get_respondents_interviewed(call_history_dataframe),
         # 'Households completed successfully': get_successfully_completed_households(call_history),
-        'Average respondents interviewed per working hour': get_average_respondents_interviewed_per_hour(call_history),
+        'Average respondents interviewed per working hour': get_average_respondents_interviewed_per_hour(call_history_dataframe),
     }
 
     # TODO: check some errorrrrs before returning!
