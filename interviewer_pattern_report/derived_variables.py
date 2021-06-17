@@ -35,19 +35,22 @@ def get_average_calls_per_hour(call_history_dataframe, string_hours_worked):
 
 
 def get_respondents_interviewed(call_history_dataframe):
-    # TODO: Review correct input fields
     return round(call_history_dataframe['number_of_interviews'].sum())
 
 
 def get_successfully_completed_households(call_history_dataframe):
-    # TODO: Mark said Numberwang
     pass
 
 
 def get_average_respondents_interviewed_per_hour(call_history_dataframe):
-    # group by hour
     group_respondents_by_hour = call_history_dataframe.groupby([call_history_dataframe['call_start_time'].dt.hour]).agg({'number_of_interviews': 'sum'})
     return group_respondents_by_hour['number_of_interviews'].sum()/len(group_respondents_by_hour.index)
+
+
+def get_percentage_non_contacts_for_all_calls(call_history_dataframe):
+    no_contact_calls = call_history_dataframe.loc[call_history_dataframe['status'].str.contains("NO CONTACT", case=False)]
+    return len(no_contact_calls.index)/len(call_history_dataframe.index)*100
+
 
 
 if __name__ == "__main__":

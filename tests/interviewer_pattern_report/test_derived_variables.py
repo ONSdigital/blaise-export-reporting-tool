@@ -44,3 +44,7 @@ def test_get_successfully_completed_households(mock_data):
 
 def test_get_average_respondents_interviewed_per_hour(mock_data):
     assert get_average_respondents_interviewed_per_hour(mock_data) == 2.6666666666666665
+
+
+def test_get_percentage_non_contacts_for_all_calls(mock_data):
+    assert get_percentage_non_contacts_for_all_calls(mock_data) == 50
