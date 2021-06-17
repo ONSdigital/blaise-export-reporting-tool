@@ -39,7 +39,7 @@ def test_get_respondents_interviewed(mock_data):
 
 
 def test_get_successfully_completed_households(mock_data):
-    pass
+    assert get_successfully_completed_households(mock_data) == 1
 
 
 def test_get_average_respondents_interviewed_per_hour(mock_data):

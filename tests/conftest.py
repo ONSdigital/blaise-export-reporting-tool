@@ -139,7 +139,7 @@ def mock_data():
             'questionnaire_id': '05cf69af-3a4e-47df-819a-928350fdda5a',
             'questionnaire_name': 'LMS2101_AA1',
             'serial_number': '1001021',
-            'status': 'Finished (Non response)',
+            'status': 'Finished (Numberwang)',
             'survey': 'LMS',
             'update_info': None,
             'wave': 1
@@ -160,7 +160,7 @@ def mock_data():
             'questionnaire_id': '05cf69af-3a4e-47df-819a-928350fdda5a',
             'questionnaire_name': 'LMS2101_AA1',
             'serial_number': '1001011',
-            'status': 'Finished (Non response)',
+            'status': 'Finished (Successful)',
             'survey': 'LMS',
             'update_info': None,
             'wave': 1

@@ -39,7 +39,11 @@ def get_respondents_interviewed(call_history_dataframe):
 
 
 def get_successfully_completed_households(call_history_dataframe):
-    pass
+    successful_status = "Numberwang"
+    successfully_completed_households = call_history_dataframe.loc[call_history_dataframe['status'].str.contains(successful_status, case=False)]
+
+    return len(successfully_completed_households.index)
+
 
 
 def get_average_respondents_interviewed_per_hour(call_history_dataframe):
@@ -52,11 +56,12 @@ def get_percentage_non_contacts_for_all_calls(call_history_dataframe):
     return len(no_contact_calls.index)/len(call_history_dataframe.index)*100
 
 
-
 if __name__ == "__main__":
     from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range
     entities = get_call_history_records_by_interviewer_and_date_range("matpal", "2021-01-01", "2021-06-11")[1]
     df = pd.DataFrame(entities)
 
-    hours_worked = get_hours_worked(df)
-    get_average_calls_per_hour(df, hours_worked)
+    get_percentage_non_contacts_for_all_calls(df)
+
+    # hours_worked = get_hours_worked(df)
+    # get_average_calls_per_hour(df, hours_worked)

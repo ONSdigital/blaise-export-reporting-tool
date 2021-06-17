@@ -23,7 +23,7 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
         '% Hours on calls': f"{get_percentage_of_hours_on_calls(get_hours_worked(call_history_dataframe), get_call_time_in_seconds(call_history_dataframe))}%",
         'Ave calls per working hour': get_average_calls_per_hour(call_history_dataframe, hours_worked),
         'Respondents interviewed': get_respondents_interviewed(call_history_dataframe),
-        # 'Households completed successfully': get_successfully_completed_households(call_history),
+        'Households completed successfully': get_successfully_completed_households(call_history),
         'Average respondents interviewed per working hour': get_average_respondents_interviewed_per_hour(call_history_dataframe),
         '% Non-contacts for all calls': f"{get_percentage_of_hours_on_calls(call_history_dataframe)}%",
     }
