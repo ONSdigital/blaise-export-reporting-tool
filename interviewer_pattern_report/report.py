@@ -1,5 +1,5 @@
-from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range
 from interviewer_pattern_report.derived_variables import *
+from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range
 
 
 def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, start_date_string, end_date_string):
@@ -26,6 +26,7 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
         'Households completed successfully': get_successfully_completed_households(call_history),
         'Average respondents interviewed per working hour': get_average_respondents_interviewed_per_hour(call_history_dataframe),
         '% Non-contacts for all calls': f"{get_percentage_of_hours_on_calls(call_history_dataframe)}%",
+        '% Appointments for contacts': f"{get_percentage_appointments_for_contacts(call_history_dataframe)}%",
     }
 
     # TODO: check some errorrrrs before returning!

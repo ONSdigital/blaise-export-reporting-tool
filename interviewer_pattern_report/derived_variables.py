@@ -39,7 +39,7 @@ def get_respondents_interviewed(call_history_dataframe):
 
 
 def get_successfully_completed_households(call_history_dataframe):
-    successful_status = "Numberwang"
+    successful_status = "numberwang"
     successfully_completed_households = call_history_dataframe.loc[call_history_dataframe['status'].str.contains(successful_status, case=False)]
 
     return len(successfully_completed_households.index)
@@ -52,8 +52,16 @@ def get_average_respondents_interviewed_per_hour(call_history_dataframe):
 
 
 def get_percentage_non_contacts_for_all_calls(call_history_dataframe):
-    no_contact_calls = call_history_dataframe.loc[call_history_dataframe['status'].str.contains("NO CONTACT", case=False)]
+    no_contact_status = "No contact"
+    no_contact_calls = call_history_dataframe.loc[call_history_dataframe['status'].str.contains(no_contact_status, case=False)]
     return len(no_contact_calls.index)/len(call_history_dataframe.index)*100
+
+
+def get_percentage_appointments_for_contacts(call_history_dataframe):
+    appointment_made_status = "Appointment made"
+
+    appointments_made = call_history_dataframe.loc[call_history_dataframe['status'].str.contains(appointment_made_status, case=False)]
+    return len(appointments_made.index)/len(call_history_dataframe.index)*100
 
 
 if __name__ == "__main__":

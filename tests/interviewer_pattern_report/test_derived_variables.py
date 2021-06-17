@@ -6,7 +6,7 @@ def test_get_hours_worked(mock_data):
     assert get_hours_worked(mock_data) == "2:27:57"
 
 
-def test_get_call_time(mock_data):
+def test_get_call_time_in_seconds(mock_data):
     assert get_call_time_in_seconds(mock_data) == "165"
 
 
@@ -18,7 +18,7 @@ def test_get_call_time(mock_data):
         ("50:00:00", "135000", 75),
     ],
 )
-def test_get_percentage_of_time_on_calls(hours_worked, total_call_seconds, expected):
+def test_get_percentage_of_hours_on_calls(hours_worked, total_call_seconds, expected):
     assert get_percentage_of_hours_on_calls(hours_worked, total_call_seconds) == expected
 
 
@@ -48,3 +48,7 @@ def test_get_average_respondents_interviewed_per_hour(mock_data):
 
 def test_get_percentage_non_contacts_for_all_calls(mock_data):
     assert get_percentage_non_contacts_for_all_calls(mock_data) == 50
+
+
+def test_get_percentage_appointments_for_contacts(mock_data):
+    assert get_percentage_appointments_for_contacts(mock_data) == 0
