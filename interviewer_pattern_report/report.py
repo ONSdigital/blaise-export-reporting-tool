@@ -68,7 +68,7 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
     if generate_report_error:
         return generate_report_error, []
 
-    return None, report
+    return None, report.json()
 
 
 if __name__ == "__main__":

@@ -13,3 +13,6 @@ class InterviewerPatternReport:
     average_respondents_interviewed_per_hour: int
     no_contacts_percentage: str
     appointments_for_contacts_percentage: str
+
+    def json(self):
+        return json.dumps(asdict(self))

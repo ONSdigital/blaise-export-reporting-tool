@@ -61,7 +61,7 @@ def call_pattern(interviewer):
         message, error_code = error
         return message, error_code
 
-    return jsonify(results)
+    return results
 
 
 @app.route("/call_history")
