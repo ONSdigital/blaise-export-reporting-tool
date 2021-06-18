@@ -11,21 +11,25 @@ from unittest import mock
 #     assert call_pattern_records == json.dumps(
 #         {
 #             "hours_worked": "3:36:40",
-#             "call_time": 338,
+#             "call_time": "0:05:38",
 #             "hours_on_calls_percentage": "2.6%",
-#             "average_calls_per_hour": 6.369230769230769,
+#             "average_calls_per_hour": 6.37,
 #             "respondents_interviewed": 23,
 #             "households_completed_successfully": "0.0%",
-#             "average_respondents_interviewed_per_hour": 6.369230769230769,
-#             "no_contacts_percentage": "60.86956521739131%",
+#             "average_respondents_interviewed_per_hour": 6.37,
+#             "no_contacts_percentage": "60.87%",
 #             "appointments_for_contacts_percentage": "0.0%"
 #         }
 #     )
 #
-
-def test_generate_report():
-    pass
-
-
-def test_generate_report_returns_error():
-    pass
+#
+# def test_generate_report():
+#     pass
+#
+#
+# def test_generate_report_returns_zero_division_error():
+#     pass
+#
+#
+# def test_generate_report_returns_an_error():
+#     pass

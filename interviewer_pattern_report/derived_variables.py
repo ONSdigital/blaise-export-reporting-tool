@@ -31,6 +31,16 @@ def get_call_time_in_seconds(call_history_dataframe):
     return result
 
 
+def convert_call_time_seconds_to_datetime_format(seconds):
+    try:
+        result = str(datetime.timedelta(seconds=seconds))
+    except Exception as err:
+        print(f"Could not convert_call_time_seconds_to_datetime_format(): {err}")
+        raise
+
+    return result
+
+
 def get_total_seconds_from_string(hours_worked):
     try:
         h, m, s = hours_worked.split(':')

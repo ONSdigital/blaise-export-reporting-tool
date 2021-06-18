@@ -14,6 +14,7 @@ def generate_report(call_history_dataframe):
         average_respondents_interviewed_per_hour = get_average_respondents_interviewed_per_hour(call_history_dataframe, hours_worked)
         no_contacts_percentage = get_percentage_of_call_for_status('no contact', call_history_dataframe)
         appointments_for_contacts_percentage = get_percentage_of_call_for_status('Appointment made', call_history_dataframe)
+        formatted_total_call_time = convert_call_time_seconds_to_datetime_format(total_call_seconds)
     except ZeroDivisionError as zero_div_err:
         print(f"""You've been Wangernumbed! 
         {call_history_dataframe['interviewer']} worked {hours_worked} hours yet completed {len(call_history_dataframe.index)} calls. 
@@ -25,7 +26,7 @@ def generate_report(call_history_dataframe):
     try:    # to populate
         report = InterviewerPatternReport(
             hours_worked=hours_worked,
-            call_time=total_call_seconds,
+            call_time=formatted_total_call_time,
             hours_on_calls_percentage=hours_on_calls_percentage,
             average_calls_per_hour=average_calls_per_hour,
             respondents_interviewed=respondents_interviewed,

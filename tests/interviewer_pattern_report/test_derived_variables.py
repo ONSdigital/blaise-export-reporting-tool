@@ -64,3 +64,16 @@ def test_get_percentage_of_call_for_status(status, expected, mock_data):
     assert get_percentage_of_call_for_status(status, mock_data) == expected
 
 
+@pytest.mark.parametrize(
+    "seconds, expected",
+    [
+        (1, "0:00:01"),
+        (100, "0:01:40"),
+        (240, "0:04:00"),
+        (856, "0:14:16"),
+        (8355, "2:19:15"),
+    ],
+)
+def test_convert_call_time_seconds_to_datetime_format(seconds, expected):
+    assert convert_call_time_seconds_to_datetime_format(seconds) == expected
+
