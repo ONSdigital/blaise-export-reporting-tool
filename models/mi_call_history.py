@@ -32,6 +32,11 @@ class MICallHistory:
         pass
 
 
+    @classmethod
+    def fields(cls):
+        return [field.name for field in fields(cls)]
+
+
 @dataclass
 class CatiMiCallHistoryTable(DBBase):
     InstrumentId: str

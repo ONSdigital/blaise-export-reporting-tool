@@ -21,11 +21,18 @@ def mi_call_history(_event, _context):
     config = Config.from_env()
     config.log()
 
-    merged_call_history = import_mi_call_history(config)
+    merged_call_history = extract_mi_call_history(config)
 
     print(merged_call_history)
 
     return merged_call_history
+
+
+def mi_respondent_data(_event, _context):
+    config = Config.from_env()
+    config.log()
+
+    extract_mi_respondent_data(config)
 
 
 load_config(app)

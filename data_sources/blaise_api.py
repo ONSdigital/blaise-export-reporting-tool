@@ -1,6 +1,10 @@
 import requests
 
 
+def get_opn_questionnaire_list(config):
+    return [x for x in get_questionnaire_list(config) if x.get("name").startswith("OPN")]
+
+
 def get_questionnaire_list(config):
     print("Get Questionnaire list")
     response = requests.get(
@@ -23,6 +27,8 @@ def load_case_data(questionnaire_name, config, fields):
             f"http://{config.blaise_api_url}/api/v1/serverparks/gusty/instruments/{questionnaire_name}/report",
             params=fields_to_get,
         )
+        if response.status_code != 200:
+            return []
         data = response.json()
         reporting_data = data.get("reportingData")
         if len(reporting_data) == 0:
