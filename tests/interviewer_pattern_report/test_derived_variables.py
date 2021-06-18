@@ -44,7 +44,7 @@ def test_get_respondents_interviewed(mock_data):
         ("08:00:00", 1),
         ("10:00:00", 0.8),
         ("5:00:00", 1.6),
-        ("30:00:00", 0.26666666666666666),
+        ("30:00:00", 0.27),
     ],
 )
 def test_get_average_respondents_interviewed_per_hour(hours_worked, expected, mock_data):
@@ -57,6 +57,7 @@ def test_get_average_respondents_interviewed_per_hour(hours_worked, expected, mo
         ("Appointment made", "0.0%"),
         ("No contact", "50.0%"),
         ("numberwang", "12.5%"),
+        ("foobar", "0.0%"),
     ],
 )
 def test_get_percentage_of_call_for_status(status, expected, mock_data):
