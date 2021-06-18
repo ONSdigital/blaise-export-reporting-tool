@@ -3,17 +3,6 @@ from data_sources.datastore import get_call_history_records_by_interviewer_and_d
 from models.interviewer_pattern import InterviewerPatternReport
 
 
-# TODO: Test
-def convert_to_json(report):
-    try:
-        json_report = json.dumps(dataclasses.asdict(report))
-    except Exception as err:
-        print(f"convert_to_json() failed: {err}")
-        return err, None
-    return None, json_report
-
-
-# TODO: Test
 def generate_report(call_history_dataframe):
     try:
         hours_worked = get_hours_worked(call_history_dataframe)
