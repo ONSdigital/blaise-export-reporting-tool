@@ -103,10 +103,3 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
         return generate_report_error, []
 
     return None, report.json()
-
-
-if __name__ == "__main__":
-    import pprint
-    pp = pprint.PrettyPrinter(indent=4)
-    pp.pprint(get_call_pattern_records_by_interviewer_and_date_range("matpal", "2021-01-01", "2021-06-11")[1])
-
