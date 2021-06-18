@@ -15,6 +15,7 @@ def test_write_list_of_dict_to_csv():
     headers = ["name", "email"]
     list = [SimpleClass("matthew", "mail@email.com")]
     tmp_folder = get_tmp_directory_path()
+    print(tmp_folder)
     csv_file_name = f"{tmp_folder}/test_file.csv"
 
     write_list_of_dict_to_csv(csv_file_name, list, headers)
