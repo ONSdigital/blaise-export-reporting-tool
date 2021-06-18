@@ -1,6 +1,3 @@
-import json
-import dataclasses
-
 from interviewer_pattern_report.derived_variables import *
 from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range
 from models.interviewer_pattern import InterviewerPatternReport
@@ -23,15 +20,15 @@ def generate_report(call_history_dataframe):
         total_call_seconds = get_call_time_in_seconds(call_history_dataframe)
 
         report = InterviewerPatternReport(
-            HoursWorked=hours_worked,
-            CallTime=total_call_seconds,
-            HoursOnCallsPercentage=f"{100 * float(total_call_seconds)/float(get_total_seconds_from_string(hours_worked))}%",
-            AverageCallsPerHour=get_average_calls_per_hour(call_history_dataframe, hours_worked),
-            RespondentsInterviewed=get_respondents_interviewed(call_history_dataframe),
-            HouseholdsCompletedSuccessfully=get_percentage_of_call_for_status('numberwang', call_history_dataframe),
-            AverageRespondentsInterviewedPerHour=get_average_respondents_interviewed_per_hour(call_history_dataframe, hours_worked),
-            NoContactsPercentage=get_percentage_of_call_for_status('no contact', call_history_dataframe),
-            AppointmentsForContactsPercentage=get_percentage_of_call_for_status('Appointment made', call_history_dataframe),
+            hours_worked=hours_worked,
+            call_time=total_call_seconds,
+            hours_on_calls_percentage=f"{100 * float(total_call_seconds)/float(get_total_seconds_from_string(hours_worked))}%",
+            average_calls_per_hour=get_average_calls_per_hour(call_history_dataframe, hours_worked),
+            respondents_interviewed=get_respondents_interviewed(call_history_dataframe),
+            households_completed_successfully=get_percentage_of_call_for_status('numberwang', call_history_dataframe),
+            average_respondents_interviewed_per_hour=get_average_respondents_interviewed_per_hour(call_history_dataframe, hours_worked),
+            no_contacts_percentage=get_percentage_of_call_for_status('no contact', call_history_dataframe),
+            appointments_for_contacts_percentage=get_percentage_of_call_for_status('Appointment made', call_history_dataframe),
         )
     except Exception as err:
         print(f"generate_report() failed: {err}")
@@ -82,11 +79,7 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
     if generate_report_error:
         return generate_report_error, []
 
-    convert_to_json_error, interviewer_pattern_report = convert_to_json(report)
-    if convert_to_json_error:
-        return convert_to_json_error, []
-
-    return None, interviewer_pattern_report
+    return None, report.json()
 
 
 if __name__ == "__main__":
