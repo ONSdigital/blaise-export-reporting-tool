@@ -4,23 +4,38 @@ from models.interviewer_pattern import InterviewerPatternReport
 
 
 def generate_report(call_history_dataframe):
-    try:
+    try:    # to calculate
         hours_worked = get_hours_worked(call_history_dataframe)
         total_call_seconds = get_call_time_in_seconds(call_history_dataframe)
+        hours_on_calls_percentage = get_percentage_of_hours_on_calls(hours_worked, total_call_seconds)
+        average_calls_per_hour = get_average_calls_per_hour(call_history_dataframe, hours_worked)
+        respondents_interviewed = get_respondents_interviewed(call_history_dataframe)
+        households_completed_successfully = get_percentage_of_call_for_status('numberwang', call_history_dataframe)
+        average_respondents_interviewed_per_hour = get_average_respondents_interviewed_per_hour(call_history_dataframe, hours_worked)
+        no_contacts_percentage = get_percentage_of_call_for_status('no contact', call_history_dataframe)
+        appointments_for_contacts_percentage = get_percentage_of_call_for_status('Appointment made', call_history_dataframe)
+    except ZeroDivisionError as zero_div_err:
+        print(f"""You've been Wangernumbed! 
+        {call_history_dataframe['interviewer']} worked {hours_worked} hours yet completed {len(call_history_dataframe.index)} calls. 
+        Please review the data and try again. Goodbye!""")
+        return zero_div_err, None
+    except Exception as err:
+        return err, None
 
+    try:    # to populate
         report = InterviewerPatternReport(
             hours_worked=hours_worked,
             call_time=total_call_seconds,
-            hours_on_calls_percentage=f"{100 * float(total_call_seconds)/float(get_total_seconds_from_string(hours_worked))}%",
-            average_calls_per_hour=get_average_calls_per_hour(call_history_dataframe, hours_worked),
-            respondents_interviewed=get_respondents_interviewed(call_history_dataframe),
-            households_completed_successfully=get_percentage_of_call_for_status('numberwang', call_history_dataframe),
-            average_respondents_interviewed_per_hour=get_average_respondents_interviewed_per_hour(call_history_dataframe, hours_worked),
-            no_contacts_percentage=get_percentage_of_call_for_status('no contact', call_history_dataframe),
-            appointments_for_contacts_percentage=get_percentage_of_call_for_status('Appointment made', call_history_dataframe),
+            hours_on_calls_percentage=hours_on_calls_percentage,
+            average_calls_per_hour=average_calls_per_hour,
+            respondents_interviewed=respondents_interviewed,
+            households_completed_successfully=households_completed_successfully,
+            average_respondents_interviewed_per_hour=average_respondents_interviewed_per_hour,
+            no_contacts_percentage=no_contacts_percentage,
+            appointments_for_contacts_percentage=appointments_for_contacts_percentage,
         )
     except Exception as err:
-        print(f"generate_report() failed: {err}")
+        print(f"Populating the data model failed: {err}")
         return err, None
 
     return None, report
