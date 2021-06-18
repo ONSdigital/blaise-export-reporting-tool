@@ -42,18 +42,36 @@ def generate_report(call_history_dataframe):
     return None, report
 
 
-# TODO: Finish and test
+def has_any_missing_data(series):
+    if series.isnull().values.any() or pd.isna(series):
+        return True
+    return False
+
+
 def validate_dataframe(call_history_dataframe):
+    call_history_dataframe.columns = call_history_dataframe.columns.str.lower()
+
+    if has_any_missing_data(call_history_dataframe['call_start_time']):
+        return ValueError("call_start_time has missing values"), None
+
+    if has_any_missing_data(call_history_dataframe['call_end_time']):
+        return ValueError("call_end_time has missing values"), None
+
+    if has_any_missing_data(call_history_dataframe['number_of_interviews']):
+        return ValueError("number_of_interviews has missing values"), None
+
+    if has_any_missing_data(call_history_dataframe['dial_secs']):
+        return ValueError("dial_secs has missing values"), None
+
     try:
-        call_history_dataframe = call_history_dataframe.astype({'number_of_interviews': 'int32'})
-        # TODO: et al
+        call_history_dataframe = call_history_dataframe['number_of_interviews'].astype('int32')
+        call_history_dataframe = call_history_dataframe['dial_secs'].astype('float64')
     except Exception as err:
         print(f"validate_dataframe() failed: {err}")
         return err, None
     return None, call_history_dataframe
 
 
-# TODO: Finish and test
 def create_dataframe(call_history):
     call_history_dataframe = pd.DataFrame()
 
