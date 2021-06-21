@@ -7,21 +7,17 @@ from models.db_base import DBBase
 class MICallHistory:
     questionnaire_id: str
     serial_number: str
-    internal_key: int
     call_number: int
     dial_number: int
     interviewer: str
     dial_result: int
     dial_line_number: int
-    seconds_dial: int
+    seconds_interview: int
     end_time: str = ""
     questionnaire_name: str = ""
     dial_date: str = ""
     dial_time: str = ""
-    entry_priority: int = ""
-    exit_priority: int = ""
     appointment_type: str = ""
-    seconds_interview: datetime = ""
     outcome_code: int = ""
 
     def generate_dial_date_and_time_fields(self, start_datetime, end_datetime):

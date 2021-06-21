@@ -54,13 +54,12 @@ def load_mi_cati_dial_history(config, questionnaire_list):
         call_history = MICallHistory(
             questionnaire_id=item.get("InstrumentId"),
             serial_number=item.get("PrimaryKeyValue"),
-            internal_key=item.get("Id"),
             call_number=item.get("CallNumber"),
             dial_number=item.get("DialNumber"),
             interviewer=item.get("Interviewer"),
             dial_result=item.get("DialResult"),
             dial_line_number=item.get("DialedNumber"),
-            seconds_dial=item.get("dialsecs"),
+            seconds_interview=item.get("dialsecs")
         )
         call_history.generate_dial_date_and_time_fields(item.get("StartTime"), item.get("EndTime"))
 
