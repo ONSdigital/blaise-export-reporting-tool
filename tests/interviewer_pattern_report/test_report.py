@@ -74,4 +74,4 @@ def test_drop_invalidated_records(questionnaire_id, column_name, expected_record
     actual_mock_data = drop_invalidated_records(mock_data, column_name)
 
     assert len(actual_mock_data) == expected_records_remaining
-    assert (actual_mock_data['questionnaire_id'] == questionnaire_id).any() == False
+    assert not (actual_mock_data['questionnaire_id'] == questionnaire_id).any()
