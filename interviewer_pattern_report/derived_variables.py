@@ -86,6 +86,15 @@ def get_respondents_interviewed(call_history_dataframe):
     return result
 
 
+def get_number_of_households_completed_successfully(status, call_history_dataframe):
+    try:
+        result = len(call_history_dataframe.loc[call_history_dataframe['status'].str.contains(status, case=False)])
+    except Exception as err:
+        print(f"Could not calculate get_percentage_of_call_for_status(): {err}")
+        raise
+    return result
+
+
 def get_average_respondents_interviewed_per_hour(call_history_dataframe, string_hours_worked):
     try:
         integer_hours_worked = get_total_seconds_from_string(string_hours_worked)/3600

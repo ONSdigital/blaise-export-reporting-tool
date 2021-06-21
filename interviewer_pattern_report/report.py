@@ -10,7 +10,7 @@ def generate_report(call_history_dataframe):
         hours_on_calls_percentage = get_percentage_of_hours_on_calls(hours_worked, total_call_seconds)
         average_calls_per_hour = get_average_calls_per_hour(call_history_dataframe, hours_worked)
         respondents_interviewed = get_respondents_interviewed(call_history_dataframe)
-        households_completed_successfully = get_percentage_of_call_for_status('numberwang', call_history_dataframe)
+        households_completed_successfully = get_number_of_households_completed_successfully('numberwang', call_history_dataframe)
         average_respondents_interviewed_per_hour = get_average_respondents_interviewed_per_hour(call_history_dataframe, hours_worked)
         no_contacts_percentage = get_percentage_of_call_for_status('no contact', call_history_dataframe)
         appointments_for_contacts_percentage = get_percentage_of_call_for_status('Appointment made', call_history_dataframe)
