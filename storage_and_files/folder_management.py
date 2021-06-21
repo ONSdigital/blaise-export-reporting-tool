@@ -18,6 +18,14 @@ def clear_tmp_directory():
     clear_directory(tmp_folder)
 
 
+def create_tmp_directory():
+    tmp_folder = os.path.join(ROOT_DIR, "tmp")
+    try:
+        os.mkdir(tmp_folder)
+    except FileExistsError:
+        print(f"tmp Folder already exists")
+
+
 def create_folder_in_tmp_directory(questionnaire_name):
     tmp_folder = get_tmp_directory_path()
     try:

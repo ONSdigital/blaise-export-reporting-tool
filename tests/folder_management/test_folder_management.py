@@ -2,7 +2,7 @@ import csv
 import os
 from dataclasses import dataclass
 
-from storage_and_files.folder_management import get_tmp_directory_path
+from storage_and_files.folder_management import get_tmp_directory_path, create_tmp_directory
 from storage_and_files.write_csv import write_list_of_dict_to_csv
 
 
@@ -15,13 +15,9 @@ class SimpleClass:
 def test_write_list_of_dict_to_csv():
     headers = ["name", "email"]
     list = [SimpleClass("matthew", "mail@email.com")]
+
+    create_tmp_directory()
     tmp_folder = get_tmp_directory_path()
-
-    try:
-        os.mkdir(tmp_folder)
-    except FileExistsError:
-        print(f"tmp Folder already exists")
-
 
     print(f"tmp_folder {tmp_folder}")
     csv_file_name = f"{tmp_folder}/test_file.csv"
