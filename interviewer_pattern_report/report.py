@@ -15,11 +15,10 @@ def generate_report(call_history_dataframe):
         no_contacts_percentage = get_percentage_of_call_for_status('no contact', call_history_dataframe)
         appointments_for_contacts_percentage = get_percentage_of_call_for_status('Appointment made', call_history_dataframe)
         formatted_total_call_time = convert_call_time_seconds_to_datetime_format(total_call_seconds)
-    except ZeroDivisionError as zero_div_err:
-        print(f"""You've been Wangernumbed! Please check call_start_time and call_end_time and try again. Goodbye!""")
-        return zero_div_err, None
+    except ZeroDivisionError as err:
+        return f"generate_report() failed with a ZeroDivisionError: {err}", None
     except Exception as err:
-        return err, None
+        return f"generate_report() failed: {err}", None
 
     try:    # to populate
         report = InterviewerPatternReport(
@@ -34,14 +33,13 @@ def generate_report(call_history_dataframe):
             appointments_for_contacts_percentage=appointments_for_contacts_percentage,
         )
     except Exception as err:
-        print(f"Populating the data model failed: {err}")
-        return err, None
+        return f"generate_report() failed: {err}", None
 
     return None, report
 
 
 def has_any_missing_data(series):
-    if series.isnull().values.any() or pd.isna(series):
+    if series.isnull().values.any():
         return True
     return False
 
@@ -50,34 +48,32 @@ def validate_dataframe(call_history_dataframe):
     call_history_dataframe.columns = call_history_dataframe.columns.str.lower()
 
     if has_any_missing_data(call_history_dataframe['call_start_time']):
-        return ValueError("call_start_time has missing values"), None
+        return "validate_dataframe() failed: call_start_time has missing values", None
 
     if has_any_missing_data(call_history_dataframe['call_end_time']):
-        return ValueError("call_end_time has missing values"), None
+        return "validate_dataframe() failed: call_end_time has missing values", None
 
     if has_any_missing_data(call_history_dataframe['number_of_interviews']):
-        return ValueError("number_of_interviews has missing values"), None
+        return "validate_dataframe() failed: number_of_interviews has missing values", None
 
     if has_any_missing_data(call_history_dataframe['dial_secs']):
-        return ValueError("dial_secs has missing values"), None
+        return "validate_dataframe() failed: dial_secs has missing values", None
 
     try:
-        call_history_dataframe = call_history_dataframe['number_of_interviews'].astype('int32')
-        call_history_dataframe = call_history_dataframe['dial_secs'].astype('float64')
+        # call_history_dataframe = call_history_dataframe['number_of_interviews'].astype('int32')
+        # call_history_dataframe = call_history_dataframe['dial_secs'].astype('float64')
+
+        call_history_dataframe = call_history_dataframe.astype({"number_of_interviews": 'int32', "dial_secs": 'float64'})
     except Exception as err:
-        print(f"validate_dataframe() failed: {err}")
-        return err, None
+        return f"validate_dataframe() failed: {err}", None
     return None, call_history_dataframe
 
 
 def create_dataframe(call_history):
-    call_history_dataframe = pd.DataFrame()
-
     try:
         call_history_dataframe = pd.DataFrame(data=call_history)
     except Exception as err:
-        print(f"create_dataframe failed: {err}")
-        return err, call_history_dataframe
+        return f"create_dataframe failed: {err}", None
     return None, call_history_dataframe
 
 
@@ -86,18 +82,22 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
         interviewer_name, start_date_string, end_date_string
     )
     if call_history_records_error:
-        return call_history_records_error, []
+        print(call_history_records_error[0])
+        return (call_history_records_error[0], 400), []
 
     create_dataframe_error, call_history_dataframe = create_dataframe(call_history)
     if create_dataframe_error:
-        return create_dataframe_error, []
+        print(create_dataframe_error)
+        return (create_dataframe_error, 400), []
 
     validate_dataframe_error, call_history_dataframe = validate_dataframe(call_history_dataframe)
     if validate_dataframe_error:
-        return validate_dataframe_error, []
+        print(validate_dataframe_error)
+        return (validate_dataframe_error, 400), []
 
     generate_report_error, report = generate_report(call_history_dataframe)
     if generate_report_error:
-        return generate_report_error, []
+        print(generate_report_error)
+        return (generate_report_error, 400), []
 
     return None, report.json()

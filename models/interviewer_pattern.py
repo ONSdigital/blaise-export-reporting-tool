@@ -9,8 +9,8 @@ class InterviewerPatternReport:
     hours_on_calls_percentage: str
     average_calls_per_hour: float
     respondents_interviewed: int
-    households_completed_successfully: str
-    average_respondents_interviewed_per_hour: int
+    households_completed_successfully: int
+    average_respondents_interviewed_per_hour: float
     no_contacts_percentage: str
     appointments_for_contacts_percentage: str
 

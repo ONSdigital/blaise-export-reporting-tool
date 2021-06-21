@@ -117,9 +117,3 @@ def get_percentage_of_call_for_status(status, call_history_dataframe):
         print(f"Could not calculate get_percentage_of_call_for_status(): {err}")
         raise
     return result
-
-
-if __name__ == "__main__":
-    from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range
-    entities = get_call_history_records_by_interviewer_and_date_range("matpal", "2021-01-01", "2021-06-11")[1]
-    df = pd.DataFrame(entities)
