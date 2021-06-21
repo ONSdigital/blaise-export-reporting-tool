@@ -44,6 +44,10 @@ def has_any_missing_data(series):
     return False
 
 
+def drop_invalidated_records(dataframe, column_name):
+    return dataframe.dropna(subset=[column_name])
+
+
 def validate_dataframe(call_history_dataframe):
     call_history_dataframe.columns = call_history_dataframe.columns.str.lower()
 
@@ -51,18 +55,15 @@ def validate_dataframe(call_history_dataframe):
         return "validate_dataframe() failed: call_start_time has missing values", None
 
     if has_any_missing_data(call_history_dataframe['call_end_time']):
-        return "validate_dataframe() failed: call_end_time has missing values", None
+        call_history_dataframe = drop_invalidated_records(call_history_dataframe, 'call_end_time')
 
     if has_any_missing_data(call_history_dataframe['number_of_interviews']):
         return "validate_dataframe() failed: number_of_interviews has missing values", None
 
     if has_any_missing_data(call_history_dataframe['dial_secs']):
-        return "validate_dataframe() failed: dial_secs has missing values", None
+        call_history_dataframe = drop_invalidated_records(call_history_dataframe, 'dial_secs')
 
     try:
-        # call_history_dataframe = call_history_dataframe['number_of_interviews'].astype('int32')
-        # call_history_dataframe = call_history_dataframe['dial_secs'].astype('float64')
-
         call_history_dataframe = call_history_dataframe.astype({"number_of_interviews": 'int32', "dial_secs": 'float64'})
     except Exception as err:
         return f"validate_dataframe() failed: {err}", None
@@ -101,3 +102,10 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
         return (generate_report_error, 400), []
 
     return None, report.json()
+
+
+if __name__ == "__main__":
+    import pprint
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(get_call_pattern_records_by_interviewer_and_date_range("matpal", "2021-01-01", "2021-06-11")[1])
+

@@ -1,8 +1,6 @@
-import json
 import numpy as np
+import pytest
 from interviewer_pattern_report.report import *
-from unittest import mock
-from interviewer_pattern_report.report import validate_dataframe
 
 
 # # @mock.patch.object()
@@ -62,3 +60,18 @@ def test_validate_dataframe_is_unhappy(mock_data):
     expected_errors, expected_dataframe = validate_dataframe(mock_data)
     assert expected_errors == "validate_dataframe() failed: call_start_time has missing values"
     assert expected_dataframe == None
+
+
+@pytest.mark.parametrize(
+    "questionnaire_id, column_name, expected_records_remaining",
+    [
+        ("05cf69af-3a4e-47df-819a-928350fdda5a", "call_end_time", 6),
+        ("05cf69af-4a4e-47df-819a-928350fdda5a", "dial_secs", 5),
+    ],
+)
+def test_drop_invalidated_records(questionnaire_id, column_name, expected_records_remaining, mock_data):
+    mock_data.loc[mock_data['questionnaire_id'] == questionnaire_id, column_name] = np.nan
+    actual_mock_data = drop_invalidated_records(mock_data, column_name)
+
+    assert len(actual_mock_data) == expected_records_remaining
+    assert (actual_mock_data['questionnaire_id'] == questionnaire_id).any() == False
