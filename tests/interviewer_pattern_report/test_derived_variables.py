@@ -39,6 +39,19 @@ def test_get_respondents_interviewed(mock_data):
 
 
 @pytest.mark.parametrize(
+    "status, expected",
+    [
+        ("Appointment made", 0),
+        ("No contact", 4),
+        ("numberwang", 1),
+        ("foobar", 0),
+    ],
+)
+def test_get_number_of_households_completed_successfully(status, expected, mock_data):
+    assert get_number_of_households_completed_successfully(status, mock_data) == expected
+
+
+@pytest.mark.parametrize(
     "hours_worked, expected",
     [
         ("08:00:00", 1),
