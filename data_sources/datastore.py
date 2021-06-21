@@ -105,9 +105,3 @@ def split_into_batches(merged_call_history, length):
         merged_call_history[i: i + length]
         for i in range(0, len(merged_call_history), length)
     ]
-
-
-if __name__ == "__main__":
-    import pprint
-    pp = pprint.PrettyPrinter(indent=4)
-    pp.pprint(get_call_history_records())

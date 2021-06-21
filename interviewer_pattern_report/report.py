@@ -16,9 +16,7 @@ def generate_report(call_history_dataframe):
         appointments_for_contacts_percentage = get_percentage_of_call_for_status('Appointment made', call_history_dataframe)
         formatted_total_call_time = convert_call_time_seconds_to_datetime_format(total_call_seconds)
     except ZeroDivisionError as zero_div_err:
-        print(f"""You've been Wangernumbed! 
-        {call_history_dataframe['interviewer']} worked {hours_worked} hours yet completed {len(call_history_dataframe.index)} calls. 
-        Please review the data and try again. Goodbye!""")
+        print(f"""You've been Wangernumbed! Please check call_start_time and call_end_time and try again. Goodbye!""")
         return zero_div_err, None
     except Exception as err:
         return err, None
