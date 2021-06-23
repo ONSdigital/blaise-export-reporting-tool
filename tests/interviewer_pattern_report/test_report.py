@@ -49,29 +49,22 @@ def test_generate_report_returns_an_error_message(mock_data, capsys):
 
 
 def test_validate_dataframe(mock_data):
-    expected_errors, expected_dataframe = validate_dataframe(mock_data)
-    assert expected_errors == None
-    assert type(expected_dataframe) == pd.DataFrame
+    expected_errors, expected_valid_dataframe, expected_invalid_dataframe = validate_dataframe(mock_data)
+    assert not expected_errors
+    assert type(expected_valid_dataframe) == pd.DataFrame
+    assert len(expected_invalid_dataframe.index) == 0
 
 
 def test_validate_dataframe_is_unhappy(mock_data):
-    mock_data.loc[mock_data['questionnaire_id'] == '05cf69af-3a4e-47df-819a-928350fdda5a', 'call_start_time'] = np.nan
+    mock_data.loc[mock_data['questionnaire_id'] == '05cf69af-3a4e-47df-819a-928350fdda5a', 'call_end_time'] = np.nan
 
-    expected_errors, expected_dataframe = validate_dataframe(mock_data)
-    assert expected_errors == "validate_dataframe() failed: call_start_time has missing values"
-    assert expected_dataframe == None
+    expected_errors, expected_valid_dataframe, expected_invalid_dataframe = validate_dataframe(mock_data)
+    assert not expected_errors
+    assert type(expected_valid_dataframe) == pd.DataFrame
+    assert len(expected_invalid_dataframe.index) == 2
 
 
-@pytest.mark.parametrize(
-    "questionnaire_id, column_name, expected_records_remaining",
-    [
-        ("05cf69af-3a4e-47df-819a-928350fdda5a", "call_end_time", 6),
-        ("05cf69af-4a4e-47df-819a-928350fdda5a", "dial_secs", 5),
-    ],
-)
-def test_drop_invalidated_records(questionnaire_id, column_name, expected_records_remaining, mock_data):
-    mock_data.loc[mock_data['questionnaire_id'] == questionnaire_id, column_name] = np.nan
-    actual_mock_data = drop_invalidated_records(mock_data, column_name)
-
-    assert len(actual_mock_data) == expected_records_remaining
-    assert not (actual_mock_data['questionnaire_id'] == questionnaire_id).any()
+def test_drop_and_return_invalidated_records(mock_data):
+    actual_valid_records, actual_invalid_records = drop_and_return_invalidated_records(mock_data)
+    assert len(actual_valid_records.index) == 8
+    assert len(actual_invalid_records.index) == 0

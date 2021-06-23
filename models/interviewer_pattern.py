@@ -13,6 +13,7 @@ class InterviewerPatternReport:
     average_respondents_interviewed_per_hour: float
     no_contacts_percentage: str
     appointments_for_contacts_percentage: str
+    discounted_invalid_records: str = "0"
 
     def json(self):
         return json.dumps(asdict(self))
