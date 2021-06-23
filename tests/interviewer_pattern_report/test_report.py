@@ -68,3 +68,20 @@ def test_drop_and_return_invalidated_records(mock_data):
     actual_valid_records, actual_invalid_records = drop_and_return_invalidated_records(mock_data)
     assert len(actual_valid_records.index) == 8
     assert len(actual_invalid_records.index) == 0
+
+
+@pytest.mark.parametrize(
+    "column_names",
+    [
+        (["call_start_time"]),
+        (["call_end_time"]),
+        (["number_of_interviews"]),
+        (["call_start_time", "call_end_time"]),
+        (["call_start_time", "call_end_time", "number_of_interviews"]),
+    ],
+)
+def test_get_invalid_fields(column_names, mock_data):
+    for col in column_names:
+        mock_data.loc[mock_data['questionnaire_id'] == "05cf69af-3a4e-47df-819a-928350fdda5a", col] = np.nan
+
+    assert get_invalid_fields(mock_data) == ''.join(column_names)

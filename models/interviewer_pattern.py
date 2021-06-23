@@ -14,6 +14,7 @@ class InterviewerPatternReport:
     no_contacts_percentage: str
     appointments_for_contacts_percentage: str
     discounted_invalid_records: str = "0"
+    invalid_fields: str = "n/a"
 
     def json(self):
         return json.dumps(asdict(self))

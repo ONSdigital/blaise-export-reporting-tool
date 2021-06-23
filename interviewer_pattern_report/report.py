@@ -6,6 +6,11 @@ from models.interviewer_pattern import InterviewerPatternReport
 COLUMNS_TO_VALIDATE = ['call_start_time', 'call_end_time', 'number_of_interviews']
 
 
+def get_invalid_fields(data):
+    data = data.filter(COLUMNS_TO_VALIDATE)
+    return ''.join(data.columns[data.isna().any()].tolist())
+
+
 def generate_report(valid_call_history_dataframe):
     try:
         hours_worked = get_hours_worked(valid_call_history_dataframe)
@@ -97,4 +102,21 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
                 'discounted_invalid_records',
                 f'{len(invalid_dataframe.index)}/{len(call_history_dataframe.index)}')
 
+        setattr(report,
+                'invalid_fields',
+                f'{get_invalid_fields(call_history_dataframe)}')
+
     return None, report.json()
+
+
+if __name__ == "__main__":
+    stuff, things = get_call_pattern_records_by_interviewer_and_date_range("matpal", "2021-01-01", "2021-06-11")
+
+    call_history_dataframe = pd.read_csv('/Users/ThornE1/Documents/Blaise/TO Report/uber_is_na_call_history_dataframe.csv', engine='python')
+    get_invalid_fields(call_history_dataframe)
+    print("foo")
+
+    # import pprint
+    # pp = pprint.PrettyPrinter(indent=4)
+    # pp.pprint(get_call_pattern_records_by_interviewer_and_date_range("matpal", "2021-01-01", "2021-06-11")[1])
+
