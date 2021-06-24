@@ -5,6 +5,7 @@ from app.app import app as flask_app
 from models.interviewer_pattern import InterviewerPatternReport
 from google.api_core.datetime_helpers import DatetimeWithNanoseconds
 
+
 @pytest.fixture
 def app():
     yield flask_app
@@ -188,3 +189,20 @@ def mock_data():
         },
     ]
     return pd.DataFrame(results)
+
+
+@pytest.fixture
+def mock_report():
+    return InterviewerPatternReport(
+        hours_worked="0:07:24",
+        call_time="0:00:13",
+        hours_on_calls_percentage="0.01%",
+        average_calls_per_hour=3.14,
+        respondents_interviewed=5,
+        households_completed_successfully=200,
+        average_respondents_interviewed_per_hour=238.21,
+        no_contacts_percentage="5%",
+        appointments_for_contacts_percentage="101%",
+        discounted_invalid_records="0",
+        invalid_fields="n/a",
+    )
