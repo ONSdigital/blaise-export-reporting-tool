@@ -40,7 +40,7 @@ def call_history(interviewer):
     if error[0]:
         message, error_code = error
         print(message)
-        return {}
+        return []
 
     return jsonify(results)
 
