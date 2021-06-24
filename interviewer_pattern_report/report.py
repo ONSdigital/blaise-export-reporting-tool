@@ -1,4 +1,3 @@
-import json
 from interviewer_pattern_report.derived_variables import *
 from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range
 from models.interviewer_pattern import InterviewerPatternReport
@@ -32,9 +31,9 @@ def generate_report(valid_call_history_dataframe):
                 'appointment made', valid_call_history_dataframe),
         )
     except ZeroDivisionError as err:
-        return f"generate_report() failed with a ZeroDivisionError: {err}", None
+        return (f"generate_report() failed with a ZeroDivisionError: {err}", 400), None
     except Exception as err:
-        return f"generate_report() failed: {err}", None
+        return (f"generate_report() failed: {err}", 400), None
     return None, report
 
 
@@ -62,15 +61,16 @@ def validate_dataframe(data):
     try:
         valid_data = valid_data.astype({"number_of_interviews": 'int32', "dial_secs": 'float64'})
     except Exception as err:
-        return f"validate_dataframe() failed: {err}", None, None
+        return (f"validate_dataframe() failed: {err}", 400), None, None
     return None, valid_data, invalid_data
 
 
+# TODO: Sam, do I need to test this? I don't think I do because pandas
 def create_dataframe(call_history):
     try:
         result = pd.DataFrame(data=call_history)
     except Exception as err:
-        return f"create_dataframe failed: {err}", None
+        return (f"create_dataframe failed: {err}", 400), None
     return None, result
 
 
@@ -79,34 +79,25 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
         interviewer_name, start_date_string, end_date_string
     )
     if call_history_records_error:
-        print(call_history_records_error[0])
-        return (call_history_records_error[0], 400), []
+        return call_history_records_error, None
 
     create_dataframe_error, call_history_dataframe = create_dataframe(call_history)
     if create_dataframe_error:
-        print(create_dataframe_error)
-        return (create_dataframe_error, 400), []
+        return create_dataframe_error, None
 
     validate_dataframe_error, valid_dataframe, invalid_dataframe = validate_dataframe(call_history_dataframe)
     if validate_dataframe_error:
-        print(validate_dataframe_error)
-        return (validate_dataframe_error, 400), []
+        return validate_dataframe_error, None
 
     generate_report_error, report = generate_report(valid_dataframe)
     if generate_report_error:
-        print(generate_report_error)
-        return (generate_report_error, 400), []
+        return generate_report_error, None
 
     if not invalid_dataframe.empty:
-        setattr(report,
-                'discounted_invalid_records',
-                f'{len(invalid_dataframe.index)}/{len(call_history_dataframe.index)}')
+        report.discounted_invalid_records = f'{len(invalid_dataframe.index)}/{len(call_history_dataframe.index)}'
+        report.invalid_fields = f'{get_invalid_fields(call_history_dataframe)}'
 
-        setattr(report,
-                'invalid_fields',
-                f'{get_invalid_fields(call_history_dataframe)}')
-
-    return None, report.json()
+    return (None, 200), report
 
 
 if __name__ == "__main__":

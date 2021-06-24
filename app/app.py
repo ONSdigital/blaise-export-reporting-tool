@@ -5,6 +5,7 @@ from data_sources.datastore import get_call_history_records, get_call_history_re
     get_call_history_report_status
 from extract_call_history import get_call_history
 from interviewer_pattern_report.report import get_call_pattern_records_by_interviewer_and_date_range
+from models.error_information import ErrorInformation
 from models.config import Config
 
 app = Flask(__name__)
@@ -52,16 +53,17 @@ def call_pattern(interviewer):
     print(f"Call history for interviewer: {interviewer} between {start_date} and {end_date}")
 
     if start_date is None or end_date is None:
-        print("Invalid request missing required filter properties ")
-        return '{"error": "Invalid request missing required filter properties"}', 400
+        print("Invalid request: missing required filter properties")
+        return {}
 
     error, results = get_call_pattern_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
 
     if error:
-        message, error_code = error
-        return message, error_code
+        message, code = error
+        print(message)
+        return {}
 
-    return results
+    return results.json()
 
 
 @app.route("/call_history")

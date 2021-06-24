@@ -46,6 +46,7 @@ def test_date_string_to_datetime_returns_valid_date_with_end_time(
         "2021-12-11-sdfsdf",
         "12-21-23",
         "1222-330-45",
+        "",
     ],
 )
 def test_date_string_to_datetime_returns_none_if_date_is_invalid(date_string):
@@ -112,3 +113,8 @@ def test_split_into_batches(list_to_split, number_to_split_by, expected_list_spl
     while i < len(split_list):
         assert len(split_list[i]) == expected_list_split[i]
         i += 1
+
+
+# TODO: Sam, help!
+def test_get_call_history_records_by_interviewer_and_date_range():
+    pass
