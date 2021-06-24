@@ -2,7 +2,6 @@ import numpy as np
 import pytest
 from interviewer_pattern_report.report import *
 
-
 # TODO: Sam, help!
 # @mock.patch.object()
 # @pytest.mark.parametrize(
