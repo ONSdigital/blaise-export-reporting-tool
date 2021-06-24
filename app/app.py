@@ -31,15 +31,16 @@ def call_history(interviewer):
 
     if start_date is None or end_date is None:
         print("Invalid request missing required filter properties ")
-        return '{"error": "Invalid request missing required filter properties"}', 400
+        # return '{"error": "Invalid request missing required filter properties"}', 400
+        return []
 
     error, results = get_call_history_records_by_interviewer_and_date_range(
         interviewer, start_date, end_date
     )
 
     if error:
-        message, error_code = error
-        return message, error_code
+        # message, error_code = error
+        return []
 
     return jsonify(results)
 
