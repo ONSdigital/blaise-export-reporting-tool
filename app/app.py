@@ -37,10 +37,9 @@ def call_history(interviewer):
         interviewer, start_date, end_date
     )
 
-    if error[0]:
+    if error:
         message, error_code = error
-        print(message)
-        return []
+        return message, error_code
 
     return jsonify(results)
 

@@ -34,7 +34,7 @@ def get_call_history_records_by_interviewer_and_date_range(
     end_date = parse_date_string_to_datetime(end_date_string, True)
 
     if start_date is None or end_date is None:
-        return ("Invalid format for date properties provided", 400), {}
+        return ("Invalid format for date properties provided", 400), []
 
     client = datastore.Client()
     query = client.query(kind="CallHistory")
@@ -45,7 +45,7 @@ def get_call_history_records_by_interviewer_and_date_range(
 
     results = list(query.fetch())
     if not results:
-        return (f"No records found for {interviewer_name} from {start_date_string} to {end_date_string}", 400), {}
+        return (f"No records found for {interviewer_name} from {start_date_string} to {end_date_string}", 400), []
 
     print(f"get_call_history_records_by_interviewer_and_date_range - {len(results)} records found")
     return None, results
