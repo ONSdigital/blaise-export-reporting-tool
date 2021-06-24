@@ -5,7 +5,6 @@ from data_sources.datastore import get_call_history_records, get_call_history_re
     get_call_history_report_status
 from extract_call_history import get_call_history
 from interviewer_pattern_report.report import get_call_pattern_records_by_interviewer_and_date_range
-from models.error_information import ErrorInformation
 from models.config import Config
 
 app = Flask(__name__)
@@ -58,7 +57,7 @@ def call_pattern(interviewer):
 
     error, results = get_call_pattern_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
 
-    if error:
+    if error[0]:
         message, code = error
         print(message)
         return {}
