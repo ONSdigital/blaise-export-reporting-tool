@@ -22,8 +22,12 @@ def call_history_report_status():
 
 @app.route("/api/reports/call-history/<interviewer>")
 def call_history(interviewer):
-    start_date = request.args.get("start-date", None)
-    end_date = request.args.get("end-date", None)
+    try:
+        start_date = request.args.get("start-date", None)
+        end_date = request.args.get("end-date", None)
+    except Exception as err:
+        print(err)
+        return []
 
     print(
         f"Call history for interviewer: {interviewer} between {start_date} and {end_date}"
