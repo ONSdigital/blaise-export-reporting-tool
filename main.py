@@ -21,7 +21,7 @@ def upload_call_history(_event, _context):
     return status
 
 
-def mi_call_history(_event, _context):
+def mi_hub_call_history(_event, _context):
     config = Config.from_env()
     config.log()
 
