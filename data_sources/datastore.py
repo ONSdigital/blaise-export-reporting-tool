@@ -44,9 +44,6 @@ def get_call_history_records_by_interviewer_and_date_range(
     query.order = ["call_start_time"]
 
     results = list(query.fetch())
-    if not results:
-        return (f"No records found for {interviewer_name} from {start_date_string} to {end_date_string}", 400), []
-
     print(f"get_call_history_records_by_interviewer_and_date_range - {len(results)} records found")
     return None, results
 

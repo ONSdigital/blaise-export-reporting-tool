@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, current_app
 
 from data_sources.database import get_events
-from data_sources.datastore import get_call_history_records, get_call_history_records_by_interviewer_and_date_range, \
+from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range, \
     get_call_history_report_status
 from extract_call_history import get_call_history
 from interviewer_pattern_report.report import get_call_pattern_records_by_interviewer_and_date_range
@@ -22,29 +22,22 @@ def call_history_report_status():
 
 @app.route("/api/reports/call-history/<interviewer>")
 def call_history(interviewer):
-    try:
-        start_date = request.args.get("start-date", None)
-        end_date = request.args.get("end-date", None)
-    except Exception as err:
-        print(err)
-        return []
+    start_date = request.args.get("start-date", None)
+    end_date = request.args.get("end-date", None)
 
-    print(
-        f"Call history for interviewer: {interviewer} between {start_date} and {end_date}"
-    )
+    print(f"Call history for interviewer: {interviewer} between {start_date} and {end_date}")
 
     if start_date is None or end_date is None:
         print("Invalid request missing required filter properties ")
-        # return '{"error": "Invalid request missing required filter properties"}', 400
-        return []
+        return '{"error": "Invalid request missing required filter properties"}', 400
 
     error, results = get_call_history_records_by_interviewer_and_date_range(
         interviewer, start_date, end_date
     )
 
-    if error[0]:
-        # message, error_code = error
-        return []
+    if error:
+        message, error_code = error
+        return message, error_code
 
     return jsonify(results)
 

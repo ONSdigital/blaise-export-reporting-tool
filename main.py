@@ -1,13 +1,12 @@
+import os
+
 from app.app import app, load_config
 from extract_mi_hub_call_history import import_mi_hub_call_history
-
-from upload_call_history import add_call_history_to_datastore
 from import_call_history import import_call_history_data
 from models.config import Config
+from upload_call_history import add_call_history_to_datastore
 
-# todo remove or setup local env switch or something
-import os
-os.environ["GCLOUD_PROJECT"] = "ons-blaise-v2-dev-matt02"
+# os.environ["GCLOUD_PROJECT"] = "ons-blaise-v2-dev-<blah>"
 
 
 def upload_call_history(_event, _context):
