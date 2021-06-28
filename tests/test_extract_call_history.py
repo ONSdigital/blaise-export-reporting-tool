@@ -32,7 +32,7 @@ def test_load_cati_dial_history(mock_get_call_history):
             "BusyDials": 0,
             "StartTime": "2021/05/19 14:59:01",
             "EndTime": "2021/05/19 14:59:17",
-            "dialsecs": 16,
+            "dial_secs": 16,
             "Status": "Finished (Non response)",
             "Interviewer": "matpal",
             "DialResult": "NonRespons",

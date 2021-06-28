@@ -1,12 +1,12 @@
 from data_sources.blaise_api import get_questionnaire_list, load_case_data
-from extract_call_history import load_mi_cati_dial_history
+from extract_call_history import load_mi_hub_cati_dial_history
 from import_call_history import append_case_data_to_dials
 
 
-def import_mi_call_history(config):
+def import_mi_hub_call_history(config):
     questionnaire_list = get_questionnaire_list(config)
 
-    case_history_data = load_mi_cati_dial_history(config, questionnaire_list)
+    case_history_data = load_mi_hub_cati_dial_history(config, questionnaire_list)
     print(f"Read {len(case_history_data)} case history data")
 
     blaise_fields_to_get = [
