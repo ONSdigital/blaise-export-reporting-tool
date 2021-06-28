@@ -12,7 +12,7 @@ def get_call_history_records():
     return results
 
 
-def date_string_to_datetime(date_string, end_of_day=False):
+def parse_date_string_to_datetime(date_string, end_of_day=False):
     x = re.search("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$", date_string)
     if not x:
         return None
@@ -27,11 +27,11 @@ def date_string_to_datetime(date_string, end_of_day=False):
     return datetime.datetime(int(date_split[0]), int(date_split[1]), int(date_split[2]))
 
 
-def get_call_history_records_by_interviewer(
-    interviewer_name, start_date_string, end_date_string
+def get_call_history_records_by_interviewer_and_date_range(
+        interviewer_name, start_date_string, end_date_string
 ):
-    start_date = date_string_to_datetime(start_date_string)
-    end_date = date_string_to_datetime(end_date_string, True)
+    start_date = parse_date_string_to_datetime(start_date_string)
+    end_date = parse_date_string_to_datetime(end_date_string, True)
 
     if start_date is None or end_date is None:
         return ("Invalid format for date properties provided", 400), []
@@ -44,7 +44,7 @@ def get_call_history_records_by_interviewer(
     query.order = ["call_start_time"]
 
     results = list(query.fetch())
-    print(f"Cases found {len(results)}")
+    print(f"get_call_history_records_by_interviewer_and_date_range - {len(results)} records found")
     return None, results
 
 
@@ -82,7 +82,6 @@ def get_call_history_keys():
 
 def bulk_upload_call_history(new_call_history_entries):
     client = datastore.Client()
-
     datastore_tasks = []
 
     for call_history_record in new_call_history_entries:
@@ -92,9 +91,7 @@ def bulk_upload_call_history(new_call_history_entries):
                 f"{call_history_record.serial_number}-{call_history_record.call_start_time}",
             )
         )
-
         task1.update(asdict(call_history_record))
-
         datastore_tasks.append(task1)
 
     datastore_batches = split_into_batches(datastore_tasks, 500)
@@ -105,6 +102,6 @@ def bulk_upload_call_history(new_call_history_entries):
 
 def split_into_batches(merged_call_history, length):
     return [
-        merged_call_history[i : i + length]
+        merged_call_history[i: i + length]
         for i in range(0, len(merged_call_history), length)
     ]

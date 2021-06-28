@@ -58,4 +58,4 @@ class CatiCallHistoryTable(DBBase):
 
     @classmethod
     def extra_fields(cls):
-        return ["ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dialsecs"]
+        return ["ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dial_secs"]
