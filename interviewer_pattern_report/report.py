@@ -65,7 +65,6 @@ def validate_dataframe(data):
     return None, valid_data, invalid_data
 
 
-# TODO: Sam, do I need to test this? I don't think I do because pandas
 def create_dataframe(call_history):
     try:
         result = pd.DataFrame(data=call_history)
@@ -80,6 +79,9 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
     )
     if call_history_records_error:
         return call_history_records_error, None
+
+    if not call_history:
+        return (f"No records found for {interviewer_name} from {start_date_string} to {end_date_string}", 400), None
 
     create_dataframe_error, call_history_dataframe = create_dataframe(call_history)
     if create_dataframe_error:
@@ -98,16 +100,3 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
         report.invalid_fields = f'{get_invalid_fields(call_history_dataframe)}'
 
     return (None, 200), report
-
-
-if __name__ == "__main__":
-    stuff, things = get_call_pattern_records_by_interviewer_and_date_range("matpal", "2021-01-01", "2021-06-11")
-
-    call_history_dataframe = pd.read_csv('/Users/ThornE1/Documents/Blaise/TO Report/uber_is_na_call_history_dataframe.csv', engine='python')
-    get_invalid_fields(call_history_dataframe)
-    print("foo")
-
-    # import pprint
-    # pp = pprint.PrettyPrinter(indent=4)
-    # pp.pprint(get_call_pattern_records_by_interviewer_and_date_range("matpal", "2021-01-01", "2021-06-11")[1])
-
