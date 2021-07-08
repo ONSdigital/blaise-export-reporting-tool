@@ -60,6 +60,15 @@ Install dependencies:
 poetry install
 ```
 
+# TODO
+gcloud auth login
+gcloud config set project ons-blaise-v2-dev-blah
+env vars...
+gcloud compute start-iap-tunnel restapi-1 80 --local-host-port=localhost:90 --zone europe-west2-a
+open sql to your network?
+change funct called in main to run cloud functions
+setting project in code...
+
 Authenticate application with GCP project:
 ```shell
 gcloud auth application-default login

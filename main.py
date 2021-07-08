@@ -1,7 +1,8 @@
 import os
 
 from app.app import app, load_config
-from extract_mi_hub_call_history import import_mi_hub_call_history
+from extract_mi_hub_respondent_data import extract_mi_hub_respondent_data
+from extract_mi_hub_call_history import extract_mi_hub_call_history
 from import_call_history import import_call_history_data
 from models.config import Config
 from upload_call_history import add_call_history_to_datastore
@@ -21,7 +22,7 @@ def upload_call_history(_event, _context):
     return status
 
 
-def mi_call_history(_event, _context):
+def mi_hub_call_history(_event, _context):
     config = Config.from_env()
     config.log()
 
@@ -36,7 +37,7 @@ def mi_hub_respondent_data(_event, _context):
     config = Config.from_env()
     config.log()
 
-    extract_mi_respondent_data(config)
+    extract_mi_hub_respondent_data(config)
 
 
 load_config(app)

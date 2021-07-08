@@ -1,4 +1,4 @@
-from data_sources.database import get_call_history, get_mi_call_history
+from data_sources.database import get_call_history, get_mi_hub_call_history
 from models.call_history import CallHistory
 from models.mi_hub_call_history import MiHubCallHistory
 
@@ -59,10 +59,9 @@ def load_mi_hub_cati_dial_history(config, questionnaire_list):
             interviewer=item.get("Interviewer"),
             dial_result=item.get("DialResult"),
             dial_line_number=item.get("DialedNumber"),
-            seconds_dial=item.get("dial_secs"),
+            # seconds_dial=item.get("dial_secs")
         )
         call_history.generate_dial_date_and_time_fields(item.get("StartTime"), item.get("EndTime"))
-
         questionnaire_name = get_questionnaire_name_from_id(
             call_history.questionnaire_id, questionnaire_list
         )

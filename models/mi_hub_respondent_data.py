@@ -2,7 +2,7 @@ from dataclasses import dataclass, fields
 
 
 @dataclass
-class MiRespondentData:
+class MiHubRespondentData:
     SER_NO: str
     OUTCOME: str
     DATE_COMPLETED: str
