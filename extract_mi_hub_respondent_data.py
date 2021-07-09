@@ -27,6 +27,7 @@ csv_columns = [
 
 def extract_mi_hub_respondent_data(config):
     opn_questionnaires = get_questionnaire_list(config)
+    tmp_folder = get_tmp_directory_path()
 
     blaise_fields_to_get = [
         {
@@ -42,8 +43,6 @@ def extract_mi_hub_respondent_data(config):
         }
     ]
 
-    clear_tmp_directory()
-    tmp_folder = get_tmp_directory_path()
 
     for questionnaire in opn_questionnaires:
         questionnaire_name = questionnaire.get("name")

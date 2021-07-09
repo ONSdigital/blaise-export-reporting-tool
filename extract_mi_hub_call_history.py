@@ -29,13 +29,12 @@ def extract_mi_hub_call_history(config):
 
     grouped_call_history = group_by_questionnaire(merged_call_history)
 
-    create_tmp_directory()
     tmp_folder = get_tmp_directory_path()
 
     for questionnaire_name in grouped_call_history.keys():
         create_folder_in_tmp_directory(questionnaire_name)
 
-        csv_file = f"{tmp_folder}/{questionnaire_name}/call_history_data.csv"
+        csv_file = f"{tmp_folder}/{questionnaire_name}/call_history.csv"
         write_list_of_dict_to_csv(csv_file, grouped_call_history[questionnaire_name], MiHubCallHistory.fields())
 
     return grouped_call_history

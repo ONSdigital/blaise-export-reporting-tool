@@ -59,7 +59,7 @@ def load_mi_hub_cati_dial_history(config, questionnaire_list):
             interviewer=item.get("Interviewer"),
             dial_result=item.get("DialResult"),
             dial_line_number=item.get("DialedNumber"),
-            # seconds_dial=item.get("dial_secs")
+            seconds_interview=item.get("dial_secs")
         )
         call_history.generate_dial_date_and_time_fields(item.get("StartTime"), item.get("EndTime"))
         questionnaire_name = get_questionnaire_name_from_id(

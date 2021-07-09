@@ -12,7 +12,7 @@ class MiHubCallHistory:
     interviewer: str
     dial_result: int
     dial_line_number: int
-    # seconds_interview: int
+    seconds_interview: int
     end_time: str = ""
     questionnaire_name: str = ""
     dial_date: str = ""
