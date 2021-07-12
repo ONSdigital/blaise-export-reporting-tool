@@ -1,10 +1,6 @@
 import requests
 
 
-def get_opn_questionnaire_list(config):
-    return [x for x in get_questionnaire_list(config) if x.get("name").startswith("OPN")]
-
-
 def get_questionnaire_list(config):
     print("Get Questionnaire list")
     response = requests.get(

@@ -2,7 +2,7 @@ import csv
 import os
 from dataclasses import asdict
 
-from data_sources.blaise_api import load_case_data, get_questionnaire_list, get_opn_questionnaire_list
+from data_sources.blaise_api import load_case_data, get_questionnaire_list
 from models.mi_hub_respondent_data import MiHubRespondentData
 from storage_and_files.folder_management import (
     clear_tmp_directory,
@@ -26,7 +26,7 @@ csv_columns = [
 
 
 def extract_mi_hub_respondent_data(config):
-    opn_questionnaires = get_questionnaire_list(config)
+    questionnaires = get_questionnaire_list(config)
     tmp_folder = get_tmp_directory_path()
 
     blaise_fields_to_get = [
@@ -43,8 +43,7 @@ def extract_mi_hub_respondent_data(config):
         }
     ]
 
-
-    for questionnaire in opn_questionnaires:
+    for questionnaire in questionnaires:
         questionnaire_name = questionnaire.get("name")
 
         respondent_data = get_respondent_data_for_questionnaire(

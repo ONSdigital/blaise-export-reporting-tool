@@ -37,7 +37,7 @@ Clone the project locally:
 git clone https://github.com/ONSdigital/blaise-export-reporting-tool.git
 ```
 
-Setup virtual environment:
+Setup a virtual environment:
 
 macOS:
 ```shell
@@ -60,18 +60,46 @@ Install dependencies:
 poetry install
 ```
 
-# TODO tidy this up
+Authenticate with GCP:
+```shell
 gcloud auth login
-gcloud config set project ons-blaise-v2-dev-rr3
-env vars...
-gcloud compute start-iap-tunnel restapi-1 80 --local-host-port=localhost:90 --zone europe-west2-a
-open sql to your network?
-change funct called in main to run cloud functions
-setting project in code...
+```
 
-Authenticate application with GCP project:
+Set your GCP project:
+```shell
+gcloud config set project ons-blaise-v2-dev
+```
+
+Authenticate the application with your GCP project:
 ```shell
 gcloud auth application-default login
+```
+
+Open a tunnel to our RESTful API in your GCP project:
+```shell
+gcloud compute start-iap-tunnel restapi-1 80 --local-host-port=localhost:90 --zone europe-west2-a
+```
+
+Create an .env file in the root of the project and add the following environment variables:
+
+| Variable | Description | Example |
+| --- | --- | --- |
+| GCLOUD_PROJECT | The GCP project the application will use. | ons-blaise-v2-dev |
+| MYSQL_HOST | The host address of the MySQL instance where reports will get data. Consider opening the MySQL instance in your GCP project to your network. | 1.3.3.7 |
+| MYSQL_USER | The username for the MySQL instance. | blaise |
+| MYSQL_PASSWORD | The password for the MySQL instance. | BadPassword123 |
+| MYSQL_DATABASE | The database to use on the MySQL instance. | blaise |
+| BLAISE_API_URL | The RESTful API the application will use to get data for reports. | localhost:90 |
+| NIFI_STAGING_BUCKET | The bucket where data will be delivered. | ons-blaise-v2-dev-nifi-staging |
+
+```shell
+GCLOUD_PROJECT="ons-blaise-v2-dev"
+MYSQL_HOST="1.3.3.7"
+MYSQL_USER="blaise"
+MYSQL_PASSWORD="BadPassword123"
+MYSQL_DATABASE="blaise"
+BLAISE_API_URL="localhost:90"
+NIFI_STAGING_BUCKET="ons-blaise-v2-dev-nifi-staging"
 ```
 
 Run application:

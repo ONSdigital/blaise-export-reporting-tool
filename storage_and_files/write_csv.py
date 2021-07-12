@@ -4,7 +4,7 @@ from dataclasses import asdict, is_dataclass
 
 def write_list_of_dict_to_csv(csv_file, list_of_dicts, fieldnames):
     try:
-        with open(csv_file, "w") as csv_file:
+        with open(csv_file, "w", newline="") as csv_file:
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
             writer.writeheader()
             for data in list_of_dicts:

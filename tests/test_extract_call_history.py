@@ -1,6 +1,7 @@
 import os
 from unittest import mock
 from unittest.mock import patch
+
 from extract_call_history import load_cati_dial_history
 from models.call_history import CallHistory
 from models.config import Config
@@ -9,11 +10,12 @@ from models.config import Config
 @mock.patch.dict(
     os.environ,
     {
-        "MYSQL_HOST": "just-a-simple-host",
-        "MYSQL_USER": "test",
-        "MYSQL_PASSWORD": "unique-password",
-        "MYSQL_DATABASE": "DB_NAME",
-        "BLAISE_API_URL": "a-legit-url",
+        "MYSQL_HOST": "mysql_host_mock",
+        "MYSQL_USER": "mysql_user_mock",
+        "MYSQL_PASSWORD": "mysql_password_mock",
+        "MYSQL_DATABASE": "mysql_database_mock",
+        "BLAISE_API_URL": "blaise_api_url_mock",
+        "NIFI_STAGING_BUCKET": "nifi_staging_bucket_mock"
     },
 )
 @patch("extract_call_history.get_call_history")

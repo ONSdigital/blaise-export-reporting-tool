@@ -1,5 +1,4 @@
 import csv
-import os
 from dataclasses import dataclass
 
 from storage_and_files.folder_management import get_tmp_directory_path, create_tmp_directory
