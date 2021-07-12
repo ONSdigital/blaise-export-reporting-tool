@@ -60,7 +60,7 @@ Install dependencies:
 poetry install
 ```
 
-# TODO
+# TODO tidy this up
 gcloud auth login
 gcloud config set project ons-blaise-v2-dev-rr3
 env vars...
