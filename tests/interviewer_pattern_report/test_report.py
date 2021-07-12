@@ -63,11 +63,11 @@ def test_generate_report(mock_data):
 
 
 def test_generate_report_returns_an_error_message(mock_data, capsys):
-    mock_data.loc[mock_data['questionnaire_id'] == '05cf69af-3a4e-47df-819a-928350fdda5a', ['call_start_time']] = ''
+    mock_data.loc[mock_data['questionnaire_id'] == '05cf69af-3a4e-47df-819a-928350fdda5a', ['call_start_time']] = 'blah'
     generate_report(mock_data)
     captured = capsys.readouterr()
     assert captured.out == ('Could not calculate get_hours_worked(): Can only use .dt accessor with '
-                            'datetime like values\n')
+                            'datetimelike values\n')
 
 
 def test_validate_dataframe(mock_data):
