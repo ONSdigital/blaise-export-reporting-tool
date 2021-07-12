@@ -81,7 +81,8 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
         return call_history_records_error, None
 
     if not call_history:
-        return (f"No records found for {interviewer_name} from {start_date_string} to {end_date_string}", 400), None
+        return (None, 200), {}
+        # return (f"No records found for {interviewer_name} from {start_date_string} to {end_date_string}", 400), None
 
     create_dataframe_error, call_history_dataframe = create_dataframe(call_history)
     if create_dataframe_error:

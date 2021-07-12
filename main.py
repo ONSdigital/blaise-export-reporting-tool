@@ -58,7 +58,6 @@ def deliver_mi_hub_reports(_event, _context):
         mi_filename = f"mi_{questionnaire}_{dt_string}"
         prepare_zip(os.path.join(tmp_folder, questionnaire), f"tmp/{mi_filename}")
         mi_zip_files.append(f"{mi_filename}.zip")
-    print("")
     for mi_zip_file in mi_zip_files:
         GoogleStorage.upload_file(google_storage, source="tmp/" + mi_zip_file, dest=mi_zip_file)
 
