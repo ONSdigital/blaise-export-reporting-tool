@@ -69,4 +69,5 @@ if os.path.isfile("./.env"):
 load_config(app)
 
 if __name__ == "__main__":
+    deliver_mi_hub_reports(None, None)
     app.run(host="0.0.0.0", port=5011)
