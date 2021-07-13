@@ -15,6 +15,7 @@ from storage_and_files.folder_management import (
 )
 from storage_and_files.zip_management import prepare_zip
 from upload_call_history import add_call_history_to_datastore
+from definitions import ROOT_DIR
 
 
 def upload_call_history(_event, _context):
@@ -40,7 +41,6 @@ def mi_hub_respondent_data():
 
 def deliver_mi_hub_reports(_event, _context):
     print("deliver_mi_hub_reports")
-    print(os.getenv("K_SERVICE"))
     config = Config.from_env()
     config.log()
     google_storage = init_google_storage(config)
@@ -50,8 +50,7 @@ def deliver_mi_hub_reports(_event, _context):
     clear_tmp_directory()
     mi_hub_call_history()
     mi_hub_respondent_data()
-    dirname = os.path.dirname(__file__)
-    tmp_folder = os.path.join(dirname, 'tmp')
+    tmp_folder = os.path.join(ROOT_DIR, 'tmp')
     questionnaires = [x for x in os.listdir(tmp_folder)]
     dt_string = datetime.datetime.now().strftime("%d%m%Y_%H%M%S")
     mi_zip_files = []
