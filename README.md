@@ -7,7 +7,7 @@
 [![Github last commit](https://img.shields.io/github/last-commit/ONSdigital/blaise-export-reporting-tool.svg)](https://github.com/ONSdigital/blaise-export-reporting-tool/commits)
 [![Github contributors](https://img.shields.io/github/contributors/ONSdigital/blaise-export-reporting-tool.svg)](https://github.com/ONSdigital/blaise-export-reporting-tool/graphs/contributors)
 
-This project extracts management information data from the Blaise CATI database and via calls to our [RESTful API](https://github.com/ONSdigital/blaise-api-rest). Persists data in [Datastore](https://cloud.google.com/datastore/docs/) if necessary. Reports can be generated from this data and delivered to an on-prem share or via the [Management Information Reports "Ernie" UI](https://github.com/ONSdigital/blaise-management-information-reports).
+This project extracts management information data from the Blaise CATI database and via calls to our [Blaise RESTful API](https://github.com/ONSdigital/blaise-api-rest). Persists data in [Datastore](https://cloud.google.com/datastore/docs/) if necessary. Reports can be generated from this data and delivered to an on-prem share or via the [Management Information Reports "Ernie" UI](https://github.com/ONSdigital/blaise-management-information-reports).
 
 ### Services
 
