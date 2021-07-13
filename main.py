@@ -10,12 +10,12 @@ from google_storage import init_google_storage, GoogleStorage
 from import_call_history import import_call_history_data
 from models.config import Config
 from storage_and_files.folder_management import (
+    get_tmp_directory_path,
     clear_tmp_directory,
     create_tmp_directory
 )
 from storage_and_files.zip_management import prepare_zip
 from upload_call_history import add_call_history_to_datastore
-from definitions import ROOT_DIR
 
 
 def upload_call_history(_event, _context):
@@ -50,16 +50,16 @@ def deliver_mi_hub_reports(_event, _context):
     clear_tmp_directory()
     mi_hub_call_history()
     mi_hub_respondent_data()
-    tmp_folder = os.path.join(ROOT_DIR, 'tmp')
+    tmp_folder = get_tmp_directory_path()
     questionnaires = [x for x in os.listdir(tmp_folder)]
     dt_string = datetime.datetime.now().strftime("%d%m%Y_%H%M%S")
     mi_zip_files = []
     for questionnaire in questionnaires:
         mi_filename = f"mi_{questionnaire}_{dt_string}"
-        prepare_zip(os.path.join(tmp_folder, questionnaire), f"tmp/{mi_filename}")
+        prepare_zip(os.path.join(tmp_folder, questionnaire), f"{tmp_folder}/{mi_filename}")
         mi_zip_files.append(f"{mi_filename}.zip")
     for mi_zip_file in mi_zip_files:
-        GoogleStorage.upload_file(google_storage, source="tmp/" + mi_zip_file, dest=mi_zip_file)
+        GoogleStorage.upload_file(google_storage, source=os.path.join(tmp_folder, mi_zip_file), dest=mi_zip_file)
 
 
 if os.path.isfile("./.env"):
