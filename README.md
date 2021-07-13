@@ -25,7 +25,16 @@ This repository has two services.
 Get call history for a specified interviewer (interviewer login name) within a date range provided in the URL parameters. Returns a JSON list of call history entries.
 
 ```http request
-GET /api/reports/call-history/<interviewer>?start-date=2021-05-01&end-date=2021-06-01
+GET /api/reports/call-history/<interviewer>?start-date=<date>&end-date=<date>
+Content-Type: application/json
+```
+
+#### Interviewer Call Pattern
+
+blah blah...
+
+```http request
+GET /api/reports/call-pattern/<interviewer>?start-date=<date>&end-date=<date>
 Content-Type: application/json
 ```
 
@@ -75,7 +84,7 @@ Authenticate the application with your GCP project:
 gcloud auth application-default login
 ```
 
-Open a tunnel to our RESTful API in your GCP project:
+Open a tunnel to our Blaise RESTful API in your GCP project:
 ```shell
 gcloud compute start-iap-tunnel restapi-1 80 --local-host-port=localhost:90 --zone europe-west2-a
 ```
@@ -88,7 +97,7 @@ Create an .env file in the root of the project and add the following environment
 | MYSQL_HOST | The host address of the MySQL instance where reports will get data. Consider opening the MySQL instance in your GCP project to your network. | 1.3.3.7 |
 | MYSQL_USER | The username for the MySQL instance. | blaise |
 | MYSQL_PASSWORD | The password for the MySQL instance. | BadPassword123 |
-| MYSQL_DATABASE | The database to use on the MySQL instance. | blaise |
+| MYSQL_DATABASE | The database to use on the MySQL instance. | cati |
 | BLAISE_API_URL | The RESTful API the application will use to get data for reports. | localhost:90 |
 | NIFI_STAGING_BUCKET | The bucket where data will be delivered. | ons-blaise-v2-dev-nifi-staging |
 
@@ -97,17 +106,31 @@ GCLOUD_PROJECT="ons-blaise-v2-dev"
 MYSQL_HOST="1.3.3.7"
 MYSQL_USER="blaise"
 MYSQL_PASSWORD="BadPassword123"
-MYSQL_DATABASE="blaise"
+MYSQL_DATABASE="cati"
 BLAISE_API_URL="localhost:90"
 NIFI_STAGING_BUCKET="ons-blaise-v2-dev-nifi-staging"
 ```
 
-Run application:
+Run the Flask application:
 ```shell
 python main.py
 ```
 
-You should now be able to call the application via [localhost:5011](http://localhost:5011). 
+You should now be able to call the Flask application report endpoints via [localhost:5011](http://localhost:5011). Examples:
+
+```http
+http://localhost:5011/api/reports/call-history/rich?start-date=2021-01-01&end-date=2022-01-01
+```
+
+```http
+http://localhost:5011/api/reports/call-pattern/rich?start-date=2021-01-01&end-date=2022-01-01
+```
+
+Run the "deliver_mi_hub_reports" Cloud Function:
+
+```shell
+python -c "from main import deliver_mi_hub_reports; deliver_mi_hub_reports(None, None)"
+```
 
 ### Run Tests
 

@@ -45,8 +45,8 @@ def deliver_mi_hub_reports(_event, _context):
     google_storage = init_google_storage(config)
     if google_storage.bucket is None:
         return "Connection to bucket failed", 500
-    clear_tmp_directory()
     create_tmp_directory()
+    clear_tmp_directory()
     mi_hub_call_history()
     mi_hub_respondent_data()
     dirname = os.path.dirname(__file__)
@@ -69,5 +69,5 @@ if os.path.isfile("./.env"):
 load_config(app)
 
 if __name__ == "__main__":
-    deliver_mi_hub_reports(None, None)
+    # TODO finish readme
     app.run(host="0.0.0.0", port=5011)
