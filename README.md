@@ -93,12 +93,12 @@ Create an .env file in the root of the project and add the following environment
 | Variable | Description | Example |
 | --- | --- | --- |
 | GCLOUD_PROJECT | The GCP project the application will use. | ons-blaise-v2-dev |
-| MYSQL_HOST | The host address of the MySQL instance where reports will get data. Consider opening the MySQL instance in your GCP project to your network. | 1.3.3.7 |
+| MYSQL_HOST | The host address of the MySQL instance where reports will get CATI data. Consider opening the MySQL instance in your GCP project to your network. | 1.3.3.7 |
 | MYSQL_USER | The username for the MySQL instance. | blaise |
 | MYSQL_PASSWORD | The password for the MySQL instance. | BadPassword123 |
 | MYSQL_DATABASE | The database to use on the MySQL instance. | cati |
 | BLAISE_API_URL | The RESTful API the application will use to get data for reports. | localhost:90 |
-| NIFI_STAGING_BUCKET | The bucket where data will be delivered. | ons-blaise-v2-dev-nifi-staging |
+| NIFI_STAGING_BUCKET | The storage bucket where data will be delivered. In formal environments this will be picked up by NiFi for on-prem delivery. | ons-blaise-v2-dev-nifi-staging |
 
 ```shell
 GCLOUD_PROJECT="ons-blaise-v2-dev"
@@ -123,6 +123,12 @@ http://localhost:5011/api/reports/call-history/rich?start-date=2021-01-01&end-da
 
 ```http
 http://localhost:5011/api/reports/call-pattern/rich?start-date=2021-01-01&end-date=2022-01-01
+```
+
+Run the "upload_call_history" Cloud Function:
+
+```shell
+python -c "from main import upload_call_history; upload_call_history(None, None)"
 ```
 
 Run the "deliver_mi_hub_reports" Cloud Function:

@@ -40,6 +40,7 @@ def mi_hub_respondent_data():
 
 def deliver_mi_hub_reports(_event, _context):
     print("deliver_mi_hub_reports")
+    print(os.getenv("GAE_ENV"))
     config = Config.from_env()
     config.log()
     google_storage = init_google_storage(config)

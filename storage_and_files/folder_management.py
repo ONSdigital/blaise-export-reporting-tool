@@ -19,6 +19,7 @@ def clear_tmp_directory():
 
 
 def create_tmp_directory():
+    print(ROOT_DIR)
     tmp_folder = os.path.join(ROOT_DIR, "tmp")
     try:
         os.mkdir(tmp_folder)
