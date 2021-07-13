@@ -53,11 +53,13 @@ def call_pattern(interviewer):
         return results.json()
 
 
+# TODO can this go?
 @app.route("/call_history")
 def get_cati_db():
     return jsonify(get_call_history(current_app.configuration))
 
 
+# TODO can this go?
 @app.route("/events")
 def get_events_cati_db():
     return jsonify(get_events(current_app.configuration))

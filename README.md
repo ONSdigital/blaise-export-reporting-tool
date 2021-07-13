@@ -7,14 +7,13 @@
 [![Github last commit](https://img.shields.io/github/last-commit/ONSdigital/blaise-export-reporting-tool.svg)](https://github.com/ONSdigital/blaise-export-reporting-tool/commits)
 [![Github contributors](https://img.shields.io/github/contributors/ONSdigital/blaise-export-reporting-tool.svg)](https://github.com/ONSdigital/blaise-export-reporting-tool/graphs/contributors)
 
-This project extracts management information data from the Blaise CATI database and via calls to our [Blaise RESTful API](https://github.com/ONSdigital/blaise-api-rest). Persists data in [Datastore](https://cloud.google.com/datastore/docs/) if necessary. Reports can be generated from this data and delivered to an on-prem share or via the [Management Information Reports "Ernie" UI](https://github.com/ONSdigital/blaise-management-information-reports).
+This project contains several services for extracting and delivering management information.
 
 ### Services
 
-This repository has two services.
-
-- Cloud Function Python application to extract the CATI data and Blaise response data and store it in Datastore.
-- App Engine Python Flask application to query Datastore for reports to be displayed in the [Management Information Reports "Ernie" UI](https://github.com/ONSdigital/blaise-management-information-reports).
+- Cloud Function (upload_call_history) to extract call history data from the Blaise CATI database, merge this with some questionnaire response data using our Blaise [Blaise RESTful API](https://github.com/ONSdigital/blaise-api-rest) and storing this data in [Datastore](https://cloud.google.com/datastore/docs/) for 12 months. 
+- Flask application to provide endpoints for querying the data stored in Datastore. Some endpoints also take care of data cleansing and summary calculations. These endpoints are called by the [Management Information Reports "Ernie" UI](https://github.com/ONSdigital/blaise-management-information-reports).
+- Cloud Function (deliver_mi_hub_reports) to extract data for several reports from CATI and questionnaire responses, format these into CSVs and delivery them to a storage bucket so they can be picked up by NiFi for on-prem delivery.
 
 ![Flow](.github/bert-ernie-flow.png)
 

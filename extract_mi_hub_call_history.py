@@ -2,8 +2,7 @@ from data_sources.blaise_api import get_questionnaire_list, load_case_data
 from extract_call_history import load_mi_hub_cati_dial_history
 from import_call_history import append_case_data_to_dials
 from models.mi_hub_call_history import MiHubCallHistory
-from storage_and_files.folder_management import create_folder_in_tmp_directory, get_tmp_directory_path, \
-    create_tmp_directory
+from storage_and_files.folder_management import create_folder_in_tmp_directory, get_tmp_directory_path
 from storage_and_files.write_csv import write_list_of_dict_to_csv
 
 
