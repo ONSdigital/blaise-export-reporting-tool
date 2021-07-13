@@ -1,22 +1,20 @@
-from data_sources.database import get_call_history, get_mi_hub_call_history
+from data_sources.database import get_cati_call_history_from_database, get_mi_hub_call_history
 from models.call_history import CallHistory
 from models.mi_hub_call_history import MiHubCallHistory
 
 
-def get_questionnaire_name_from_id(questionnaire_id, questionnaire_list):
+def get_instrument_name_from_id(instrument_id, instrument_list):
     return next(
-        (item for item in questionnaire_list if item.get("id") == questionnaire_id),
+        (item for item in instrument_list if item.get("id") == instrument_id),
         {"name": ""},
     ).get("name")
 
 
-def load_cati_dial_history(config, questionnaire_list):
-    results = get_call_history(config)
-
-    call_history_list = []
-
+def get_cati_call_history(config, instrument_list):
+    results = get_cati_call_history_from_database(config)
+    cati_call_history_list = []
     for item in results:
-        call_history = CallHistory(
+        cati_call_history = CallHistory(
             questionnaire_id=item.get("InstrumentId"),
             serial_number=item.get("PrimaryKeyValue"),
             call_number=item.get("CallNumber"),
@@ -31,18 +29,12 @@ def load_cati_dial_history(config, questionnaire_list):
             update_info=item.get("UpdateInfo"),
             appointment_info=item.get("AppointmentInfo"),
         )
-        questionnaire_name = get_questionnaire_name_from_id(
-            call_history.questionnaire_id, questionnaire_list
-        )
-        if questionnaire_name != "":
-            call_history.generate_questionnaire_details(questionnaire_name)
-        call_history_list.append(call_history)
-
-    print(
-        f"{len(results)} calls in CATI DB - {len(call_history_list)} calls appended to list"
-    )
-
-    return call_history_list
+        instrument_name = get_instrument_name_from_id(cati_call_history.questionnaire_id, instrument_list)
+        if instrument_name != "":
+            cati_call_history.generate_instrument_details(instrument_name)
+        cati_call_history_list.append(cati_call_history)
+    print(f"Found {len(results)} call history records in the CATI database")
+    return cati_call_history_list
 
 
 def load_mi_hub_cati_dial_history(config, questionnaire_list):
@@ -62,7 +54,7 @@ def load_mi_hub_cati_dial_history(config, questionnaire_list):
             seconds_interview=item.get("dial_secs")
         )
         call_history.generate_dial_date_and_time_fields(item.get("StartTime"), item.get("EndTime"))
-        questionnaire_name = get_questionnaire_name_from_id(
+        questionnaire_name = get_instrument_name_from_id(
             call_history.questionnaire_id, questionnaire_list
         )
         if questionnaire_name != "":

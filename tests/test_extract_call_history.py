@@ -2,7 +2,7 @@ import os
 from unittest import mock
 from unittest.mock import patch
 
-from extract_call_history import load_cati_dial_history
+from extract_call_history import get_cati_call_history
 from models.call_history import CallHistory
 from models.config import Config
 
@@ -18,14 +18,14 @@ from models.config import Config
         "NIFI_STAGING_BUCKET": "nifi_staging_bucket_mock"
     },
 )
-@patch("extract_call_history.get_call_history")
-def test_load_cati_dial_history(mock_get_call_history):
+@patch("extract_call_history.get_cati_call_history_from_database")
+def test_load_cati_dial_history(mock_get_cati_call_history_from_database):
     # Setup
     questionnaire_list = [
         {"name": "OPN2101A", "id": "05cf69af-3a4e-47df-819a-928350fdda5a"}
     ]
 
-    mock_get_call_history.return_value = [
+    mock_get_cati_call_history_from_database.return_value = [
         {
             "InstrumentId": "05cf69af-3a4e-47df-819a-928350fdda5a",
             "PrimaryKeyValue": "1001011",
@@ -45,7 +45,7 @@ def test_load_cati_dial_history(mock_get_call_history):
     config = Config.from_env()
 
     # Execution
-    dial_history = load_cati_dial_history(config, questionnaire_list)
+    dial_history = get_cati_call_history(config, questionnaire_list)
 
     # Assertion
     assert len(dial_history) == 1

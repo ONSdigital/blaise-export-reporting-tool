@@ -2,12 +2,12 @@ import csv
 import os
 from dataclasses import asdict
 
-from data_sources.blaise_api import load_case_data, get_questionnaire_list
+from data_sources.blaise_api import get_instrument_data, get_list_of_installed_instruments
 from models.mi_hub_respondent_data import MiHubRespondentData
 from storage_and_files.folder_management import (
     clear_tmp_directory,
     get_tmp_directory_path,
-    create_folder_in_tmp_directory,
+    create_instrument_name_folder_in_tmp_directory,
 )
 from storage_and_files.write_csv import write_list_of_dict_to_csv
 
@@ -26,7 +26,7 @@ csv_columns = [
 
 
 def extract_mi_hub_respondent_data(config):
-    questionnaires = get_questionnaire_list(config)
+    questionnaires = get_list_of_installed_instruments(config)
     tmp_folder = get_tmp_directory_path()
 
     blaise_fields_to_get = [
@@ -50,7 +50,7 @@ def extract_mi_hub_respondent_data(config):
             blaise_fields_to_get, config, questionnaire_name
         )
 
-        create_folder_in_tmp_directory(questionnaire_name)
+        create_instrument_name_folder_in_tmp_directory(questionnaire_name)
 
         csv_file = f"{tmp_folder}/{questionnaire_name}/respondent_data.csv"
         write_list_of_dict_to_csv(csv_file, respondent_data, MiHubRespondentData.fields())
@@ -60,7 +60,7 @@ def get_respondent_data_for_questionnaire(
         blaise_fields_to_get, config, questionnaire_name
 ):
     cases = []
-    cases.extend(load_case_data(questionnaire_name, config, blaise_fields_to_get))
+    cases.extend(get_instrument_data(questionnaire_name, config, blaise_fields_to_get))
 
     respondent_data = []
     for case in cases:

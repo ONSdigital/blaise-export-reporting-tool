@@ -37,6 +37,14 @@ GET /api/reports/call-pattern/<interviewer>?start-date=<date>&end-date=<date>
 Content-Type: application/json
 ```
 
+#### MI HUB Call History
+
+blah blah...
+
+#### MI HUB Respondent Data
+
+blah blah...
+
 ### Local Setup
 
 Clone the project locally:

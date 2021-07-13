@@ -17,7 +17,7 @@ def test_generate_questionnaire_details_lms():
         None,
         None,
     )
-    call_history.generate_questionnaire_details("LMS2101_AA1")
+    call_history.generate_instrument_details("LMS2101_AA1")
 
     assert call_history.questionnaire_name == "LMS2101_AA1"
     assert call_history.survey == "LMS"
@@ -41,7 +41,7 @@ def test_generate_questionnaire_details_opn():
         None,
         None,
     )
-    call_history.generate_questionnaire_details("OPN2101A")
+    call_history.generate_instrument_details("OPN2101A")
 
     assert call_history.questionnaire_name == "OPN2101A"
     assert call_history.survey == "OPN"

@@ -1,26 +1,24 @@
 import requests
 
 
-def get_questionnaire_list(config):
-    print("Get Questionnaire list")
-    response = requests.get(
-        f"http://{config.blaise_api_url}/api/v1/serverparks/gusty/instruments"
-    )
-    questionnaire_list = response.json()
-    print(f"{len(questionnaire_list)} questionnaires installed")
-    return questionnaire_list
+def get_list_of_installed_instruments(config):
+    print("Getting list of installed instruments")
+    response = requests.get(f"http://{config.blaise_api_url}/api/v1/serverparks/gusty/instruments")
+    instrument_list = response.json()
+    print(f"Found {len(instrument_list)} instruments installed")
+    return instrument_list
 
 
-def load_case_data(questionnaire_name, config, fields):
+def get_instrument_data(instrument_name, config, fields):
     fields_to_get = []
     for field in fields:
         fields_to_get.append(("fieldIds", field))
 
-    print(f"Get reporting data for questionnaire {questionnaire_name}")
+    print(f"Getting instrument data for instrument {instrument_name}")
 
     try:
         response = requests.get(
-            f"http://{config.blaise_api_url}/api/v1/serverparks/gusty/instruments/{questionnaire_name}/report",
+            f"http://{config.blaise_api_url}/api/v1/serverparks/gusty/instruments/{instrument_name}/report",
             params=fields_to_get,
         )
         if response.status_code != 200:
@@ -31,7 +29,7 @@ def load_case_data(questionnaire_name, config, fields):
             return []
 
         for case in reporting_data:
-            case["questionnaire_name"] = questionnaire_name
+            case["questionnaire_name"] = instrument_name
 
         return reporting_data
     except ConnectionResetError:

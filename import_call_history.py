@@ -1,8 +1,38 @@
-from data_sources.blaise_api import get_questionnaire_list, load_case_data
-from extract_call_history import load_cati_dial_history
+from data_sources.blaise_api import get_list_of_installed_instruments, get_instrument_data
+from extract_call_history import get_cati_call_history
 
 
-def append_case_data_to_dials(case_history_data, cases):
+def get_call_history(config):
+    installed_instrument_list = get_list_of_installed_instruments(config)
+    cati_call_history = get_cati_call_history(config, installed_instrument_list)
+    instrument_fields_to_get = [
+        "QID.Serial_Number",
+        "QHAdmin.HOut",
+        "QHousehold.QHHold.HHSize",
+    ]
+    instrument_data = []
+    for instrument in installed_instrument_list:
+        instrument_data.extend(get_instrument_data(instrument.get("name"), config, instrument_fields_to_get))
+    print(f"Found {len(instrument_data)} instrument records")
+    cati_call_history_and_instrument_data_merged = merge_cati_call_history_and_instrument_data(cati_call_history,
+                                                                                               instrument_data)
+    print(f"Merged cati call history and instrument data")
+    return cati_call_history_and_instrument_data_merged
+
+
+def get_matching_case(serial_number, questionnaire_name, case_list_to_query):
+    case_data = [
+        case
+        for case in case_list_to_query
+        if case.get("qiD.Serial_Number") == serial_number
+           and case["questionnaire_name"] == questionnaire_name
+    ]
+    if len(case_data) != 1:
+        return None
+    return case_data[0]
+
+
+def merge_cati_call_history_and_instrument_data(case_history_data, cases):
     for case in case_history_data:
         case_data = get_matching_case(
             case.serial_number, case.questionnaire_name, cases
@@ -12,40 +42,3 @@ def append_case_data_to_dials(case_history_data, cases):
             case.number_of_interviews = case_data.get("qHousehold.QHHold.HHSize", "")
             case.outcome_code = case_data.get("qhAdmin.HOut", "")
     return case_history_data
-
-
-def get_matching_case(serial_number, questionnaire_name, case_list_to_query):
-    case_data = [
-        case
-        for case in case_list_to_query
-        if case.get("qiD.Serial_Number") == serial_number
-        and case["questionnaire_name"] == questionnaire_name
-    ]
-    if len(case_data) != 1:
-        return None
-    return case_data[0]
-
-
-def import_call_history_data(config):
-    questionnaire_list = get_questionnaire_list(config)
-
-    case_history_data = load_cati_dial_history(config, questionnaire_list)
-    print(f"Read {len(case_history_data)} case history data")
-
-    blaise_fields_to_get = [
-        "QID.Serial_Number",
-        "QHAdmin.HOut",
-        "QHousehold.QHHold.HHSize",
-    ]
-
-    cases = []
-    for questionnaire in questionnaire_list:
-        cases.extend(
-            load_case_data(questionnaire.get("name"), config, blaise_fields_to_get)
-        )
-    print(f"Read {len(cases)} cases")
-
-    merged_call_history = append_case_data_to_dials(case_history_data, cases)
-    print(f"Merged case history data with case data")
-
-    return merged_call_history

@@ -7,7 +7,7 @@ from app.app import app, load_config
 from extract_mi_hub_call_history import extract_mi_hub_call_history
 from extract_mi_hub_respondent_data import extract_mi_hub_respondent_data
 from google_storage import init_google_storage, GoogleStorage
-from import_call_history import import_call_history_data
+from import_call_history import get_call_history
 from models.config import Config
 from storage_and_files.folder_management import (
     get_tmp_directory_path,
@@ -15,16 +15,13 @@ from storage_and_files.folder_management import (
     create_tmp_directory
 )
 from storage_and_files.zip_management import prepare_zip
-from upload_call_history import add_call_history_to_datastore
+from upload_call_history import upload_call_history_to_datastore
 
 
 def upload_call_history(_event, _context):
     config = Config.from_env()
     config.log()
-    merged_call_history = import_call_history_data(config)
-    status = add_call_history_to_datastore(merged_call_history)
-    print(status)
-    return status
+    upload_call_history_to_datastore(get_call_history(config))
 
 
 def mi_hub_call_history():
@@ -45,7 +42,7 @@ def deliver_mi_hub_reports(_event, _context):
     config.log()
     google_storage = init_google_storage(config)
     if google_storage.bucket is None:
-        return "Connection to bucket failed", 500
+        return "Connection to storage bucket failed", 500
     create_tmp_directory()
     clear_tmp_directory()
     mi_hub_call_history()
@@ -63,11 +60,12 @@ def deliver_mi_hub_reports(_event, _context):
 
 
 if os.path.isfile("./.env"):
-    print("loading env vars from dotenv")
+    print("Loading environment variables from dotenv file")
     load_dotenv()
 
 load_config(app)
 
 if __name__ == "__main__":
-    # TODO finish readme
-    app.run(host="0.0.0.0", port=5011)
+    # TODO finish readme, report descriptions
+    app.run(host="0.0.0.0", port=5011)  # TODO put back before committing
+    # upload_call_history(None, None)  # TODO remove this before committing

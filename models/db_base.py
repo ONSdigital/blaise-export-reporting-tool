@@ -13,9 +13,9 @@ class DBBase:
                 database=config.mysql_database,
             )
         except mysql.connector.errors.ProgrammingError:
-            print("MySQL Authentication issue")
+            print("MySQL authentication issue")
         except mysql.connector.errors.InterfaceError:
-            print("MySQL Connection Issue")
+            print("MySQL connection issue")
 
     @classmethod
     def select_from(cls, config):

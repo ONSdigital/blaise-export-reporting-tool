@@ -1,9 +1,7 @@
-from flask import Flask, jsonify, request, current_app
+from flask import Flask, jsonify, request
 
-from data_sources.database import get_events
 from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range, \
     get_call_history_report_status
-from extract_call_history import get_call_history
 from interviewer_pattern_report.report import get_call_pattern_records_by_interviewer_and_date_range
 from models.config import Config
 
@@ -51,15 +49,3 @@ def call_pattern(interviewer):
         return {}
     else:
         return results.json()
-
-
-# TODO can this go?
-@app.route("/call_history")
-def get_cati_db():
-    return jsonify(get_call_history(current_app.configuration))
-
-
-# TODO can this go?
-@app.route("/events")
-def get_events_cati_db():
-    return jsonify(get_events(current_app.configuration))
