@@ -3,15 +3,15 @@ from dataclasses import dataclass, fields
 
 @dataclass
 class MiHubRespondentData:
-    SER_NO: str
-    OUTCOME: str
-    DATE_COMPLETED: str
-    INT_NAME: str
-    MODE: str
-    POSTCODE: str
-    GENDER: str
-    DATE_OF_BIRTH: str
-    AGE: str
+    serial_number: str
+    outcome_code: str
+    date_completed: str
+    interviewer: str
+    mode: str
+    postcode: str
+    gender: str
+    date_of_birth: str
+    age: str
 
     @classmethod
     def fields(cls):

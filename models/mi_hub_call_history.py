@@ -1,22 +1,23 @@
 from dataclasses import dataclass, fields
 from datetime import datetime
+
 from models.db_base import DBBase
 
 
 @dataclass
 class MiHubCallHistory:
-    questionnaire_id: str
-    serial_number: str
-    call_number: int
-    dial_number: int
-    interviewer: str
-    dial_result: int
-    dial_line_number: int
-    seconds_interview: int
-    end_time: str = ""
     questionnaire_name: str = ""
+    questionnaire_id: str = None
+    serial_number: str = None
     dial_date: str = ""
     dial_time: str = ""
+    end_time: str = ""
+    seconds_interview: int = None
+    call_number: int = None
+    dial_number: int = None
+    interviewer: str = None
+    dial_result: int = None
+    dial_line_number: int = None
     appointment_type: str = ""
     outcome_code: int = ""
 

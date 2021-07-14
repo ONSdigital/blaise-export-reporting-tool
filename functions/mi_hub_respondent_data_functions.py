@@ -40,15 +40,15 @@ def get_mi_hub_respondent_data_for_instrument(blaise_fields_to_get, config, ques
     mi_hub_respondent_data = []
     for record in records:
         mi_hub_respondent_data_record = MiHubRespondentData(
-            SER_NO=record.get("qiD.Serial_Number"),
-            OUTCOME=record.get("qhAdmin.HOut"),
-            DATE_COMPLETED=record.get("dateTimeStamp"),
-            INT_NAME=record.get("qhAdmin.Interviewer[1]"),
-            MODE=record.get("mode"),
-            POSTCODE=record.get("qDataBag.PostCode"),
-            GENDER=record.get("qHousehold.QHHold.Person[1].Sex"),
-            DATE_OF_BIRTH=record.get("qHousehold.QHHold.Person[1].tmpDoB"),
-            AGE=record.get("qHousehold.QHHold.Person[1].DVAge"),
+            serial_number=record.get("qiD.Serial_Number"),
+            outcome_code=record.get("qhAdmin.HOut"),
+            date_completed=record.get("dateTimeStamp"),
+            interviewer=record.get("qhAdmin.Interviewer[1]"),
+            mode=record.get("mode"),
+            postcode=record.get("qDataBag.PostCode"),
+            gender=record.get("qHousehold.QHHold.Person[1].Sex"),
+            date_of_birth=record.get("qHousehold.QHHold.Person[1].tmpDoB"),
+            age=record.get("qHousehold.QHHold.Person[1].DVAge"),
         )
         mi_hub_respondent_data.append(mi_hub_respondent_data_record)
     return mi_hub_respondent_data
