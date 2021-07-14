@@ -1,6 +1,8 @@
-from interviewer_pattern_report.derived_variables import *
+import pandas as pd
+
 from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range
-from models.interviewer_pattern import InterviewerPatternReport
+from interviewer_call_pattern_report.derived_variables import *
+from models.interviewer_call_pattern import InterviewerCallPatternReport
 
 COLUMNS_TO_VALIDATE = ['call_start_time', 'call_end_time', 'number_of_interviews']
 
@@ -15,7 +17,7 @@ def generate_report(valid_call_history_dataframe):
         hours_worked = get_hours_worked(valid_call_history_dataframe)
         total_call_seconds = get_call_time_in_seconds(valid_call_history_dataframe)
 
-        report = InterviewerPatternReport(
+        report = InterviewerCallPatternReport(
             hours_worked=hours_worked,
             call_time=convert_call_time_seconds_to_datetime_format(total_call_seconds),
             hours_on_calls_percentage=get_percentage_of_hours_on_calls(hours_worked, total_call_seconds),
@@ -82,7 +84,6 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
 
     if not call_history:
         return (None, 200), {}
-        # return (f"No records found for {interviewer_name} from {start_date_string} to {end_date_string}", 400), None
 
     create_dataframe_error, call_history_dataframe = create_dataframe(call_history)
     if create_dataframe_error:

@@ -1,8 +1,8 @@
 import csv
 from dataclasses import dataclass
 
-from storage_and_files.folder_management import get_tmp_directory_path, create_tmp_directory
-from storage_and_files.write_csv import write_list_of_dicts_to_csv
+from functions.csv_functions import write_list_of_dicts_to_csv
+from functions.folder_functions import get_tmp_directory_path, create_tmp_directory
 
 
 @dataclass

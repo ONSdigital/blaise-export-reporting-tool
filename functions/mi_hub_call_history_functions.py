@@ -1,14 +1,13 @@
 from data_sources.blaise_api import get_list_of_installed_instruments, get_instrument_data
-from extract_call_history import get_cati_mi_hub_call_history
-from import_call_history import merge_cati_call_history_and_instrument_data
+from functions.call_history_functions import get_cati_mi_hub_call_history, merge_cati_call_history_and_instrument_data
+from functions.csv_functions import write_list_of_dicts_to_csv
+from functions.folder_functions import create_instrument_name_folder_in_tmp_directory, get_tmp_directory_path
 from models.mi_hub_call_history import MiHubCallHistory
-from storage_and_files.folder_management import create_instrument_name_folder_in_tmp_directory, get_tmp_directory_path
-from storage_and_files.write_csv import write_list_of_dicts_to_csv
 
 
 def get_mi_hub_call_history(config):
-    installed_instrument_list = get_list_of_installed_instruments(config)
     print("Getting data for the MI hub call history report")
+    installed_instrument_list = get_list_of_installed_instruments(config)
     mi_hub_cati_call_history = get_cati_mi_hub_call_history(config, installed_instrument_list)
     instrument_fields_to_get = [
         "QID.Serial_Number",

@@ -2,7 +2,7 @@ import os
 from unittest import mock
 from unittest.mock import patch
 
-from extract_call_history import get_cati_call_history
+from functions.call_history_functions import get_cati_call_history
 from models.call_history import CallHistory
 from models.config import Config
 
@@ -18,7 +18,7 @@ from models.config import Config
         "NIFI_STAGING_BUCKET": "nifi_staging_bucket_mock"
     },
 )
-@patch("extract_call_history.get_cati_call_history_from_database")
+@patch("functions.call_history_functions.get_cati_call_history_from_database")
 def test_load_cati_dial_history(mock_get_cati_call_history_from_database):
     # Setup
     questionnaire_list = [

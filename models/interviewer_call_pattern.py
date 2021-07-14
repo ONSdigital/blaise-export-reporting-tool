@@ -3,7 +3,7 @@ from dataclasses import asdict, dataclass
 
 
 @dataclass
-class InterviewerPatternReport:
+class InterviewerCallPatternReport:
     hours_worked: str
     call_time: str
     hours_on_calls_percentage: str

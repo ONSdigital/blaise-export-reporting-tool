@@ -27,14 +27,12 @@ def parse_date_string_to_datetime(date_string, end_of_day=False):
     return datetime.datetime(int(date_split[0]), int(date_split[1]), int(date_split[2]))
 
 
-def get_call_history_records_by_interviewer_and_date_range(
-        interviewer_name, start_date_string, end_date_string
-):
+def get_call_history_records_by_interviewer_and_date_range(interviewer_name, start_date_string, end_date_string):
     start_date = parse_date_string_to_datetime(start_date_string)
     end_date = parse_date_string_to_datetime(end_date_string, True)
 
     if start_date is None or end_date is None:
-        return ("Invalid format for date properties provided", 400), []
+        return ("Invalid date range parameters provided", 400), []
 
     client = datastore.Client()
     query = client.query(kind="CallHistory")

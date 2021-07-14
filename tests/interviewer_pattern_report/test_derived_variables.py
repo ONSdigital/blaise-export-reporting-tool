@@ -1,5 +1,6 @@
 import pytest
-from interviewer_pattern_report.derived_variables import *
+
+from interviewer_call_pattern_report.derived_variables import *
 
 
 def test_get_hours_worked(mock_data):

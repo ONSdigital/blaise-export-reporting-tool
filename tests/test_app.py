@@ -1,6 +1,5 @@
-import json
 from unittest.mock import patch
-from models.interviewer_pattern import InterviewerPatternReport
+
 
 #
 # @patch("app.app.get_call_history_records_by_interviewer_and_date_range")

@@ -1,26 +1,14 @@
 from data_sources.blaise_api import get_instrument_data, get_list_of_installed_instruments
-from models.mi_hub_respondent_data import MiHubRespondentData
-from storage_and_files.folder_management import (
+from functions.csv_functions import write_list_of_dicts_to_csv
+from functions.folder_functions import (
     get_tmp_directory_path,
     create_instrument_name_folder_in_tmp_directory,
 )
-from storage_and_files.write_csv import write_list_of_dicts_to_csv
-
-csv_columns = [
-    "dateTimeStamp",
-    "qHousehold.QHHold.Person[1].DVAge",
-    "qiD.Serial_Number",
-    "qhAdmin.Interviewer[1]",
-    "qHousehold.QHHold.Person[1].tmpDoB",
-    "questionnaire_name",
-    "qDataBag.PostCode",
-    "mode",
-    "qhAdmin.HOut",
-    "qHousehold.QHHold.Person[1].Sex",
-]
+from models.mi_hub_respondent_data import MiHubRespondentData
 
 
 def get_mi_hub_respondent_data(config):
+    print("Getting data for the MI hub respondent data report")
     installed_instrument_list = get_list_of_installed_instruments(config)
     instrument_fields_to_get = [
         {
@@ -35,7 +23,6 @@ def get_mi_hub_respondent_data(config):
             "DateTimeStamp",
         }
     ]
-    print("Getting data for the MI hub respondent data report")
     for instrument in installed_instrument_list:
         instrument_name = instrument.get("name")
         mi_hub_respondent_data = get_mi_hub_respondent_data_for_instrument(

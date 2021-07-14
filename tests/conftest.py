@@ -1,9 +1,11 @@
 import datetime
-import pytest
+
 import pandas as pd
-from app.app import app as flask_app
-from models.interviewer_pattern import InterviewerPatternReport
+import pytest
 from google.api_core.datetime_helpers import DatetimeWithNanoseconds
+
+from app.app import app as flask_app
+from models.interviewer_call_pattern import InterviewerCallPatternReport
 
 
 @pytest.fixture
@@ -193,7 +195,7 @@ def mock_data():
 
 @pytest.fixture
 def mock_report():
-    return InterviewerPatternReport(
+    return InterviewerCallPatternReport(
         hours_worked="0:07:24",
         call_time="0:00:13",
         hours_on_calls_percentage="0.01%",

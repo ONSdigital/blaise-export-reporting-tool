@@ -13,9 +13,7 @@ def get_instrument_data(instrument_name, config, fields):
     fields_to_get = []
     for field in fields:
         fields_to_get.append(("fieldIds", field))
-
     print(f"Getting instrument data for instrument {instrument_name}")
-
     try:
         response = requests.get(
             f"http://{config.blaise_api_url}/api/v1/serverparks/gusty/instruments/{instrument_name}/report",
@@ -27,11 +25,9 @@ def get_instrument_data(instrument_name, config, fields):
         reporting_data = data.get("reportingData")
         if len(reporting_data) == 0:
             return []
-
-        for case in reporting_data:
-            case["questionnaire_name"] = instrument_name
-
+        for record in reporting_data:
+            record["questionnaire_name"] = instrument_name
         return reporting_data
     except ConnectionResetError:
-        print("connection error :( ")
+        print("Connection error")
         return []

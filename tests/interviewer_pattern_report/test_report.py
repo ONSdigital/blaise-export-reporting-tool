@@ -1,6 +1,8 @@
 import numpy as np
 import pytest
-from interviewer_pattern_report.report import *
+
+from interviewer_call_pattern_report.report import *
+
 
 # TODO: Sam, help!
 # @mock.patch.object()
@@ -49,7 +51,7 @@ from interviewer_pattern_report.report import *
 
 def test_generate_report(mock_data):
     assert not generate_report(mock_data)[0]
-    assert generate_report(mock_data)[1] == InterviewerPatternReport(
+    assert generate_report(mock_data)[1] == InterviewerCallPatternReport(
         hours_worked='2:27:57',
         call_time='0:02:45',
         hours_on_calls_percentage='1.86%',

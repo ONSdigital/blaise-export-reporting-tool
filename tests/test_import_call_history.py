@@ -1,6 +1,4 @@
-import pytest
-
-from import_call_history import merge_cati_call_history_and_instrument_data
+from functions.call_history_functions import merge_cati_call_history_and_instrument_data
 from models.call_history import CallHistory
 
 
