@@ -4,8 +4,8 @@ import os
 from dotenv import load_dotenv
 
 from app.app import app, load_config
-from extract_mi_hub_call_history import extract_mi_hub_call_history
-from extract_mi_hub_respondent_data import extract_mi_hub_respondent_data
+from extract_mi_hub_call_history import get_mi_hub_call_history
+from extract_mi_hub_respondent_data import get_mi_hub_respondent_data
 from google_storage import init_google_storage, GoogleStorage
 from import_call_history import get_call_history
 from models.config import Config
@@ -27,17 +27,16 @@ def upload_call_history(_event, _context):
 def mi_hub_call_history():
     config = Config.from_env()
     config.log()
-    extract_mi_hub_call_history(config)
+    get_mi_hub_call_history(config)
 
 
 def mi_hub_respondent_data():
     config = Config.from_env()
     config.log()
-    extract_mi_hub_respondent_data(config)
+    get_mi_hub_respondent_data(config)
 
 
 def deliver_mi_hub_reports(_event, _context):
-    print("deliver_mi_hub_reports")
     config = Config.from_env()
     config.log()
     google_storage = init_google_storage(config)
@@ -66,6 +65,4 @@ if os.path.isfile("./.env"):
 load_config(app)
 
 if __name__ == "__main__":
-    # TODO finish readme, report descriptions
-    app.run(host="0.0.0.0", port=5011)  # TODO put back before committing
-    # upload_call_history(None, None)  # TODO remove this before committing
+    app.run(host="0.0.0.0", port=5011)

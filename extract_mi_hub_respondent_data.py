@@ -1,15 +1,10 @@
-import csv
-import os
-from dataclasses import asdict
-
 from data_sources.blaise_api import get_instrument_data, get_list_of_installed_instruments
 from models.mi_hub_respondent_data import MiHubRespondentData
 from storage_and_files.folder_management import (
-    clear_tmp_directory,
     get_tmp_directory_path,
     create_instrument_name_folder_in_tmp_directory,
 )
-from storage_and_files.write_csv import write_list_of_dict_to_csv
+from storage_and_files.write_csv import write_list_of_dicts_to_csv
 
 csv_columns = [
     "dateTimeStamp",
@@ -25,11 +20,9 @@ csv_columns = [
 ]
 
 
-def extract_mi_hub_respondent_data(config):
-    questionnaires = get_list_of_installed_instruments(config)
-    tmp_folder = get_tmp_directory_path()
-
-    blaise_fields_to_get = [
+def get_mi_hub_respondent_data(config):
+    installed_instrument_list = get_list_of_installed_instruments(config)
+    instrument_fields_to_get = [
         {
             "QID.Serial_Number",
             "QHAdmin.HOut",
@@ -42,38 +35,33 @@ def extract_mi_hub_respondent_data(config):
             "DateTimeStamp",
         }
     ]
-
-    for questionnaire in questionnaires:
-        questionnaire_name = questionnaire.get("name")
-
-        respondent_data = get_respondent_data_for_questionnaire(
-            blaise_fields_to_get, config, questionnaire_name
+    print("Getting data for the MI hub respondent data report")
+    for instrument in installed_instrument_list:
+        instrument_name = instrument.get("name")
+        mi_hub_respondent_data = get_mi_hub_respondent_data_for_instrument(
+            instrument_fields_to_get, config, instrument_name
         )
+        create_instrument_name_folder_in_tmp_directory(instrument_name)
+        tmp_folder = get_tmp_directory_path()
+        csv_file = f"{tmp_folder}/{instrument_name}/respondent_data.csv"
+        write_list_of_dicts_to_csv(csv_file, mi_hub_respondent_data, MiHubRespondentData.fields())
 
-        create_instrument_name_folder_in_tmp_directory(questionnaire_name)
 
-        csv_file = f"{tmp_folder}/{questionnaire_name}/respondent_data.csv"
-        write_list_of_dict_to_csv(csv_file, respondent_data, MiHubRespondentData.fields())
-
-
-def get_respondent_data_for_questionnaire(
-        blaise_fields_to_get, config, questionnaire_name
-):
-    cases = []
-    cases.extend(get_instrument_data(questionnaire_name, config, blaise_fields_to_get))
-
-    respondent_data = []
-    for case in cases:
-        respondent = MiHubRespondentData(
-            SER_NO=case.get("qiD.Serial_Number"),
-            OUTCOME=case.get("qhAdmin.HOut"),
-            DATE_COMPLETED=case.get("dateTimeStamp"),
-            INT_NAME=case.get("qhAdmin.Interviewer[1]"),
-            MODE=case.get("mode"),
-            POSTCODE=case.get("qDataBag.PostCode"),
-            GENDER=case.get("qHousehold.QHHold.Person[1].Sex"),
-            DATE_OF_BIRTH=case.get("qHousehold.QHHold.Person[1].tmpDoB"),
-            AGE=case.get("qHousehold.QHHold.Person[1].DVAge"),
+def get_mi_hub_respondent_data_for_instrument(blaise_fields_to_get, config, questionnaire_name):
+    records = []
+    records.extend(get_instrument_data(questionnaire_name, config, blaise_fields_to_get))
+    mi_hub_respondent_data = []
+    for record in records:
+        mi_hub_respondent_data_record = MiHubRespondentData(
+            SER_NO=record.get("qiD.Serial_Number"),
+            OUTCOME=record.get("qhAdmin.HOut"),
+            DATE_COMPLETED=record.get("dateTimeStamp"),
+            INT_NAME=record.get("qhAdmin.Interviewer[1]"),
+            MODE=record.get("mode"),
+            POSTCODE=record.get("qDataBag.PostCode"),
+            GENDER=record.get("qHousehold.QHHold.Person[1].Sex"),
+            DATE_OF_BIRTH=record.get("qHousehold.QHHold.Person[1].tmpDoB"),
+            AGE=record.get("qHousehold.QHHold.Person[1].DVAge"),
         )
-        respondent_data.append(respondent)
-    return respondent_data
+        mi_hub_respondent_data.append(mi_hub_respondent_data_record)
+    return mi_hub_respondent_data

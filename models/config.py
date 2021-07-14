@@ -24,12 +24,12 @@ class Config:
         )
 
     def log(self):
-        print(f"Configuration: mysql_host: {self.mysql_host}")
-        print(f"Configuration: mysql_user: {self.mysql_user}")
+        print(f"Configuration - mysql_host: {self.mysql_host}")
+        print(f"Configuration - mysql_user: {self.mysql_user}")
         if self.mysql_password is None:
-            print(f"Configuration: mysql_password: None")
+            print(f"Configuration - mysql_password: None")
         else:
-            print(f"Configuration: mysql_password: Provided")
-        print(f"Configuration: mysql_database: {self.mysql_database}")
-        print(f"Configuration: blaise_api_url: {self.blaise_api_url}")
-        print(f"Configuration: nifi_staging_bucket: {self.nifi_staging_bucket}")
+            print(f"Configuration - mysql_password: Provided")
+        print(f"Configuration - mysql_database: {self.mysql_database}")
+        print(f"Configuration - blaise_api_url: {self.blaise_api_url}")
+        print(f"Configuration - nifi_staging_bucket: {self.nifi_staging_bucket}")

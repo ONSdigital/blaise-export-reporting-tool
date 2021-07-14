@@ -24,9 +24,9 @@ class GoogleStorage:
 
     def upload_file(self, source, dest):
         blob_destination = self.bucket.blob(dest)
-        print(f"Uploading file - {source}")
+        print(f"Uploading file to storage bucket - {source}")
         blob_destination.upload_from_filename(source)
-        print(f"Uploaded file - {source}")
+        print(f"Uploaded file to storage bucket - {source}")
 
 
 def init_google_storage(config):

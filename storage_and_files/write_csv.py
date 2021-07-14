@@ -2,7 +2,7 @@ import csv
 from dataclasses import asdict, is_dataclass
 
 
-def write_list_of_dict_to_csv(csv_file, list_of_dicts, fieldnames):
+def write_list_of_dicts_to_csv(csv_file, list_of_dicts, fieldnames):
     try:
         with open(csv_file, "w", newline="") as csv_file:
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)

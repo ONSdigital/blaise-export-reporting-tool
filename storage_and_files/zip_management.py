@@ -14,5 +14,5 @@ def prepare_zip(dir_path, zip_name):
         for file in files:
             zip.write(os.path.join(dir_path, file), f_path + file)
     zip.close()
-    print(f"File {new_file} Created successfully")
+    print(f"File created - {new_file}")
     return new_file

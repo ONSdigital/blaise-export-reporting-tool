@@ -6,12 +6,13 @@ from data_sources.datastore import (
 
 
 def upload_call_history_to_datastore(call_history_data):
+    print("Checking for new call history records to upload to datastore")
     new_call_history_records = filter_out_existing_call_history_records(call_history_data)
     if len(new_call_history_records) == 0:
         print("No new call history records to upload to datastore")
     else:
         bulk_upload_call_history(new_call_history_records)
-        print(f"Uploaded {len(new_call_history_records)} call history records to datastore")
+        print(f"Uploaded {len(new_call_history_records)} new call history records to datastore")
     update_call_history_report_status()
 
 

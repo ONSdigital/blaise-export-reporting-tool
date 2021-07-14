@@ -14,31 +14,29 @@ def get_call_history(config):
     for instrument in installed_instrument_list:
         instrument_data.extend(get_instrument_data(instrument.get("name"), config, instrument_fields_to_get))
     print(f"Found {len(instrument_data)} instrument records")
-    cati_call_history_and_instrument_data_merged = merge_cati_call_history_and_instrument_data(cati_call_history,
-                                                                                               instrument_data)
+    cati_call_history_and_instrument_data_merged = merge_cati_call_history_and_instrument_data(
+        cati_call_history, instrument_data)
     print(f"Merged cati call history and instrument data")
     return cati_call_history_and_instrument_data_merged
 
 
-def get_matching_case(serial_number, questionnaire_name, case_list_to_query):
-    case_data = [
-        case
-        for case in case_list_to_query
-        if case.get("qiD.Serial_Number") == serial_number
-           and case["questionnaire_name"] == questionnaire_name
+def match_cati_call_history_and_instrument_data(serial_number, instrument_name, instrument_data):
+    matched_record = [
+        record
+        for record in instrument_data
+        if record.get("qiD.Serial_Number") == serial_number and record["questionnaire_name"] == instrument_name
     ]
-    if len(case_data) != 1:
+    if len(matched_record) > 0:
+        return matched_record[0]
+    else:
         return None
-    return case_data[0]
 
 
-def merge_cati_call_history_and_instrument_data(case_history_data, cases):
-    for case in case_history_data:
-        case_data = get_matching_case(
-            case.serial_number, case.questionnaire_name, cases
-        )
-        if case_data is not None:
-            # Get additional field data from the case and append to dial
-            case.number_of_interviews = case_data.get("qHousehold.QHHold.HHSize", "")
-            case.outcome_code = case_data.get("qhAdmin.HOut", "")
-    return case_history_data
+def merge_cati_call_history_and_instrument_data(cati_call_history, instrument_data):
+    for record in cati_call_history:
+        matched_record = match_cati_call_history_and_instrument_data(
+            record.serial_number, record.questionnaire_name, instrument_data)
+        if matched_record is not None:
+            record.number_of_interviews = matched_record.get("qHousehold.QHHold.HHSize", "")
+            record.outcome_code = matched_record.get("qhAdmin.HOut", "")
+    return cati_call_history

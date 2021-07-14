@@ -123,7 +123,7 @@ Run the Flask application:
 python main.py
 ```
 
-You should now be able to call the Flask application report endpoints via [localhost:5011](http://localhost:5011). Examples:
+You should now be able to call the Flask application report endpoints via localhost:5011. Examples:
 
 ```http
 http://localhost:5011/api/reports/call-history/rich?start-date=2021-01-01&end-date=2022-01-01
