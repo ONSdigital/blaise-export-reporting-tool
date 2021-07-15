@@ -3,12 +3,12 @@ import pytest
 from interviewer_call_pattern_report.derived_variables import *
 
 
-def test_get_hours_worked(mock_data):
-    assert get_hours_worked(mock_data) == "2:27:57"
+def test_get_hours_worked(call_history_dataframe):
+    assert get_hours_worked(call_history_dataframe) == "2:27:57"
 
 
-def test_get_call_time_in_seconds(mock_data):
-    assert get_call_time_in_seconds(mock_data) == 165
+def test_get_call_time_in_seconds(call_history_dataframe):
+    assert get_call_time_in_seconds(call_history_dataframe) == 165
 
 
 @pytest.mark.parametrize(
@@ -31,12 +31,12 @@ def test_get_percentage_of_hours_on_calls(hours_worked, total_call_seconds, expe
         ("16:00:00", 0.5),
     ],
 )
-def test_get_average_calls_per_hour(hours_worked, expected, mock_data):
-    assert get_average_calls_per_hour(mock_data, hours_worked) == expected
+def test_get_average_calls_per_hour(hours_worked, expected, call_history_dataframe):
+    assert get_average_calls_per_hour(call_history_dataframe, hours_worked) == expected
 
 
-def test_get_respondents_interviewed(mock_data):
-    assert get_respondents_interviewed(mock_data) == 8
+def test_get_respondents_interviewed(call_history_dataframe):
+    assert get_respondents_interviewed(call_history_dataframe) == 8
 
 
 @pytest.mark.parametrize(
@@ -48,8 +48,8 @@ def test_get_respondents_interviewed(mock_data):
         ("foobar", 0),
     ],
 )
-def test_get_number_of_households_completed_successfully(status, expected, mock_data):
-    assert get_number_of_households_completed_successfully(status, mock_data) == expected
+def test_get_number_of_households_completed_successfully(status, expected, call_history_dataframe):
+    assert get_number_of_households_completed_successfully(status, call_history_dataframe) == expected
 
 
 @pytest.mark.parametrize(
@@ -61,8 +61,8 @@ def test_get_number_of_households_completed_successfully(status, expected, mock_
         ("30:00:00", 0.27),
     ],
 )
-def test_get_average_respondents_interviewed_per_hour(hours_worked, expected, mock_data):
-    assert get_average_respondents_interviewed_per_hour(mock_data, hours_worked) == expected
+def test_get_average_respondents_interviewed_per_hour(hours_worked, expected, call_history_dataframe):
+    assert get_average_respondents_interviewed_per_hour(call_history_dataframe, hours_worked) == expected
 
 
 @pytest.mark.parametrize(
@@ -74,8 +74,8 @@ def test_get_average_respondents_interviewed_per_hour(hours_worked, expected, mo
         ("foobar", "0.0%"),
     ],
 )
-def test_get_percentage_of_call_for_status(status, expected, mock_data):
-    assert get_percentage_of_call_for_status(status, mock_data) == expected
+def test_get_percentage_of_call_for_status(status, expected, call_history_dataframe):
+    assert get_percentage_of_call_for_status(status, call_history_dataframe) == expected
 
 
 @pytest.mark.parametrize(

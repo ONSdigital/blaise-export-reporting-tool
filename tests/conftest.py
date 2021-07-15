@@ -5,7 +5,151 @@ import pytest
 from google.api_core.datetime_helpers import DatetimeWithNanoseconds
 
 from app.app import app as flask_app
+from models.config import Config
 from models.interviewer_call_pattern import InterviewerCallPatternReport
+
+
+@pytest.fixture
+def config():
+    return Config(
+        mysql_host="blah",
+        mysql_user="blah",
+        mysql_password="blah",
+        mysql_database="blah",
+        blaise_api_url="blah",
+        nifi_staging_bucket="blah"
+    )
+
+
+@pytest.fixture
+def api_installed_questionnaires_response():
+    return [
+        {
+            "name": "LMS2107_CC1",
+            "id": "7bb77712-e51c-4c8e-a484-57f4c0f090be",
+            "serverParkName": "gusty",
+            "installDate": "2021-07-08T09:48:42.0848146+01:00",
+            "status": "Active",
+            "dataRecordCount": 9494,
+            "hasData": True,
+            "nodes": [
+                {
+                    "nodeName": "blaise-gusty-mgmt",
+                    "nodeStatus": "Active"
+                },
+                {
+                    "nodeName": "blaise-gusty-data-entry-1",
+                    "nodeStatus": "Active"
+                },
+                {
+                    "nodeName": "blaise-gusty-data-entry-2",
+                    "nodeStatus": "Active"
+                }
+            ]
+        },
+        {
+            "name": "OPN2107N",
+            "id": "befbf57c-591b-4a22-b77f-e183d38e87b6",
+            "serverParkName": "gusty",
+            "installDate": "2021-07-08T15:59:52.396583+01:00",
+            "status": "Active",
+            "dataRecordCount": 100,
+            "hasData": True,
+            "nodes": [
+                {
+                    "nodeName": "blaise-gusty-mgmt",
+                    "nodeStatus": "Active"
+                },
+                {
+                    "nodeName": "blaise-gusty-data-entry-1",
+                    "nodeStatus": "Active"
+                },
+                {
+                    "nodeName": "blaise-gusty-data-entry-2",
+                    "nodeStatus": "Active"
+                }
+            ]
+        },
+        {
+            "name": "OPN2105F",
+            "id": "6c9e6a19-9c8b-4210-ae69-9e478c8843ac",
+            "serverParkName": "gusty",
+            "installDate": "2021-07-09T13:33:06.2277781+01:00",
+            "status": "Active",
+            "dataRecordCount": 300,
+            "hasData": True,
+            "nodes": [
+                {
+                    "nodeName": "blaise-gusty-mgmt",
+                    "nodeStatus": "Active"
+                },
+                {
+                    "nodeName": "blaise-gusty-data-entry-1",
+                    "nodeStatus": "Active"
+                },
+                {
+                    "nodeName": "blaise-gusty-data-entry-2",
+                    "nodeStatus": "Active"
+                }
+            ]
+        }
+    ]
+
+
+@pytest.fixture
+def questionnaire_name():
+    return "DST2106Z"
+
+
+@pytest.fixture
+def questionnaire_fields_to_get():
+    return [
+        "QID.Serial_Number",
+        "QHAdmin.HOut"
+    ]
+
+
+@pytest.fixture
+def api_reporting_data_response():
+    return {
+        "instrumentName": "DST2106Z",
+        "instrumentId": "12345-12345-12345-12345-12345",
+        "reportingData": [
+            {
+                "qiD.Serial_Number": "10010",
+                "qhAdmin.HOut": "110"
+            },
+            {
+                "qiD.Serial_Number": "10020",
+                "qhAdmin.HOut": "110"
+            },
+            {
+                "qiD.Serial_Number": "10030",
+                "qhAdmin.HOut": "110"
+
+            }
+        ]
+    }
+
+
+@pytest.fixture
+def interviewer_name():
+    return "mparkinson"
+
+
+@pytest.fixture
+def start_date_string():
+    return "2022-01-01"
+
+
+@pytest.fixture
+def end_date_string():
+    return "2022-01-01"
+
+
+@pytest.fixture
+def invalid_date():
+    return "blah"
 
 
 @pytest.fixture
@@ -19,7 +163,7 @@ def client(app):
 
 
 @pytest.fixture
-def mock_data():
+def call_history_dataframe():
     results = [
         {
             'appointment_info': None,

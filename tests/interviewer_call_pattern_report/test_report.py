@@ -49,9 +49,9 @@ from interviewer_call_pattern_report.report import *
 #     assert message == expected_message
 
 
-def test_generate_report(mock_data):
-    assert not generate_report(mock_data)[0]
-    assert generate_report(mock_data)[1] == InterviewerCallPatternReport(
+def test_generate_report(call_history_dataframe):
+    assert not generate_report(call_history_dataframe)[0]
+    assert generate_report(call_history_dataframe)[1] == InterviewerCallPatternReport(
         hours_worked='2:27:57',
         call_time='0:02:45',
         hours_on_calls_percentage='1.86%',
@@ -64,16 +64,17 @@ def test_generate_report(mock_data):
     )
 
 
-def test_generate_report_returns_an_error_message(mock_data, capsys):
-    mock_data.loc[mock_data['questionnaire_id'] == '05cf69af-3a4e-47df-819a-928350fdda5a', ['call_start_time']] = 'blah'
-    generate_report(mock_data)
+def test_generate_report_returns_an_error_message(call_history_dataframe, capsys):
+    call_history_dataframe.loc[call_history_dataframe['questionnaire_id'] == '05cf69af-3a4e-47df-819a-928350fdda5a', [
+        'call_start_time']] = 'blah'
+    generate_report(call_history_dataframe)
     captured = capsys.readouterr()
     assert captured.out == ('Could not calculate get_hours_worked(): Can only use .dt accessor with '
                             'datetimelike values\n')
 
 
-def test_validate_dataframe(mock_data):
-    expected_errors, expected_valid_dataframe, expected_invalid_dataframe = validate_dataframe(mock_data)
+def test_validate_dataframe(call_history_dataframe):
+    expected_errors, expected_valid_dataframe, expected_invalid_dataframe = validate_dataframe(call_history_dataframe)
 
     assert expected_valid_dataframe.columns.to_series().str.islower().all()
     assert not expected_errors
@@ -81,29 +82,31 @@ def test_validate_dataframe(mock_data):
     assert len(expected_invalid_dataframe.index) == 0
 
 
-def test_validate_dataframe_returns_invalid_data(mock_data):
-    mock_data.loc[mock_data['questionnaire_id'] == '05cf69af-3a4e-47df-819a-928350fdda5a', 'call_end_time'] = np.nan
+def test_validate_dataframe_returns_invalid_data(call_history_dataframe):
+    call_history_dataframe.loc[
+        call_history_dataframe['questionnaire_id'] == '05cf69af-3a4e-47df-819a-928350fdda5a', 'call_end_time'] = np.nan
 
-    expected_errors, expected_valid_dataframe, expected_invalid_dataframe = validate_dataframe(mock_data)
+    expected_errors, expected_valid_dataframe, expected_invalid_dataframe = validate_dataframe(call_history_dataframe)
     assert expected_valid_dataframe.columns.to_series().str.islower().all()
     assert not expected_errors
     assert type(expected_valid_dataframe) == pd.DataFrame
     assert len(expected_invalid_dataframe.index) == 2
 
 
-def test_validate_dataframe_returns_error(mock_data):
-    mock_data.loc[
-        mock_data['questionnaire_id'] == '05cf69af-3a4e-47df-819a-928350fdda5a', 'number_of_interviews'] = 'hey-yo!'
+def test_validate_dataframe_returns_error(call_history_dataframe):
+    call_history_dataframe.loc[
+        call_history_dataframe[
+            'questionnaire_id'] == '05cf69af-3a4e-47df-819a-928350fdda5a', 'number_of_interviews'] = 'hey-yo!'
 
-    expected_errors, expected_valid_dataframe, expected_invalid_dataframe = validate_dataframe(mock_data)
+    expected_errors, expected_valid_dataframe, expected_invalid_dataframe = validate_dataframe(call_history_dataframe)
     assert expected_errors[0] == f"validate_dataframe() failed: invalid literal for int() with base 10: 'hey-yo!'"
     assert expected_errors[1] == 400
     assert not expected_valid_dataframe
     assert not expected_invalid_dataframe
 
 
-def test_drop_and_return_invalidated_records(mock_data):
-    actual_valid_records, actual_invalid_records = drop_and_return_invalidated_records(mock_data)
+def test_drop_and_return_invalidated_records(call_history_dataframe):
+    actual_valid_records, actual_invalid_records = drop_and_return_invalidated_records(call_history_dataframe)
     assert len(actual_valid_records.index) == 8
     assert len(actual_invalid_records.index) == 0
 
@@ -118,8 +121,9 @@ def test_drop_and_return_invalidated_records(mock_data):
         (["call_start_time", "call_end_time", "number_of_interviews"]),
     ],
 )
-def test_get_invalid_fields(column_names, mock_data):
+def test_get_invalid_fields(column_names, call_history_dataframe):
     for col in column_names:
-        mock_data.loc[mock_data['questionnaire_id'] == "05cf69af-3a4e-47df-819a-928350fdda5a", col] = np.nan
+        call_history_dataframe.loc[
+            call_history_dataframe['questionnaire_id'] == "05cf69af-3a4e-47df-819a-928350fdda5a", col] = np.nan
 
-    assert get_invalid_fields(mock_data) == ''.join(column_names)
+    assert get_invalid_fields(call_history_dataframe) == ''.join(column_names)

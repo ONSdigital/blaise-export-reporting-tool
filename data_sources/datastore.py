@@ -16,31 +16,25 @@ def parse_date_string_to_datetime(date_string, end_of_day=False):
     x = re.search("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$", date_string)
     if not x:
         return None
-
     date_split = date_string.split("-")
-
     if end_of_day:
         return datetime.datetime(
             int(date_split[0]), int(date_split[1]), int(date_split[2]), 23, 59, 59
         )
-
     return datetime.datetime(int(date_split[0]), int(date_split[1]), int(date_split[2]))
 
 
 def get_call_history_records_by_interviewer_and_date_range(interviewer_name, start_date_string, end_date_string):
     start_date = parse_date_string_to_datetime(start_date_string)
     end_date = parse_date_string_to_datetime(end_date_string, True)
-
     if start_date is None or end_date is None:
         return ("Invalid date range parameters provided", 400), []
-
     client = datastore.Client()
     query = client.query(kind="CallHistory")
     query.add_filter("interviewer", "=", interviewer_name)
     query.add_filter("call_start_time", ">=", start_date)
     query.add_filter("call_start_time", "<=", end_date)
     query.order = ["call_start_time"]
-
     results = list(query.fetch())
     print(f"get_call_history_records_by_interviewer_and_date_range - {len(results)} records found")
     return None, results
