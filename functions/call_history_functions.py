@@ -1,4 +1,4 @@
-from data_sources.blaise_api import get_list_of_installed_instruments, get_instrument_data
+from data_sources.blaise_api import get_list_of_installed_questionnaires, get_questionnaire_data
 from data_sources.cati_database import get_cati_call_history_from_database
 from data_sources.datastore import (
     get_call_history_keys,
@@ -10,24 +10,25 @@ from models.call_history import CallHistory
 
 def get_call_history(config):
     print("Getting call history data")
-    installed_instrument_list = get_list_of_installed_instruments(config)
-    cati_call_history = get_cati_call_history(config, installed_instrument_list)
-    instrument_fields_to_get = [
+    installed_questionnaire_list = get_list_of_installed_questionnaires(config)
+    cati_call_history = get_cati_call_history(config, installed_questionnaire_list)
+    questionnaire_fields_to_get = [
         "QID.Serial_Number",
         "QHAdmin.HOut",
         "QHousehold.QHHold.HHSize",
     ]
-    instrument_data = []
-    for instrument in installed_instrument_list:
-        instrument_data.extend(get_instrument_data(instrument.get("name"), config, instrument_fields_to_get))
-    print(f"Found {len(instrument_data)} instrument records")
-    cati_call_history_and_instrument_data_merged = merge_cati_call_history_and_instrument_data(
-        cati_call_history, instrument_data)
-    print(f"Merged cati call history and instrument data")
-    return cati_call_history_and_instrument_data_merged
+    questionnaire_data = []
+    for questionnaire in installed_questionnaire_list:
+        questionnaire_data.extend(
+            get_questionnaire_data(questionnaire.get("name"), config, questionnaire_fields_to_get))
+    print(f"Found {len(questionnaire_data)} questionnaire records")
+    cati_call_history_and_questionnaire_data_merged = merge_cati_call_history_and_questionnaire_data(
+        cati_call_history, questionnaire_data)
+    print(f"Merged cati call history and questionnaire data")
+    return cati_call_history_and_questionnaire_data_merged
 
 
-def get_cati_call_history(config, instrument_list):
+def get_cati_call_history(config, questionnaire_list):
     results = get_cati_call_history_from_database(config)
     cati_call_history_list = []
     for item in results:
@@ -46,36 +47,36 @@ def get_cati_call_history(config, instrument_list):
             update_info=item.get("UpdateInfo"),
             appointment_info=item.get("AppointmentInfo"),
         )
-        instrument_name = get_instrument_name_from_id(cati_call_history.questionnaire_id, instrument_list)
-        if instrument_name != "":
-            cati_call_history.generate_instrument_details(instrument_name)
+        questionnaire_name = get_questionnaire_name_from_id(cati_call_history.questionnaire_id, questionnaire_list)
+        if questionnaire_name != "":
+            cati_call_history.generate_questionnaire_details(questionnaire_name)
         cati_call_history_list.append(cati_call_history)
     print(f"Found {len(results)} call history records in the CATI database")
     return cati_call_history_list
 
 
-def get_instrument_name_from_id(instrument_id, instrument_list):
+def get_questionnaire_name_from_id(questionnaire_id, questionnaire_list):
     return next(
-        (item for item in instrument_list if item.get("id") == instrument_id),
+        (item for item in questionnaire_list if item.get("id") == questionnaire_id),
         {"name": ""},
     ).get("name")
 
 
-def merge_cati_call_history_and_instrument_data(cati_call_history, instrument_data):
+def merge_cati_call_history_and_questionnaire_data(cati_call_history, questionnaire_data):
     for record in cati_call_history:
-        matched_record = match_cati_call_history_and_instrument_data(
-            record.serial_number, record.questionnaire_name, instrument_data)
+        matched_record = match_cati_call_history_and_questionnaire_data(
+            record.serial_number, record.questionnaire_name, questionnaire_data)
         if matched_record is not None:
             record.number_of_interviews = matched_record.get("qHousehold.QHHold.HHSize", "")
             record.outcome_code = matched_record.get("qhAdmin.HOut", "")
     return cati_call_history
 
 
-def match_cati_call_history_and_instrument_data(serial_number, instrument_name, instrument_data):
+def match_cati_call_history_and_questionnaire_data(serial_number, questionnaire_name, questionnaire_data):
     matched_record = [
         record
-        for record in instrument_data
-        if record.get("qiD.Serial_Number") == serial_number and record["questionnaire_name"] == instrument_name
+        for record in questionnaire_data
+        if record.get("qiD.Serial_Number") == serial_number and record["questionnaire_name"] == questionnaire_name
     ]
     if len(matched_record) > 0:
         return matched_record[0]

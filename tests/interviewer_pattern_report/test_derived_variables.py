@@ -90,4 +90,3 @@ def test_get_percentage_of_call_for_status(status, expected, mock_data):
 )
 def test_convert_call_time_seconds_to_datetime_format(seconds, expected):
     assert convert_call_time_seconds_to_datetime_format(seconds) == expected
-

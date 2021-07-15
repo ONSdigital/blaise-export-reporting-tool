@@ -1,7 +1,7 @@
 import datetime
 from dataclasses import dataclass
 
-from models.db_base import DBBase
+from models.database_base import DataBaseBase
 
 
 @dataclass
@@ -26,16 +26,16 @@ class CallHistory:
     number_of_interviews: int = None
     outcome_code: str = None
 
-    def generate_instrument_details(self, instrument_name):
-        self.questionnaire_name = instrument_name
-        self.survey = instrument_name[0:3]
+    def generate_questionnaire_details(self, questionnaire_name):
+        self.questionnaire_name = questionnaire_name
+        self.survey = questionnaire_name[0:3]
         if self.survey == "LMS":
-            self.wave: int = int(instrument_name[len(instrument_name) - 1:])
-            self.cohort: str = instrument_name[len(instrument_name) - 3: -1]
+            self.wave: int = int(questionnaire_name[len(questionnaire_name) - 1:])
+            self.cohort: str = questionnaire_name[len(questionnaire_name) - 3: -1]
 
 
 @dataclass
-class CatiCallHistoryTable(DBBase):
+class CatiCallHistoryTable(DataBaseBase):
     InstrumentId: str
     PrimaryKeyValue: str
     CallNumber: int

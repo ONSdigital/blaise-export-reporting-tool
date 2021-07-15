@@ -1,4 +1,4 @@
-from functions.call_history_functions import merge_cati_call_history_and_instrument_data
+from functions.call_history_functions import merge_cati_call_history_and_questionnaire_data
 from models.call_history import CallHistory
 
 
@@ -38,7 +38,7 @@ def test_append_case_data_to_dials():
         }
     ]
 
-    merged_data = merge_cati_call_history_and_instrument_data(call_history, cases)
+    merged_data = merge_cati_call_history_and_questionnaire_data(call_history, cases)
 
     assert merged_data[0].outcome_code == 310
     assert merged_data[0].number_of_interviews == 2

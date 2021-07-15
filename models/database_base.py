@@ -1,10 +1,11 @@
-import mysql.connector
 from dataclasses import fields
 
+import mysql.connector
 
-class DBBase:
+
+class DataBaseBase:
     @classmethod
-    def connect_to_db(cls, config):
+    def connect_to_database(cls, config):
         try:
             return mysql.connector.connect(
                 host=config.mysql_host,
@@ -19,15 +20,12 @@ class DBBase:
 
     @classmethod
     def select_from(cls, config):
-        db = cls.connect_to_db(config)
+        db = cls.connect_to_database(config)
         cursor = db.cursor(dictionary=True)
-
         cursor.execute(f"""SELECT {cls.fields()} FROM {cls.table_name()}""")
-
         results = cursor.fetchall()
         cursor.close()
         db.close()
-
         return results
 
     @classmethod

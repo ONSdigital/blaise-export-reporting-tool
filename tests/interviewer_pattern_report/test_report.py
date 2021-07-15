@@ -92,7 +92,8 @@ def test_validate_dataframe_returns_invalid_data(mock_data):
 
 
 def test_validate_dataframe_returns_error(mock_data):
-    mock_data.loc[mock_data['questionnaire_id'] == '05cf69af-3a4e-47df-819a-928350fdda5a', 'number_of_interviews'] = 'hey-yo!'
+    mock_data.loc[
+        mock_data['questionnaire_id'] == '05cf69af-3a4e-47df-819a-928350fdda5a', 'number_of_interviews'] = 'hey-yo!'
 
     expected_errors, expected_valid_dataframe, expected_invalid_dataframe = validate_dataframe(mock_data)
     assert expected_errors[0] == f"validate_dataframe() failed: invalid literal for int() with base 10: 'hey-yo!'"

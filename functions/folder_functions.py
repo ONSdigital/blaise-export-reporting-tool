@@ -26,12 +26,12 @@ def create_tmp_directory():
         print(f"tmp folder already exists")
 
 
-def create_instrument_name_folder_in_tmp_directory(instrument_name):
+def create_questionnaire_name_folder_in_tmp_directory(questionnaire_name):
     tmp_folder = get_tmp_directory_path()
     try:
-        os.mkdir(os.path.join(tmp_folder, instrument_name))
+        os.mkdir(os.path.join(tmp_folder, questionnaire_name))
     except FileExistsError:
-        print(f"{instrument_name} folder already exists")
+        print(f"{questionnaire_name} folder already exists")
 
 
 def get_tmp_directory_path():

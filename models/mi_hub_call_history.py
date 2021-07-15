@@ -1,7 +1,7 @@
 from dataclasses import dataclass, fields
 from datetime import datetime
 
-from models.db_base import DBBase
+from models.database_base import DataBaseBase
 
 
 @dataclass
@@ -34,7 +34,7 @@ class MiHubCallHistory:
 
 
 @dataclass
-class CatiMiHubCallHistoryTable(DBBase):
+class CatiMiHubCallHistoryTable(DataBaseBase):
     InstrumentId: str
     PrimaryKeyValue: str
     Id: int
