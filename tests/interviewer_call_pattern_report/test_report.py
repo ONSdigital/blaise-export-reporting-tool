@@ -5,14 +5,6 @@ from interviewer_call_pattern_report.report import *
 from models.interviewer_call_pattern import InterviewerCallPattern
 
 
-def test_get_call_pattern_records_by_interviewer_and_date_range_when_no_records_found():
-    error, call_pattern_records = get_call_pattern_records_by_interviewer_and_date_range("ricer",
-                                                                                         "2021-01-01",
-                                                                                         "2021-01-01")
-    assert error is None
-    assert call_pattern_records == {}
-
-
 def test_get_call_pattern_records_by_interviewer_and_date_range_returns_error():
     error, call_pattern_records = get_call_pattern_records_by_interviewer_and_date_range("ricer", "blah", "blah")
     error_message, error_code = error
