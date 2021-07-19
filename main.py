@@ -13,7 +13,7 @@ from functions.folder_functions import (
 from functions.google_storage_functions import init_google_storage, GoogleStorage
 from functions.mi_hub_call_history_functions import get_mi_hub_call_history
 from functions.mi_hub_respondent_data_functions import get_mi_hub_respondent_data
-from functions.zip_functions import prepare_zip
+from functions.zip_functions import create_zip
 from models.config import Config
 
 
@@ -51,7 +51,7 @@ def deliver_mi_hub_reports(_event, _context):
     mi_zip_files = []
     for questionnaire in questionnaires:
         mi_filename = f"mi_{questionnaire}_{dt_string}"
-        prepare_zip(os.path.join(tmp_folder, questionnaire), f"{tmp_folder}/{mi_filename}")
+        create_zip(os.path.join(tmp_folder, questionnaire), f"{tmp_folder}/{mi_filename}")
         mi_zip_files.append(f"{mi_filename}.zip")
     for mi_zip_file in mi_zip_files:
         GoogleStorage.upload_file(google_storage, source=os.path.join(tmp_folder, mi_zip_file), dest=mi_zip_file)

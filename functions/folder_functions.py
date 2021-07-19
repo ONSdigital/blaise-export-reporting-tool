@@ -7,7 +7,6 @@ def clear_directory(folder_dir):
     for root, dirs, files in os.walk(folder_dir):
         for file in files:
             os.remove(os.path.join(root, file))
-
     folders = os.listdir(folder_dir)
     for folder in folders:
         os.rmdir(os.path.join(folder_dir, folder))

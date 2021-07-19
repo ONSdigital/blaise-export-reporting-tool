@@ -2,8 +2,8 @@ import os
 from unittest import mock
 from unittest.mock import patch
 
-from functions.call_history_functions import get_cati_call_history
-from functions.call_history_functions import merge_cati_call_history_and_questionnaire_data
+from functions.call_history_functions import get_cati_call_history, get_questionnaire_name_from_id, \
+    merge_cati_call_history_and_questionnaire_data
 from models.call_history import CallHistory
 from models.config import Config
 
@@ -73,6 +73,15 @@ def test_get_cati_call_history(mock_get_cati_call_history_from_database):
             outcome_code=None,
         )
     ]
+
+
+def test_get_questionnaire_name_from_id(api_installed_questionnaires_response):
+    assert get_questionnaire_name_from_id("12345-12345-12345-12345-ZZZZZ",
+                                          api_installed_questionnaires_response) == "DST2106Z"
+
+
+def test_get_questionnaire_name_from_id_not_found(api_installed_questionnaires_response):
+    assert get_questionnaire_name_from_id("blah", api_installed_questionnaires_response) == ""
 
 
 def test_merge_cati_call_history_and_questionnaire_data():

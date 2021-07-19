@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 
 from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range, \
     get_call_history_report_status
+from functions.date_functions import validate_date
 from interviewer_call_pattern_report.report import get_call_pattern_records_by_interviewer_and_date_range
 from models.config import Config
 
@@ -28,8 +29,8 @@ def call_history(interviewer):
         return '{"error": "Invalid request, missing required date parameters"}', 400
     error, results = get_call_history_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
     if error:
-        message, error_code = error
-        return message, error_code
+        error_message, error_code = error
+        return error_message, error_code
     return jsonify(results)
 
 
@@ -42,9 +43,9 @@ def call_pattern(interviewer):
         print("Invalid request, missing required date parameters")
         return '{"error": "Invalid request, missing required date parameters"}', 400
     error, results = get_call_pattern_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
-    if error[0]:
-        message, error_code = error
-        return message, error_code
+    if error:
+        error_message, error_code = error
+        return error_message, error_code
     if results == {}:
         return {}
     else:
