@@ -27,6 +27,9 @@ def call_history(interviewer):
     if start_date is None or end_date is None:
         print("Invalid request, missing required date parameters")
         return '{"error": "Invalid request, missing required date parameters"}', 400
+    if not validate_date(start_date) or not validate_date(end_date):
+        print("Invalid request, date is not valid")
+        return '{"error": "Invalid request, date is not valid"}', 400
     error, results = get_call_history_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
     if error:
         error_message, error_code = error
