@@ -74,18 +74,18 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
         interviewer_name, start_date_string, end_date_string
     )
     if call_history_records_error:
-        return call_history_records_error, {}
+        return call_history_records_error, None
     if not call_history_records:
         return None, {}
     create_dataframe_error, call_history_dataframe = create_dataframe(call_history_records)
     if create_dataframe_error:
-        return call_history_records_error, {}
+        return create_dataframe_error, None
     validate_dataframe_error, valid_dataframe, invalid_dataframe = validate_dataframe(call_history_dataframe)
     if validate_dataframe_error:
-        return call_history_records_error, {}
+        return validate_dataframe_error, None
     generate_report_error, report = generate_report(valid_dataframe)
     if generate_report_error:
-        return call_history_records_error, {}
+        return generate_report_error, None
     if not invalid_dataframe.empty:
         report.discounted_invalid_records = f"{len(invalid_dataframe.index)}/{len(call_history_dataframe.index)}"
         report.invalid_fields = f"{get_invalid_fields(call_history_dataframe)}"
