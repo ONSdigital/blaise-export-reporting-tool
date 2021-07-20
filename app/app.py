@@ -33,6 +33,7 @@ def call_history(interviewer):
     error, results = get_call_history_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
     if error:
         error_message, error_code = error
+        print(error_message)
         return error_message, error_code
     return jsonify(results)
 
@@ -51,6 +52,7 @@ def call_pattern(interviewer):
     error, results = get_call_pattern_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
     if error:
         error_message, error_code = error
+        print(error_message)
         return error_message, error_code
     if results == {}:
         return {}
