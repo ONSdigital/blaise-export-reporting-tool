@@ -1,9 +1,155 @@
 import datetime
-import pytest
+
 import pandas as pd
-from app.app import app as flask_app
-from models.interviewer_pattern import InterviewerPatternReport
+import pytest
 from google.api_core.datetime_helpers import DatetimeWithNanoseconds
+
+from app.app import app as flask_app
+from models.config import Config
+from models.interviewer_call_pattern import InterviewerCallPattern
+
+
+@pytest.fixture
+def config():
+    return Config(
+        mysql_host="blah",
+        mysql_user="blah",
+        mysql_password="blah",
+        mysql_database="blah",
+        blaise_api_url="blah",
+        nifi_staging_bucket="blah"
+    )
+
+
+@pytest.fixture
+def api_installed_questionnaires_response():
+    return [
+        {
+            "name": "DST2106X",
+            "id": "12345-12345-12345-12345-XXXXX",
+            "serverParkName": "gusty",
+            "installDate": "2021-01-01T01:01:01.99999+01:00",
+            "status": "Active",
+            "dataRecordCount": 1337,
+            "hasData": True,
+            "nodes": [
+                {
+                    "nodeName": "blaise-gusty-mgmt",
+                    "nodeStatus": "Active"
+                },
+                {
+                    "nodeName": "blaise-gusty-data-entry-1",
+                    "nodeStatus": "Active"
+                },
+                {
+                    "nodeName": "blaise-gusty-data-entry-2",
+                    "nodeStatus": "Active"
+                }
+            ]
+        },
+        {
+            "name": "DST2106Y",
+            "id": "12345-12345-12345-12345-YYYYY",
+            "serverParkName": "gusty",
+            "installDate": "2021-01-01T01:01:01.99999+01:00",
+            "status": "Active",
+            "dataRecordCount": 42,
+            "hasData": True,
+            "nodes": [
+                {
+                    "nodeName": "blaise-gusty-mgmt",
+                    "nodeStatus": "Active"
+                },
+                {
+                    "nodeName": "blaise-gusty-data-entry-1",
+                    "nodeStatus": "Active"
+                },
+                {
+                    "nodeName": "blaise-gusty-data-entry-2",
+                    "nodeStatus": "Active"
+                }
+            ]
+        },
+        {
+            "name": "DST2106Z",
+            "id": "12345-12345-12345-12345-ZZZZZ",
+            "serverParkName": "gusty",
+            "installDate": "2021-01-01T01:01:01.99999+01:00",
+            "status": "Active",
+            "dataRecordCount": 999,
+            "hasData": True,
+            "nodes": [
+                {
+                    "nodeName": "blaise-gusty-mgmt",
+                    "nodeStatus": "Active"
+                },
+                {
+                    "nodeName": "blaise-gusty-data-entry-1",
+                    "nodeStatus": "Active"
+                },
+                {
+                    "nodeName": "blaise-gusty-data-entry-2",
+                    "nodeStatus": "Active"
+                }
+            ]
+        }
+    ]
+
+
+@pytest.fixture
+def questionnaire_name():
+    return "DST2106Z"
+
+
+@pytest.fixture
+def questionnaire_fields_to_get():
+    return [
+        "QID.Serial_Number",
+        "QHAdmin.HOut"
+    ]
+
+
+@pytest.fixture
+def api_reporting_data_response():
+    return {
+        "instrumentName": "DST2106Z",
+        "instrumentId": "12345-12345-12345-12345-12345",
+        "reportingData": [
+            {
+                "qiD.Serial_Number": "10010",
+                "qhAdmin.HOut": "110"
+            },
+            {
+                "qiD.Serial_Number": "10020",
+                "qhAdmin.HOut": "110"
+            },
+            {
+                "qiD.Serial_Number": "10030",
+                "qhAdmin.HOut": "110"
+
+            }
+        ]
+    }
+
+
+@pytest.fixture
+def interviewer_name():
+    return "ricer"
+
+
+@pytest.fixture
+def start_date_string():
+    return "2021-01-01"
+
+
+@pytest.fixture
+def end_date_string():
+    return "2022-01-01"
+
+
+@pytest.fixture
+def invalid_date():
+    return "blah"
 
 
 @pytest.fixture
@@ -17,7 +163,7 @@ def client(app):
 
 
 @pytest.fixture
-def mock_data():
+def call_history_dataframe():
     results = [
         {
             'appointment_info': None,
@@ -192,16 +338,16 @@ def mock_data():
 
 
 @pytest.fixture
-def mock_report():
-    return InterviewerPatternReport(
-        hours_worked="0:07:24",
-        call_time="0:00:13",
-        hours_on_calls_percentage="0.01%",
+def interviewer_call_pattern_report():
+    return InterviewerCallPattern(
+        hours_worked="7:24:00",
+        call_time="0:00:00",
+        hours_on_calls_percentage="0%",
         average_calls_per_hour=3.14,
         respondents_interviewed=5,
-        households_completed_successfully=200,
-        average_respondents_interviewed_per_hour=238.21,
-        no_contacts_percentage="5%",
+        households_completed_successfully=42,
+        average_respondents_interviewed_per_hour=123,
+        no_contacts_percentage="0%",
         appointments_for_contacts_percentage="101%",
         discounted_invalid_records="0",
         invalid_fields="n/a",
