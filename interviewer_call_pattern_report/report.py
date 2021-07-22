@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range
 from interviewer_call_pattern_report.derived_variables import *
@@ -39,10 +40,15 @@ def generate_report(valid_call_history_dataframe):
 
 
 def drop_and_return_invalidated_records(dataframe):
-    valid_records = dataframe.dropna(subset=COLUMNS_TO_VALIDATE)
+    valid_records = dataframe.copy()
+    valid_records['number_of_interviews'].replace('', np.nan, inplace=True)
+
+    valid_records.dropna(subset=COLUMNS_TO_VALIDATE, inplace=True)
     invalid_records = dataframe[~dataframe.index.isin(valid_records.index)]
+
     valid_records.reset_index(drop=True, inplace=True)
     invalid_records.reset_index(drop=True, inplace=True)
+
     return valid_records, invalid_records
 
 
@@ -50,10 +56,10 @@ def validate_dataframe(data):
     invalid_data = pd.DataFrame()
     valid_data = data.copy()
     valid_data.columns = valid_data.columns.str.lower()
+
     missing_data_found = valid_data.filter(COLUMNS_TO_VALIDATE).isna().any().any()
     if missing_data_found:
-        valid_data = drop_and_return_invalidated_records(data)[0]
-        invalid_data = drop_and_return_invalidated_records(data)[1]
+        valid_data, invalid_data = drop_and_return_invalidated_records(data)
     try:
         valid_data = valid_data.astype({"number_of_interviews": "int32", "dial_secs": "float64"})
     except Exception as err:
