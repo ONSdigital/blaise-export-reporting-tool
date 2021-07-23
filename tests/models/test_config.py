@@ -6,33 +6,37 @@ from models.config import Config
 
 def test_config():
     config = Config(
-        mysql_host="just-a-simple-host",
-        mysql_user="test",
-        mysql_password="unique-password",
-        mysql_database="DB_NAME",
-        blaise_api_url="a-legit-url",
+        mysql_host="mysql_host_mock",
+        mysql_user="mysql_user_mock",
+        mysql_password="mysql_password_mock",
+        mysql_database="mysql_database_mock",
+        blaise_api_url="blaise_api_url_mock",
+        nifi_staging_bucket="nifi_staging_bucket_mock"
     )
-    assert config.mysql_host == "just-a-simple-host"
-    assert config.mysql_user == "test"
-    assert config.mysql_password == "unique-password"
-    assert config.mysql_database == "DB_NAME"
-    assert config.blaise_api_url == "a-legit-url"
+    assert config.mysql_host == "mysql_host_mock"
+    assert config.mysql_user == "mysql_user_mock"
+    assert config.mysql_password == "mysql_password_mock"
+    assert config.mysql_database == "mysql_database_mock"
+    assert config.blaise_api_url == "blaise_api_url_mock"
+    assert config.nifi_staging_bucket == "nifi_staging_bucket_mock"
 
 
 @mock.patch.dict(
     os.environ,
     {
-        "MYSQL_HOST": "just-a-simple-host",
-        "MYSQL_USER": "test",
-        "MYSQL_PASSWORD": "unique-password",
-        "MYSQL_DATABASE": "DB_NAME",
-        "BLAISE_API_URL": "a-legit-url",
+        "MYSQL_HOST": "mysql_host_mock",
+        "MYSQL_USER": "mysql_user_mock",
+        "MYSQL_PASSWORD": "mysql_password_mock",
+        "MYSQL_DATABASE": "mysql_database_mock",
+        "BLAISE_API_URL": "blaise_api_url_mock",
+        "NIFI_STAGING_BUCKET": "nifi_staging_bucket_mock"
     },
 )
 def test_config_from_env():
     config = Config.from_env()
-    assert config.mysql_host == "just-a-simple-host"
-    assert config.mysql_user == "test"
-    assert config.mysql_password == "unique-password"
-    assert config.mysql_database == "DB_NAME"
-    assert config.blaise_api_url == "a-legit-url"
+    assert config.mysql_host == "mysql_host_mock"
+    assert config.mysql_user == "mysql_user_mock"
+    assert config.mysql_password == "mysql_password_mock"
+    assert config.mysql_database == "mysql_database_mock"
+    assert config.blaise_api_url == "blaise_api_url_mock"
+    assert config.nifi_staging_bucket == "nifi_staging_bucket_mock"

@@ -1,10 +1,9 @@
-from flask import Flask, jsonify, request, current_app
+from flask import Flask, jsonify, request
 
-from data_sources.database import get_events
 from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range, \
     get_call_history_report_status
-from extract_call_history import get_call_history
-from interviewer_pattern_report.report import get_call_pattern_records_by_interviewer_and_date_range
+from functions.date_functions import validate_date
+from interviewer_call_pattern_report.report import get_call_pattern_records_by_interviewer_and_date_range
 from models.config import Config
 
 app = Flask(__name__)
@@ -24,21 +23,18 @@ def call_history_report_status():
 def call_history(interviewer):
     start_date = request.args.get("start-date", None)
     end_date = request.args.get("end-date", None)
-
-    print(f"Call history for interviewer: {interviewer} between {start_date} and {end_date}")
-
+    print(f"Getting call history data for {interviewer} between {start_date} and {end_date}")
     if start_date is None or end_date is None:
-        print("Invalid request missing required filter properties ")
-        return '{"error": "Invalid request missing required filter properties"}', 400
-
-    error, results = get_call_history_records_by_interviewer_and_date_range(
-        interviewer, start_date, end_date
-    )
-
+        print("Invalid request, missing required date parameters")
+        return '{"error": "Invalid request, missing required date parameters"}', 400
+    if not validate_date(start_date) or not validate_date(end_date):
+        print("Invalid request, date is not valid")
+        return '{"error": "Invalid request, date is not valid"}', 400
+    error, results = get_call_history_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
     if error:
-        message, error_code = error
-        return message, error_code
-
+        error_message, error_code = error
+        print(error_message)
+        return error_message, error_code
     return jsonify(results)
 
 
@@ -46,28 +42,19 @@ def call_history(interviewer):
 def call_pattern(interviewer):
     start_date = request.args.get("start-date", None)
     end_date = request.args.get("end-date", None)
-
-    print(f"Call history for interviewer: {interviewer} between {start_date} and {end_date}")
-
+    print(f"Getting call pattern data for {interviewer} between {start_date} and {end_date}")
     if start_date is None or end_date is None:
-        print("Invalid request: missing required filter properties")
-        return {}
-
+        print("Invalid request, missing required date parameters")
+        return '{"error": "Invalid request, missing required date parameters"}', 400
+    if not validate_date(start_date) or not validate_date(end_date):
+        print("Invalid request, date is not valid")
+        return '{"error": "Invalid request, date is not valid"}', 400
     error, results = get_call_pattern_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
-
-    if error[0]:
-        message, code = error
-        print(message)
+    if error:
+        error_message, error_code = error
+        print(error_message)
+        return error_message, error_code
+    if results == {}:
         return {}
-
-    return results.json()
-
-
-@app.route("/call_history")
-def get_cati_db():
-    return jsonify(get_call_history(current_app.configuration))
-
-
-@app.route("/events")
-def get_events_cati_db():
-    return jsonify(get_events(current_app.configuration))
+    else:
+        return results.json()

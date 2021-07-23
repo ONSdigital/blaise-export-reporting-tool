@@ -1,4 +1,3 @@
-import pandas as pd
 import datetime
 
 
@@ -9,7 +8,8 @@ def get_hours_worked(call_history_dataframe):
             [call_history_dataframe['call_start_time'].dt.date]).agg({'call_start_time': min, 'call_end_time': max})
 
         # subtract first call time from last call time
-        daily_call_history_by_date['hours_worked'] = daily_call_history_by_date['call_end_time']-daily_call_history_by_date['call_start_time']
+        daily_call_history_by_date['hours_worked'] = daily_call_history_by_date['call_end_time'] - \
+                                                     daily_call_history_by_date['call_start_time']
 
         # sum total hours
         total_hours = daily_call_history_by_date['hours_worked'].sum()
@@ -57,7 +57,7 @@ def limit_two_decimal_places(float_value):
 
 def get_percentage_of_hours_on_calls(hours_worked, total_call_seconds):
     try:
-        value = 100 * float(total_call_seconds)/float(get_total_seconds_from_string(hours_worked))
+        value = 100 * float(total_call_seconds) / float(get_total_seconds_from_string(hours_worked))
         result = f"{limit_two_decimal_places(value)}%"
     except Exception as err:
         print(f"Could not calculate get_percentage_of_hours_on_calls(): {err}")
@@ -67,10 +67,10 @@ def get_percentage_of_hours_on_calls(hours_worked, total_call_seconds):
 
 def get_average_calls_per_hour(call_history_dataframe, string_hours_worked):
     try:
-        integer_hours_worked = get_total_seconds_from_string(string_hours_worked)/3600
+        integer_hours_worked = get_total_seconds_from_string(string_hours_worked) / 3600
         total_calls = len(call_history_dataframe.index)
 
-        result = limit_two_decimal_places(total_calls/integer_hours_worked)
+        result = limit_two_decimal_places(total_calls / integer_hours_worked)
     except Exception as err:
         print(f"Could not calculate get_average_calls_per_hour(): {err}")
         raise
@@ -97,10 +97,10 @@ def get_number_of_households_completed_successfully(status, call_history_datafra
 
 def get_average_respondents_interviewed_per_hour(call_history_dataframe, string_hours_worked):
     try:
-        integer_hours_worked = get_total_seconds_from_string(string_hours_worked)/3600
+        integer_hours_worked = get_total_seconds_from_string(string_hours_worked) / 3600
         respondents_interviewed = call_history_dataframe['number_of_interviews'].sum()
 
-        result = limit_two_decimal_places(respondents_interviewed/integer_hours_worked)
+        result = limit_two_decimal_places(respondents_interviewed / integer_hours_worked)
     except Exception as err:
         print(f"Could not calculate get_average_respondents_interviewed_per_hour(): {err}")
         raise
@@ -111,7 +111,7 @@ def get_percentage_of_call_for_status(status, call_history_dataframe):
     try:
         numerator = call_history_dataframe.loc[call_history_dataframe['status'].str.contains(status, case=False)]
 
-        value = 100 * len(numerator.index)/len(call_history_dataframe.index)
+        value = 100 * len(numerator.index) / len(call_history_dataframe.index)
         result = f"{limit_two_decimal_places(value)}%"
     except Exception as err:
         print(f"Could not calculate get_percentage_of_call_for_status(): {err}")
