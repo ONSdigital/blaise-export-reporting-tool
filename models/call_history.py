@@ -1,6 +1,7 @@
 import datetime
 from dataclasses import dataclass
-from models.db_base import DBBase
+
+from models.database_base import DataBaseBase
 
 
 @dataclass
@@ -29,16 +30,12 @@ class CallHistory:
         self.questionnaire_name = questionnaire_name
         self.survey = questionnaire_name[0:3]
         if self.survey == "LMS":
-            self.wave: int = int(
-                self.questionnaire_name[len(self.questionnaire_name) - 1 :]
-            )
-            self.cohort: str = self.questionnaire_name[
-                len(self.questionnaire_name) - 3 : -1
-            ]
+            self.wave: int = int(questionnaire_name[len(questionnaire_name) - 1:])
+            self.cohort: str = questionnaire_name[len(questionnaire_name) - 3: -1]
 
 
 @dataclass
-class CatiCallHistoryTable(DBBase):
+class CatiCallHistoryTable(DataBaseBase):
     InstrumentId: str
     PrimaryKeyValue: str
     CallNumber: int
@@ -58,4 +55,4 @@ class CatiCallHistoryTable(DBBase):
 
     @classmethod
     def extra_fields(cls):
-        return ["ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dialsecs"]
+        return ["ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dial_secs"]

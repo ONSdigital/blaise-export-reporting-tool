@@ -1,27 +1,24 @@
 from dataclasses import dataclass, fields
 from datetime import datetime
-from models.db_base import DBBase
+
+from models.database_base import DataBaseBase
 
 
 @dataclass
-class MICallHistory:
-    questionnaire_id: str
-    serial_number: str
-    internal_key: int
-    call_number: int
-    dial_number: int
-    interviewer: str
-    dial_result: int
-    dial_line_number: int
-    seconds_dial: int
-    end_time: str = ""
+class MiHubCallHistory:
     questionnaire_name: str = ""
+    questionnaire_id: str = None
+    serial_number: str = None
     dial_date: str = ""
     dial_time: str = ""
-    entry_priority: int = ""
-    exit_priority: int = ""
+    end_time: str = ""
+    seconds_interview: int = None
+    call_number: int = None
+    dial_number: int = None
+    interviewer: str = None
+    dial_result: int = None
+    dial_line_number: int = None
     appointment_type: str = ""
-    seconds_interview: datetime = ""
     outcome_code: int = ""
 
     def generate_dial_date_and_time_fields(self, start_datetime, end_datetime):
@@ -31,9 +28,13 @@ class MICallHistory:
             self.end_time = end_datetime.strftime("%H:%M:%S")
         pass
 
+    @classmethod
+    def fields(cls):
+        return [field.name for field in fields(cls)]
+
 
 @dataclass
-class CatiMiCallHistoryTable(DBBase):
+class CatiMiHubCallHistoryTable(DataBaseBase):
     InstrumentId: str
     PrimaryKeyValue: str
     Id: int
@@ -52,4 +53,4 @@ class CatiMiCallHistoryTable(DBBase):
 
     @classmethod
     def extra_fields(cls):
-        return ["ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dialsecs"]
+        return ["ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dial_secs"]
