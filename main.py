@@ -18,24 +18,15 @@ from models.config import Config
 
 
 def upload_call_history(_event, _context):
+    print("Running Cloud Function - upload_call_history")
     config = Config.from_env()
     config.log()
-    upload_call_history_to_datastore(get_call_history(config))
-
-
-def mi_hub_call_history():
-    config = Config.from_env()
-    config.log()
-    get_mi_hub_call_history(config)
-
-
-def mi_hub_respondent_data():
-    config = Config.from_env()
-    config.log()
-    get_mi_hub_respondent_data(config)
+    call_history = get_call_history(config)
+    upload_call_history_to_datastore(call_history)
 
 
 def deliver_mi_hub_reports(_event, _context):
+    print("Running Cloud Function - deliver_mi_hub_reports")
     config = Config.from_env()
     config.log()
     google_storage = init_google_storage(config)
@@ -43,8 +34,8 @@ def deliver_mi_hub_reports(_event, _context):
         return "Connection to storage bucket failed", 500
     create_tmp_directory()
     clear_tmp_directory()
-    mi_hub_call_history()
-    mi_hub_respondent_data()
+    get_mi_hub_call_history(config)
+    get_mi_hub_respondent_data(config)
     tmp_folder = get_tmp_directory_path()
     questionnaires = [x for x in os.listdir(tmp_folder)]
     dt_string = datetime.datetime.now().strftime("%d%m%Y_%H%M%S")
@@ -64,4 +55,5 @@ if os.path.isfile("./.env"):
 load_config(app)
 
 if __name__ == "__main__":
+    print("Running Flask application")
     app.run(host="0.0.0.0", port=5011)
