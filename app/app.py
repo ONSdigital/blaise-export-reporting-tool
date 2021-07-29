@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request
 from data_sources.datastore_data import get_call_history_report_status
 from functions.date_functions import validate_date
 from models.config_model import Config
+from reports.appointment_resource_planning_report import get_appointment_resource_planning_by_date
 from reports.interviewer_call_history_report import get_call_history_records_by_interviewer_and_date_range
 from reports.interviewer_call_pattern_report import get_call_pattern_records_by_interviewer_and_date_range
 
@@ -58,3 +59,13 @@ def call_pattern(interviewer):
         return {}
     else:
         return results.json()
+
+
+@app.route("/api/reports/appointment-resource-planning/<date>")
+def appointment_resource_planning(date):
+    error, results = get_appointment_resource_planning_by_date(date)
+    if error:
+        error_message, error_code = error
+        print(error_message)
+        return error_message, error_code
+    return jsonify(results)
