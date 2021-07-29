@@ -1,4 +1,4 @@
-from data_sources.blaise_api import get_list_of_installed_questionnaires, get_questionnaire_data
+from data_sources.questionnaire_data import get_list_of_installed_questionnaires, get_questionnaire_data
 
 
 def test_get_list_of_installed_questionnaires(config, requests_mock, api_installed_questionnaires_response):

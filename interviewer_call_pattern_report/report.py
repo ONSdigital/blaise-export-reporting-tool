@@ -1,7 +1,7 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
-from data_sources.datastore import get_call_history_records_by_interviewer_and_date_range
+from data_sources.datastore_data import get_call_history_records_by_interviewer_and_date_range
 from interviewer_call_pattern_report.derived_variables import *
 from models.interviewer_call_pattern import InterviewerCallPattern
 

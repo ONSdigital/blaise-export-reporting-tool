@@ -1,5 +1,5 @@
-from data_sources.blaise_api import get_list_of_installed_questionnaires, get_questionnaire_data
-from data_sources.cati_database import get_cati_mi_hub_call_history_from_database
+from data_sources.cati_data import get_cati_mi_hub_call_history_from_database
+from data_sources.questionnaire_data import get_list_of_installed_questionnaires, get_questionnaire_data
 from functions.call_history_functions import merge_cati_call_history_and_questionnaire_data, \
     get_questionnaire_name_from_id
 from functions.csv_functions import write_list_of_dicts_to_csv

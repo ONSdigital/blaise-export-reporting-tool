@@ -1,4 +1,4 @@
-from data_sources.blaise_api import get_questionnaire_data, get_list_of_installed_questionnaires
+from data_sources.questionnaire_data import get_questionnaire_data, get_list_of_installed_questionnaires
 from functions.csv_functions import write_list_of_dicts_to_csv
 from functions.folder_functions import (
     get_tmp_directory_path,

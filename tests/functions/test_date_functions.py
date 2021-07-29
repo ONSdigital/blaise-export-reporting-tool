@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from data_sources.datastore import parse_date_string_to_datetime
+from data_sources.datastore_data import parse_date_string_to_datetime
 
 
 @pytest.mark.parametrize(

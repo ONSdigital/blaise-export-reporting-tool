@@ -1,6 +1,6 @@
 import pytest
 
-from data_sources.datastore import split_into_batches, get_call_history_records_by_interviewer_and_date_range
+from data_sources.datastore_data import split_into_batches, get_call_history_records_by_interviewer_and_date_range
 
 
 def test_get_call_history_records_by_interviewer_and_date_range_with_invalid_dates(interviewer_name, invalid_date):
