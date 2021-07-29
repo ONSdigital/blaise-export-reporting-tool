@@ -1,4 +1,4 @@
-from models.interviewer_call_pattern import InterviewerCallPattern
+from models.interviewer_call_pattern_model import InterviewerCallPattern
 
 
 def test_interviewer_call_pattern():

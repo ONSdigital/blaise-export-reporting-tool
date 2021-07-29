@@ -4,17 +4,13 @@ import os
 from dotenv import load_dotenv
 
 from app.app import app, load_config
-from functions.call_history_functions import get_call_history, upload_call_history_to_datastore
-from functions.folder_functions import (
-    get_tmp_directory_path,
-    clear_tmp_directory,
-    create_tmp_directory
-)
+from data_sources.datastore_data import get_call_history, upload_call_history_to_datastore
+from functions.folder_functions import get_tmp_directory_path, clear_tmp_directory, create_tmp_directory
 from functions.google_storage_functions import init_google_storage, GoogleStorage
-from functions.mi_hub_call_history_functions import get_mi_hub_call_history
-from functions.mi_hub_respondent_data_functions import get_mi_hub_respondent_data
 from functions.zip_functions import create_zip
-from models.config import Config
+from models.config_model import Config
+from reports.mi_hub_call_history_report import get_mi_hub_call_history
+from reports.mi_hub_respondent_data_report import get_mi_hub_respondent_data
 
 
 def upload_call_history(_event, _context):

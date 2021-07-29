@@ -1,4 +1,5 @@
-from data_sources.questionnaire_data import get_list_of_installed_questionnaires, get_questionnaire_data
+from data_sources.questionnaire_data import get_list_of_installed_questionnaires, get_questionnaire_data, \
+    get_questionnaire_name_from_id
 
 
 def test_get_list_of_installed_questionnaires(config, requests_mock, api_installed_questionnaires_response):
@@ -28,3 +29,12 @@ def test_get_questionnaire_data(questionnaire_name,
                               {'qhAdmin.HOut': '110',
                                'qiD.Serial_Number': '10030',
                                'questionnaire_name': 'DST2106Z'}]
+
+
+def test_get_questionnaire_name_from_id(api_installed_questionnaires_response):
+    assert get_questionnaire_name_from_id("12345-12345-12345-12345-ZZZZZ",
+                                          api_installed_questionnaires_response) == "DST2106Z"
+
+
+def test_get_questionnaire_name_from_id_not_found(api_installed_questionnaires_response):
+    assert get_questionnaire_name_from_id("blah", api_installed_questionnaires_response) == ""

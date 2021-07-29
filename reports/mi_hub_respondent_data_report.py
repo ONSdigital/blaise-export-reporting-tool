@@ -4,7 +4,7 @@ from functions.folder_functions import (
     get_tmp_directory_path,
     create_questionnaire_name_folder_in_tmp_directory,
 )
-from models.mi_hub_respondent_data import MiHubRespondentData
+from models.mi_hub_respondent_data_model import MiHubRespondentData
 
 
 def get_mi_hub_respondent_data(config):

@@ -1,5 +1,5 @@
-from models.call_history import CatiCallHistoryTable
-from models.mi_hub_call_history import CatiMiHubCallHistoryTable
+from models.call_history_model import CatiCallHistoryTable
+from models.mi_hub_call_history_model import CatiMiHubCallHistoryTable
 
 
 def get_cati_call_history_from_database(config):

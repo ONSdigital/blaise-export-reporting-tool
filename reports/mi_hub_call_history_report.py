@@ -1,10 +1,10 @@
 from data_sources.cati_data import get_cati_mi_hub_call_history_from_database
-from data_sources.questionnaire_data import get_list_of_installed_questionnaires, get_questionnaire_data
-from functions.call_history_functions import merge_cati_call_history_and_questionnaire_data, \
+from data_sources.datastore_data import merge_cati_call_history_and_questionnaire_data
+from data_sources.questionnaire_data import get_list_of_installed_questionnaires, get_questionnaire_data, \
     get_questionnaire_name_from_id
 from functions.csv_functions import write_list_of_dicts_to_csv
 from functions.folder_functions import create_questionnaire_name_folder_in_tmp_directory, get_tmp_directory_path
-from models.mi_hub_call_history import MiHubCallHistory
+from models.mi_hub_call_history_model import MiHubCallHistory
 
 
 def get_mi_hub_call_history(config):
