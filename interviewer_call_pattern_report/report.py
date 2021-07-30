@@ -75,6 +75,11 @@ def create_dataframe(call_history):
     return None, result
 
 
+def add_invalid_fields_to_report(report, invalid_dataframe, call_history_dataframe):
+    report.discounted_invalid_records = f"{len(invalid_dataframe.index)}/{len(call_history_dataframe.index)}"
+    report.invalid_fields = f"{get_invalid_fields(invalid_dataframe)}"
+
+
 def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, start_date_string, end_date_string):
     call_history_records_error, call_history_records = get_call_history_records_by_interviewer_and_date_range(
         interviewer_name, start_date_string, end_date_string
@@ -93,6 +98,5 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
     if generate_report_error:
         return generate_report_error, None
     if not invalid_dataframe.empty:
-        report.discounted_invalid_records = f"{len(invalid_dataframe.index)}/{len(call_history_dataframe.index)}"
-        report.invalid_fields = f"{get_invalid_fields(call_history_dataframe)}"
+        add_invalid_fields_to_report(report, invalid_dataframe, call_history_dataframe)
     return None, report
