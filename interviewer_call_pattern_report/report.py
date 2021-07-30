@@ -10,7 +10,7 @@ COLUMNS_TO_VALIDATE = ["call_start_time", "call_end_time", "number_of_interviews
 
 def get_invalid_fields(data):
     data = data.filter(COLUMNS_TO_VALIDATE)
-    return "".join(data.columns[data.isna().any()].tolist())
+    return ", ".join(data.columns[data.isna().any()].tolist())
 
 
 def generate_report(valid_call_history_dataframe):
