@@ -1,4 +1,3 @@
-import numpy as np
 import pytest
 
 from interviewer_call_pattern_report.report import *
@@ -26,6 +25,31 @@ def test_generate_report(call_history_dataframe):
         no_contacts_percentage='50.0%',
         appointments_for_contacts_percentage='0.0%'
     )
+
+
+@pytest.mark.parametrize(
+    "column_names",
+    [
+        (["call_start_time"]),
+        (["call_end_time"]),
+        (["number_of_interviews"]),
+        (["call_start_time", "call_end_time"]),
+        (["call_start_time", "call_end_time", "number_of_interviews"]),
+    ],
+)
+def test_add_invalid_fields_to_report(column_names, interviewer_call_pattern_report, invalid_call_history_dataframe, call_history_dataframe):
+
+    for col in column_names:
+        invalid_call_history_dataframe.loc[
+            invalid_call_history_dataframe['questionnaire_id'] == "05cf69af-1a4e-47df-819a-928350fdda5a", col] = np.nan
+
+    add_invalid_fields_to_report(
+        interviewer_call_pattern_report,
+        invalid_call_history_dataframe,
+        call_history_dataframe
+    )
+
+    assert interviewer_call_pattern_report.invalid_fields == ", ".join(column_names)
 
 
 def test_generate_report_returns_error(call_history_dataframe, capsys):
