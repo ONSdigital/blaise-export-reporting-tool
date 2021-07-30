@@ -111,4 +111,4 @@ def test_get_invalid_fields(column_names, call_history_dataframe):
     for col in column_names:
         call_history_dataframe.loc[
             call_history_dataframe['questionnaire_id'] == "05cf69af-3a4e-47df-819a-928350fdda5a", col] = np.nan
-    assert get_invalid_fields(call_history_dataframe) == ''.join(column_names)
+    assert get_invalid_fields(call_history_dataframe) == ", ".join(column_names)
