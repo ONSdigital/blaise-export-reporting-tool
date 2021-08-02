@@ -2,7 +2,7 @@ from models.interviewer_call_pattern_model import InterviewerCallPattern
 
 
 def test_interviewer_call_pattern():
-    mi_hub_respondent_data = InterviewerCallPattern(
+    interviewer_call_pattern = InterviewerCallPattern(
         hours_worked="",
         call_time="",
         hours_on_calls_percentage="",
@@ -15,4 +15,4 @@ def test_interviewer_call_pattern():
         discounted_invalid_records="",
         invalid_fields="",
     )
-    assert mi_hub_respondent_data is not None
+    assert interviewer_call_pattern is not None
