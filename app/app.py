@@ -58,3 +58,8 @@ def call_pattern(interviewer):
         return {}
     else:
         return results.json()
+
+@app.route("/bert/<version>/health")
+def health_check(version):
+    response = {"healthy": True}
+    return jsonify(response)
