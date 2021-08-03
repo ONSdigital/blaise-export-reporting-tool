@@ -14,6 +14,8 @@ def get_call_history_records():
 
 
 def get_call_history_records_by_interviewer_and_date_range(interviewer_name, start_date_string, end_date_string):
+    print(f"Getting call history data for {interviewer_name} between {start_date_string} and {end_date_string}")
+
     start_date = parse_date_string_to_datetime(start_date_string)
     end_date = parse_date_string_to_datetime(end_date_string, True)
     if start_date is None or end_date is None:
