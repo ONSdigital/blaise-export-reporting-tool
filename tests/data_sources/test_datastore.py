@@ -1,11 +1,14 @@
 import pytest
 
 from data_sources.datastore import split_into_batches, get_call_history_records_by_interviewer_and_date_range
+from models.error_capture import BertException
 
 
 def test_get_call_history_records_by_interviewer_and_date_range_with_invalid_dates(interviewer_name, invalid_date):
-    assert get_call_history_records_by_interviewer_and_date_range(interviewer_name, invalid_date, invalid_date) == (
-        ("Invalid date range parameters provided", 400), [])
+    with pytest.raises(BertException) as error:
+        get_call_history_records_by_interviewer_and_date_range(interviewer_name, invalid_date, invalid_date)
+    assert error.value.message == "Invalid date range parameters provided"
+    assert error.value.code == 400
 
 
 @pytest.mark.parametrize(

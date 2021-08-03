@@ -2,6 +2,7 @@ import json
 from unittest.mock import patch
 
 from models.config import Config
+from models.error_capture import BertException
 
 
 def test_load_config():
@@ -128,7 +129,7 @@ def test_call_pattern_report_returns_error(mock_get_call_pattern_records_by_inte
 @patch("app.app.get_call_pattern_records_by_interviewer_and_date_range")
 def test_call_pattern_report(mock_get_call_pattern_records_by_interviewer_and_date_range, client,
                              interviewer_call_pattern_report):
-    mock_get_call_pattern_records_by_interviewer_and_date_range.return_value = None, interviewer_call_pattern_report
+    mock_get_call_pattern_records_by_interviewer_and_date_range.return_value = interviewer_call_pattern_report
     response = client.get("/api/reports/call-pattern/matpal?start-date=2021-01-01&end-date=2021-01-01")
     assert response.status_code == 200
     assert response.get_data(as_text=True) == interviewer_call_pattern_report.json()

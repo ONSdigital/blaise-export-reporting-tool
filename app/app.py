@@ -22,13 +22,7 @@ def call_history_report_status():
 
 @app.route("/api/reports/call-history/<interviewer>")
 def call_history(interviewer):
-    result = date_handler(request)
-
-    if not result:
-        print(Errors.message)
-        return Errors.message, Errors.code
-
-    start_date, end_date = result
+    start_date, end_date = date_handler(request)
 
     error, results = get_call_history_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
     if error:
@@ -40,14 +34,9 @@ def call_history(interviewer):
 
 @app.route("/api/reports/call-pattern/<interviewer>")
 def call_pattern(interviewer):
-    result = date_handler(request)
+    start_date, end_date = date_handler(request)
 
-    start_date, end_date = result
-    error, results = get_call_pattern_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
-    if error:
-        error_message, error_code = error
-        print(error_message)
-        return error_message, error_code
+    results = get_call_pattern_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
     if results == {}:
         return {}
     else:

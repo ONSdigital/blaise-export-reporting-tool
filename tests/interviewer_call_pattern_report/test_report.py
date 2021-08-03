@@ -2,19 +2,19 @@ import pytest
 
 from interviewer_call_pattern_report.report import *
 from models.interviewer_call_pattern import InterviewerCallPattern
+from models.error_capture import BertException
 
 
 def test_get_call_pattern_records_by_interviewer_and_date_range_returns_error():
-    error, call_pattern_records = get_call_pattern_records_by_interviewer_and_date_range("ricer", "blah", "blah")
-    error_message, error_code = error
-    assert error_code == 400
-    assert error_message == "Invalid date range parameters provided"
+    with pytest.raises(BertException) as error:
+        get_call_pattern_records_by_interviewer_and_date_range("ricer", "blah", "blah")
+
+    assert error.value.message == "Invalid date range parameters provided"
+    assert error.value.code == 400
 
 
 def test_generate_report(call_history_dataframe):
-    error, result = generate_report(call_history_dataframe)
-    assert error is None
-    assert result == InterviewerCallPattern(
+    assert generate_report(call_history_dataframe) == InterviewerCallPattern(
         hours_worked='2:27:57',
         call_time='0:02:45',
         hours_on_calls_percentage='1.86%',
@@ -52,19 +52,19 @@ def test_add_invalid_fields_to_report(column_names, interviewer_call_pattern_rep
     assert interviewer_call_pattern_report.invalid_fields == ", ".join(column_names)
 
 
-def test_generate_report_returns_error(call_history_dataframe, capsys):
+def test_generate_report_returns_error(call_history_dataframe):
     call_history_dataframe.loc[call_history_dataframe['questionnaire_id'] == '05cf69af-3a4e-47df-819a-928350fdda5a', [
         'call_start_time']] = 'blah'
-    generate_report(call_history_dataframe)
-    captured = capsys.readouterr()
-    assert captured.out == ('Could not calculate get_hours_worked(): Can only use .dt accessor with '
-                            'datetimelike values\n')
+
+    with pytest.raises(BertException) as error:
+        generate_report(call_history_dataframe)
+    assert error.value.message == "generate_report failed: Can only use .dt accessor with datetimelike values"
+    assert error.value.code == 400
 
 
 def test_validate_dataframe_with_no_invalid_data(call_history_dataframe):
-    error, valid_dataframe, invalid_dataframe = validate_dataframe(call_history_dataframe)
+    valid_dataframe, invalid_dataframe = validate_dataframe(call_history_dataframe)
     assert valid_dataframe.columns.to_series().str.islower().all()
-    assert error is None
     assert type(valid_dataframe) == pd.DataFrame
     assert len(invalid_dataframe.index) == 0
 
@@ -72,9 +72,9 @@ def test_validate_dataframe_with_no_invalid_data(call_history_dataframe):
 def test_validate_dataframe_with_invalid_data(call_history_dataframe):
     call_history_dataframe.loc[
         call_history_dataframe["questionnaire_id"] == "05cf69af-3a4e-47df-819a-928350fdda5a", "call_end_time"] = np.nan
-    error, valid_dataframe, invalid_dataframe = validate_dataframe(call_history_dataframe)
+
+    valid_dataframe, invalid_dataframe = validate_dataframe(call_history_dataframe)
     assert valid_dataframe.columns.to_series().str.islower().all()
-    assert error is None
     assert type(valid_dataframe) == pd.DataFrame
     assert len(invalid_dataframe.index) == 2
 
@@ -83,12 +83,11 @@ def test_validate_dataframe_returns_error(call_history_dataframe):
     call_history_dataframe.loc[
         call_history_dataframe[
             "questionnaire_id"] == "05cf69af-3a4e-47df-819a-928350fdda5a", "number_of_interviews"] = "hey-yo!"
-    error, valid_dataframe, invalid_dataframe = validate_dataframe(call_history_dataframe)
-    error_message, error_code = error
-    assert error_message == "validate_dataframe failed: invalid literal for int() with base 10: \'hey-yo!\'"
-    assert error_code == 400
-    assert valid_dataframe is None
-    assert invalid_dataframe is None
+
+    with pytest.raises(BertException) as error:
+        validate_dataframe(call_history_dataframe)
+    assert error.value.message == "validate_dataframe failed: invalid literal for int() with base 10: \'hey-yo!\'"
+    assert error.value.code == 400
 
 
 def test_drop_and_return_invalidated_records(call_history_dataframe):
