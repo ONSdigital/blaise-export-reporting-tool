@@ -22,7 +22,7 @@ def create_tmp_directory():
     try:
         os.mkdir(tmp_folder)
     except FileExistsError:
-        print(f"tmp folder already exists")
+        print("tmp folder already exists")
 
 
 def create_questionnaire_name_folder_in_tmp_directory(questionnaire_name):

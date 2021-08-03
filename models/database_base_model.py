@@ -29,6 +29,16 @@ class DataBaseBase:
         return results
 
     @classmethod
+    def query(cls, config, query):
+        db = cls.connect_to_database(config)
+        cursor = db.cursor(dictionary=True)
+        cursor.execute(query)
+        results = cursor.fetchall()
+        cursor.close()
+        db.close()
+        return results
+
+    @classmethod
     def table_name(cls):
         pass
 

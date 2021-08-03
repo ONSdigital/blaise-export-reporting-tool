@@ -5,8 +5,8 @@ import pytest
 from google.api_core.datetime_helpers import DatetimeWithNanoseconds
 
 from app.app import app as flask_app
-from models.config import Config
-from models.interviewer_call_pattern import InterviewerCallPattern
+from models.config_model import Config
+from models.interviewer_call_pattern_model import InterviewerCallPattern
 
 
 @pytest.fixture

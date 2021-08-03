@@ -2,10 +2,70 @@ import os
 from unittest import mock
 from unittest.mock import patch
 
-from functions.call_history_functions import get_cati_call_history, get_questionnaire_name_from_id, \
+import pytest
+
+from data_sources.datastore_data import split_into_batches, get_cati_call_history, \
     merge_cati_call_history_and_questionnaire_data
-from models.call_history import CallHistory
-from models.config import Config
+from models.call_history_model import CallHistory
+from models.config_model import Config
+
+
+@pytest.mark.parametrize(
+    "list_to_split, number_to_split_by, expected",
+    [
+        (
+                [
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                ],
+                2,
+                [2, 2, 2, 2, 2],
+        ),
+        (
+                [
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                    "item",
+                ],
+                5,
+                [5, 5, 5, 5],
+        ),
+        (["item", "item", "item"], 2, [2, 1]),
+        (["item", "item", "item"], 5, [3]),
+    ],
+)
+def test_split_into_batches(list_to_split, number_to_split_by, expected):
+    split_list = split_into_batches(list_to_split, number_to_split_by)
+    assert len(split_list) == len(expected)
+    i = 0
+    while i < len(split_list):
+        assert len(split_list[i]) == expected[i]
+        i += 1
 
 
 @mock.patch.dict(
@@ -19,7 +79,7 @@ from models.config import Config
         "NIFI_STAGING_BUCKET": "nifi_staging_bucket_mock"
     },
 )
-@patch("functions.call_history_functions.get_cati_call_history_from_database")
+@patch("data_sources.datastore_data.get_cati_call_history_from_database")
 def test_get_cati_call_history(mock_get_cati_call_history_from_database):
     # Setup
     questionnaire_list = [
@@ -73,15 +133,6 @@ def test_get_cati_call_history(mock_get_cati_call_history_from_database):
             outcome_code=None,
         )
     ]
-
-
-def test_get_questionnaire_name_from_id(api_installed_questionnaires_response):
-    assert get_questionnaire_name_from_id("12345-12345-12345-12345-ZZZZZ",
-                                          api_installed_questionnaires_response) == "DST2106Z"
-
-
-def test_get_questionnaire_name_from_id_not_found(api_installed_questionnaires_response):
-    assert get_questionnaire_name_from_id("blah", api_installed_questionnaires_response) == ""
 
 
 def test_merge_cati_call_history_and_questionnaire_data():
