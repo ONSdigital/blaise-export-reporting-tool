@@ -1,4 +1,8 @@
-from functions.folder_functions import *
+import os
+
+from definitions import ROOT_DIR
+from functions.folder_functions import clear_tmp_directory, get_tmp_directory_path, create_tmp_directory, \
+    create_questionnaire_name_folder_in_tmp_directory
 
 
 def test_get_tmp_directory_path():
