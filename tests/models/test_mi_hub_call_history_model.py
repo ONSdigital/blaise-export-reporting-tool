@@ -1,4 +1,4 @@
-from models.mi_hub_call_history import MiHubCallHistory, CatiMiHubCallHistoryTable
+from models.mi_hub_call_history_model import MiHubCallHistory, CatiMiHubCallHistoryTable
 
 
 def test_mi_hub_call_history():

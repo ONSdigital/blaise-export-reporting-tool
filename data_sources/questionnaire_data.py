@@ -9,6 +9,13 @@ def get_list_of_installed_questionnaires(config):
     return questionnaire_list
 
 
+def get_questionnaire_name_from_id(questionnaire_id, questionnaire_list):
+    return next(
+        (item for item in questionnaire_list if item.get("id") == questionnaire_id),
+        {"name": ""},
+    ).get("name")
+
+
 def get_questionnaire_data(questionnaire_name, config, fields):
     fields_to_get = []
     for field in fields:

@@ -1,7 +1,7 @@
 import os
 from unittest import mock
 
-from models.config import Config
+from models.config_model import Config
 
 
 def test_config():

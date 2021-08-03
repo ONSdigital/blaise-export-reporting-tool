@@ -44,6 +44,15 @@ GET /api/reports/call-pattern/<interviewer>?start-date=<date>&end-date=<date>
 Content-Type: application/json
 ```
 
+#### Appointment Resource Planning
+
+API endpoint. View the number of interview appointments scheduled for a given date.
+
+```http request
+GET /api/reports/appointment-resource-planning/<date>
+Content-Type: application/json
+```
+
 #### MI HUB Call History
 
 CSV file delivered on-prem. All call history from active questionnaires.
@@ -143,6 +152,10 @@ http://localhost:5011/api/reports/call-history/rich?start-date=2021-01-01&end-da
 
 ```http
 http://localhost:5011/api/reports/call-pattern/rich?start-date=2021-01-01&end-date=2022-01-01
+```
+
+```http
+http://localhost:5011/api/reports/appointment-resource-planning/2021-01-01
 ```
 
 Run the "upload_call_history" Cloud Function:
