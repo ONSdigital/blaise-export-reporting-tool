@@ -69,3 +69,9 @@ def appointment_resource_planning(date):
         print(error_message)
         return error_message, error_code
     return jsonify(results)
+
+  
+@app.route("/bert/<version>/health")
+def health_check(version):
+    response = {"healthy": True}
+    return jsonify(response)
