@@ -21,3 +21,13 @@ def parse_date_string_to_datetime(date_string, end_of_day=False):
             int(date_split[0]), int(date_split[1]), int(date_split[2]), 23, 59, 59
         )
     return datetime(int(date_split[0]), int(date_split[1]), int(date_split[2]))
+
+
+def date_handler(start_date, end_date):
+    if start_date is None or end_date is None:
+        print("Invalid request, missing required date parameters")
+        return '{"error": "Invalid request, missing required date parameters"}', 400
+
+    if not validate_date(start_date) or not validate_date(end_date):
+        print("Invalid request, date is not valid")
+        return '{"error": "Invalid request, date is not valid"}', 400
