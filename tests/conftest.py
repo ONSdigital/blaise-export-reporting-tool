@@ -338,6 +338,34 @@ def call_history_dataframe():
 
 
 @pytest.fixture
+def invalid_call_history_dataframe():
+    results = [
+        {
+            'appointment_info': None,
+            'busy_dials': 0,
+            'call_end_time': DatetimeWithNanoseconds(2021, 5, 19, 12, 33, 21, tzinfo=datetime.timezone.utc),
+            'call_number': 1,
+            'call_result': 'NonRespons',
+            'call_start_time': DatetimeWithNanoseconds(2021, 5, 19, 12, 32, 16, tzinfo=datetime.timezone.utc),
+            'cohort': 'AA',
+            'dial_number': 1,
+            'dial_secs': 65,
+            'interviewer': 'matpal',
+            'number_of_interviews': 1,
+            'outcome_code': '542',
+            'questionnaire_id': '05cf69af-1a4e-47df-819a-928350fdda5a',
+            'questionnaire_name': 'LMS2101_AA1',
+            'serial_number': '1001081',
+            'status': 'Finished (Non response)',
+            'survey': 'LMS',
+            'update_info': None,
+            'wave': 1
+        },
+    ]
+    return pd.DataFrame(results)
+
+
+@pytest.fixture
 def interviewer_call_pattern_report():
     return InterviewerCallPattern(
         hours_worked="7:24:00",
