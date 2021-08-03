@@ -42,10 +42,6 @@ def call_history(interviewer):
 def call_pattern(interviewer):
     result = date_handler(request)
 
-    if not result:
-        print(Errors.message)
-        return Errors.message, Errors.code
-
     start_date, end_date = result
     error, results = get_call_pattern_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
     if error:
