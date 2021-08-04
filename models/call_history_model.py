@@ -1,7 +1,7 @@
 import datetime
 from dataclasses import dataclass
 
-from models.database_base import DataBaseBase
+from models.database_base_model import DataBaseBase
 
 
 @dataclass

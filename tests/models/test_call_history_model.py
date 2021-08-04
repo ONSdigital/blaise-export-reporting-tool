@@ -1,4 +1,4 @@
-from models.call_history import CallHistory, CatiCallHistoryTable
+from models.call_history_model import CallHistory, CatiCallHistoryTable
 
 
 def test_generate_questionnaire_details_lms():

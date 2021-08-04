@@ -1,4 +1,4 @@
-from models.mi_hub_respondent_data import MiHubRespondentData
+from models.mi_hub_respondent_data_model import MiHubRespondentData
 
 
 def test_mi_hub_respondent_data():
