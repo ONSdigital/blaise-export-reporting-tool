@@ -39,12 +39,7 @@ def call_pattern(interviewer):
 
 @app.route("/api/reports/appointment-resource-planning/<date>")
 def appointment_resource_planning(date):
-    error, results = get_appointment_resource_planning_by_date(date)
-    if error:
-        error_message, error_code = error
-        print(error_message)
-        return error_message, error_code
-    return jsonify(results)
+    return jsonify(get_appointment_resource_planning_by_date(date))
 
 
 @app.route("/bert/<version>/health")

@@ -22,4 +22,4 @@ def get_appointment_resource_planning_by_date(date):
         if questionnaire_name != "":
             cati_appointment_resource_planning.questionnaire_name = questionnaire_name
         cati_appointment_resource_planning_list.append(cati_appointment_resource_planning)
-    return None, cati_appointment_resource_planning_list
+    return cati_appointment_resource_planning_list
