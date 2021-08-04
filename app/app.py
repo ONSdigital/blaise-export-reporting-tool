@@ -24,19 +24,12 @@ def call_history_report_status():
 @app.route("/api/reports/call-history/<interviewer>")
 def call_history(interviewer):
     start_date, end_date = date_handler(request)
-
-    error, results = get_call_history_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
-    if error:
-        error_message, error_code = error
-        print(error_message)
-        return error_message, error_code
-    return jsonify(results)
+    return jsonify(get_call_history_records_by_interviewer_and_date_range(interviewer, start_date, end_date))
 
 
 @app.route("/api/reports/call-pattern/<interviewer>")
 def call_pattern(interviewer):
     start_date, end_date = date_handler(request)
-
     results = get_call_pattern_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
     if results == {}:
         return {}

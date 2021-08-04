@@ -25,7 +25,6 @@ def parse_date_string_to_datetime(date_string, end_of_day=False):
 
 
 def date_handler(request):
-    errors = BertException
     start_date = request.args.get("start-date", None)
     end_date = request.args.get("end-date", None)
 
