@@ -2,11 +2,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from interviewer_call_pattern_report.report import *
-from models.interviewer_call_pattern import InterviewerCallPattern
+from models.interviewer_call_pattern_model import InterviewerCallPattern
 from models.error_capture import BertException
 from reports.interviewer_call_pattern_report import get_call_pattern_records_by_interviewer_and_date_range, \
-    generate_report, InterviewerCallPattern, validate_dataframe, drop_and_return_invalidated_records, \
+    generate_report, validate_dataframe, drop_and_return_invalidated_records, \
     get_invalid_fields, get_hours_worked, get_call_time_in_seconds, get_percentage_of_hours_on_calls, \
     get_average_calls_per_hour, get_respondents_interviewed, get_number_of_households_completed_successfully, \
     get_average_respondents_interviewed_per_hour, get_percentage_of_call_for_status, \

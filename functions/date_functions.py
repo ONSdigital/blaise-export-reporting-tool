@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from models.error_capture import Errors
+from models.error_capture import BertException
 
 
 def validate_date(date_text):
@@ -25,20 +25,14 @@ def parse_date_string_to_datetime(date_string, end_of_day=False):
 
 
 def date_handler(request):
-    errors = Errors
+    errors = BertException
     start_date = request.args.get("start-date", None)
     end_date = request.args.get("end-date", None)
 
     if start_date is None or end_date is None:
-        print("Invalid request, missing required date parameters")
-        errors.message = '{"error": "Invalid request, missing required date parameters"}'
-        errors.code = 400
-        return False
+        raise(BertException("Invalid request, missing required date parameters", 400))
 
     if not validate_date(start_date) or not validate_date(end_date):
-        print("Invalid request, date is not valid")
-        errors.message = '{"error": "Invalid request, date is not valid"}'
-        errors.code = 400
-        return False
+        raise(BertException("Invalid request, date is not valid", 400))
 
     return start_date, end_date

@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 from models.interviewer_call_pattern_model import InterviewerCallPattern
+from models.error_capture import BertException
 from reports.interviewer_call_history_report import get_call_history_records_by_interviewer_and_date_range
 
 COLUMNS_TO_VALIDATE = ["call_start_time", "call_end_time", "number_of_interviews"]
@@ -39,10 +40,10 @@ def generate_report(valid_call_history_dataframe):
                 "appointment made", valid_call_history_dataframe),
         )
     except ZeroDivisionError as err:
-        return (f"generate_report failed with a ZeroDivisionError: {err}", 400), None
+        raise BertException(f"generate_report failed with a ZeroDivisionError: {err}", 400)
     except Exception as err:
-        return (f"generate_report failed: {err}", 400), None
-    return None, report
+        raise BertException(f"generate_report failed: {err}", 400)
+    return report
 
 
 def drop_and_return_invalidated_records(dataframe):
@@ -69,35 +70,31 @@ def validate_dataframe(data):
     try:
         valid_data = valid_data.astype({"number_of_interviews": "int32", "dial_secs": "float64"})
     except Exception as err:
-        return (f"validate_dataframe failed: {err}", 400), None, None
-    return None, valid_data, invalid_data
+        raise BertException(f"validate_dataframe failed: {err}", 400)
+    return valid_data, invalid_data
 
 
 def create_dataframe(call_history):
     try:
         result = pd.DataFrame(data=call_history)
     except Exception as err:
-        return (f"create_dataframe failed: {err}", 400), None
+        raise BertException(f"create_dataframe failed: {err}", 400)
     return None, result
 
 
 def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, start_date_string, end_date_string):
-    call_history_records_error, call_history_records = get_call_history_records_by_interviewer_and_date_range(
+    call_history_records = get_call_history_records_by_interviewer_and_date_range(
         interviewer_name, start_date_string, end_date_string
     )
-    if call_history_records_error:
-        return call_history_records_error, None
     if not call_history_records:
-        return None, {}
-    create_dataframe_error, call_history_dataframe = create_dataframe(call_history_records)
-    if create_dataframe_error:
-        return create_dataframe_error, None
-    validate_dataframe_error, valid_dataframe, invalid_dataframe = validate_dataframe(call_history_dataframe)
-    if validate_dataframe_error:
-        return validate_dataframe_error, None
-    generate_report_error, report = generate_report(valid_dataframe)
-    if generate_report_error:
-        return generate_report_error, None
+        return {}
+
+    call_history_dataframe = create_dataframe(call_history_records)
+
+    valid_dataframe, invalid_dataframe = validate_dataframe(call_history_dataframe)
+
+    report = generate_report(valid_dataframe)
+
     if not invalid_dataframe.empty:
         add_invalid_fields_to_report(report, invalid_dataframe, call_history_dataframe)
     return None, report

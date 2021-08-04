@@ -1,5 +1,4 @@
 import datetime
-
 import pandas as pd
 import pytest
 from google.api_core.datetime_helpers import DatetimeWithNanoseconds

@@ -1,8 +1,8 @@
 import json
 from unittest.mock import patch
 
-from models.error_capture import BertException
 from models.config_model import Config
+from models.error_capture import BertException
 
 
 def test_load_config():
@@ -109,13 +109,19 @@ def test_call_pattern_report_returns_error_when_end_date_value_is_not_a_valid_da
 
 
 @patch("app.app.get_call_pattern_records_by_interviewer_and_date_range")
+def test_call_pattern_report(mock_get_call_pattern_records_by_interviewer_and_date_range, client, mock_report):
+    mock_get_call_pattern_records_by_interviewer_and_date_range.return_value = (None, 200), mock_report
+    response = client.get("/api/reports/call-pattern/matpal?start-date=2021-01-01&end-date=2021-01-01")
+    assert response.status_code == 200
+    assert response.get_data(as_text=True) == mock_report.json()
+
+
+@patch("app.app.get_call_pattern_records_by_interviewer_and_date_range")
 def test_call_pattern_report_returns_error(mock_get_call_pattern_records_by_interviewer_and_date_range, client):
-    mock_get_call_pattern_records_by_interviewer_and_date_range.return_value = (
-                                                                                   "Invalid date range parameters provided",
-                                                                                   400), []
+    mock_get_call_pattern_records_by_interviewer_and_date_range.side_effect = BertException("Invalid date range parameters provided", 400)
     response = client.get("/api/reports/call-pattern/matpal?start-date=2021-01-01&end-date=2021-01-01")
     assert response.status_code == 400
-    assert response.get_data(as_text=True) == "Invalid date range parameters provided"
+    assert response.get_data(as_text=True) == '{"error": "Invalid date range parameters provided"}'
 
 
 @patch("app.app.get_call_pattern_records_by_interviewer_and_date_range")
@@ -125,11 +131,3 @@ def test_call_pattern_report(mock_get_call_pattern_records_by_interviewer_and_da
     response = client.get("/api/reports/call-pattern/matpal?start-date=2021-01-01&end-date=2021-01-01")
     assert response.status_code == 200
     assert response.get_data(as_text=True) == interviewer_call_pattern_report.json()
-
-
-@patch("app.app.get_appointment_resource_planning_by_date")
-def test_appointment_resource_planning(mock_get_appointment_resource_planning_by_date, client):
-    mock_get_appointment_resource_planning_by_date.return_value = None, []
-    response = client.get("/api/reports/appointment-resource-planning/2021-01-01")
-    assert response.status_code == 200
-    assert response.get_data() is not None
