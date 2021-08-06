@@ -94,7 +94,7 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
 
     if not invalid_dataframe.empty:
         add_invalid_fields_to_report(report, invalid_dataframe, call_history_dataframe)
-    return None, report
+    return report
 
 
 def get_hours_worked(call_history_dataframe):
@@ -110,8 +110,7 @@ def get_hours_worked(call_history_dataframe):
         # sum total hours
         total_hours = daily_call_history_by_date['hours_worked'].sum()
     except Exception as err:
-        print(f"Could not calculate get_hours_worked(): {err}")
-        raise
+        raise BertException(f"Could not calculate get_hours_worked(): {err}", 400)
 
     # return sum total in fancy format
     return str(datetime.timedelta(seconds=total_hours.total_seconds()))
@@ -121,9 +120,7 @@ def get_call_time_in_seconds(call_history_dataframe):
     try:
         result = round(call_history_dataframe['dial_secs'].sum())
     except Exception as err:
-        print(f"Could not calculate get_call_time_in_seconds(): {err}")
-        raise
-
+        raise BertException(f"Could not calculate get_call_time_in_seconds(): {err}", 400)
     return result
 
 
@@ -131,9 +128,7 @@ def convert_call_time_seconds_to_datetime_format(seconds):
     try:
         result = str(datetime.timedelta(seconds=seconds))
     except Exception as err:
-        print(f"Could not convert_call_time_seconds_to_datetime_format(): {err}")
-        raise
-
+        raise BertException(f"Could not convert_call_time_seconds_to_datetime_format(): {err}", 400)
     return result
 
 
@@ -142,13 +137,16 @@ def get_total_seconds_from_string(hours_worked):
         h, m, s = hours_worked.split(':')
         result = int(h) * 3600 + int(m) * 60 + int(s)
     except Exception as err:
-        print(f"Could not calculate get_total_seconds_from_string(): {err}")
-        raise
+        raise BertException(f"Could not calculate get_total_seconds_from_string(): {err}", 400)
     return result
 
 
 def limit_two_decimal_places(float_value):
-    return float("{:.2f}".format(float_value))
+    try:
+        result = float("{:.2f}".format(float_value))
+    except Exception as err:
+        raise BertException(f"Could not convert {float_value} to float: {err}")
+    return result
 
 
 def get_percentage_of_hours_on_calls(hours_worked, total_call_seconds):
@@ -156,8 +154,7 @@ def get_percentage_of_hours_on_calls(hours_worked, total_call_seconds):
         value = 100 * float(total_call_seconds) / float(get_total_seconds_from_string(hours_worked))
         result = f"{limit_two_decimal_places(value)}%"
     except Exception as err:
-        print(f"Could not calculate get_percentage_of_hours_on_calls(): {err}")
-        raise
+        raise BertException(f"Could not calculate get_percentage_of_hours_on_calls(): {err}", 400)
     return result
 
 
@@ -168,8 +165,7 @@ def get_average_calls_per_hour(call_history_dataframe, string_hours_worked):
 
         result = limit_two_decimal_places(total_calls / integer_hours_worked)
     except Exception as err:
-        print(f"Could not calculate get_average_calls_per_hour(): {err}")
-        raise
+        raise BertException(f"Could not calculate get_average_calls_per_hour(): {err}", 400)
     return result
 
 
@@ -177,8 +173,7 @@ def get_respondents_interviewed(call_history_dataframe):
     try:
         result = round(call_history_dataframe['number_of_interviews'].sum())
     except Exception as err:
-        print(f"Could not calculate get_respondents_interviewed(): {err}")
-        raise
+        raise BertException(f"Could not calculate get_respondents_interviewed(): {err}", 400)
     return result
 
 
@@ -186,8 +181,7 @@ def get_number_of_households_completed_successfully(status, call_history_datafra
     try:
         result = len(call_history_dataframe.loc[call_history_dataframe['status'].str.contains(status, case=False)])
     except Exception as err:
-        print(f"Could not calculate get_percentage_of_call_for_status(): {err}")
-        raise
+        raise BertException(f"Could not calculate get_percentage_of_call_for_status(): {err}", 400)
     return result
 
 
@@ -195,11 +189,9 @@ def get_average_respondents_interviewed_per_hour(call_history_dataframe, string_
     try:
         integer_hours_worked = get_total_seconds_from_string(string_hours_worked) / 3600
         respondents_interviewed = call_history_dataframe['number_of_interviews'].sum()
-
         result = limit_two_decimal_places(respondents_interviewed / integer_hours_worked)
     except Exception as err:
-        print(f"Could not calculate get_average_respondents_interviewed_per_hour(): {err}")
-        raise
+        raise BertException(f"Could not calculate get_average_respondents_interviewed_per_hour(): {err}", 400)
     return result
 
 
@@ -210,6 +202,5 @@ def get_percentage_of_call_for_status(status, call_history_dataframe):
         value = 100 * len(numerator.index) / len(call_history_dataframe.index)
         result = f"{limit_two_decimal_places(value)}%"
     except Exception as err:
-        print(f"Could not calculate get_percentage_of_call_for_status(): {err}")
-        raise
+        raise BertException(f"Could not calculate get_percentage_of_call_for_status(): {err}", 400)
     return result
