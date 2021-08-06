@@ -14,7 +14,7 @@ from reports.interviewer_call_pattern_report import get_call_pattern_records_by_
 
 def test_get_call_pattern_records_by_interviewer_and_date_range_returns_error():
     with pytest.raises(BertException) as error:
-        get_call_pattern_records_by_interviewer_and_date_range("ricer", "blah", "blah")
+        get_call_pattern_records_by_interviewer_and_date_range("ricer", "blah", "blah", None)
 
     assert error.value.message == "Invalid date range parameters provided"
     assert error.value.code == 400
