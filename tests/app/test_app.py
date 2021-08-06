@@ -20,14 +20,6 @@ def test_call_history_report_status(mock_get_call_history_report_status, client)
 
 
 @patch("app.app.get_call_history_records_by_interviewer_and_date_range")
-def test_call_history_report_with_survey_tla(mock_get_call_history_records_by_interviewer_and_date_range, client):
-    mock_get_call_history_records_by_interviewer_and_date_range.return_value = []
-    response = client.get("/api/reports/call-history/matpal?start-date=2021-01-01&end-date=2021-01-01&survey-tla=opn")
-    assert response.status_code == 200
-    assert json.loads(response.get_data(as_text=True)) == []
-
-
-@patch("app.app.get_call_history_records_by_interviewer_and_date_range")
 def test_call_history_report(mock_get_call_history_records_by_interviewer_and_date_range, client):
     mock_get_call_history_records_by_interviewer_and_date_range.return_value = []
     response = client.get("/api/reports/call-history/matpal?start-date=2021-01-01&end-date=2021-01-01&survey-tla=opn")
@@ -58,6 +50,12 @@ def test_call_pattern_report_returns_error(mock_get_call_pattern_records_by_inte
     response = client.get("/api/reports/call-pattern/matpal?start-date=2021-01-01&end-date=2021-01-01")
     assert response.status_code == 400
     assert response.get_data(as_text=True) == '{"error": "Invalid date range parameters provided"}'
+
+
+
+
+
+
 
 
 @patch("app.app.get_appointment_resource_planning_by_date")
