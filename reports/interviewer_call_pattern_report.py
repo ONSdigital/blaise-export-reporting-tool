@@ -21,28 +21,24 @@ def add_invalid_fields_to_report(report, invalid_dataframe, call_history_datafra
 
 
 def generate_report(valid_call_history_dataframe):
-    try:
-        hours_worked = get_hours_worked(valid_call_history_dataframe)
-        total_call_seconds = get_call_time_in_seconds(valid_call_history_dataframe)
-        report = InterviewerCallPattern(
-            hours_worked=hours_worked,
-            call_time=convert_call_time_seconds_to_datetime_format(total_call_seconds),
-            hours_on_calls_percentage=get_percentage_of_hours_on_calls(hours_worked, total_call_seconds),
-            average_calls_per_hour=get_average_calls_per_hour(valid_call_history_dataframe, hours_worked),
-            respondents_interviewed=get_respondents_interviewed(valid_call_history_dataframe),
-            households_completed_successfully=get_number_of_households_completed_successfully(
-                "numberwang", valid_call_history_dataframe),
-            average_respondents_interviewed_per_hour=get_average_respondents_interviewed_per_hour(
-                valid_call_history_dataframe, hours_worked),
-            no_contacts_percentage=get_percentage_of_call_for_status(
-                "no contact", valid_call_history_dataframe),
-            appointments_for_contacts_percentage=get_percentage_of_call_for_status(
-                "appointment made", valid_call_history_dataframe),
-        )
-    except ZeroDivisionError as err:
-        raise BertException(f"generate_report failed with a ZeroDivisionError: {err}", 400)
-    except Exception as err:
-        raise BertException(f"generate_report failed: {err}", 400)
+    hours_worked = get_hours_worked(valid_call_history_dataframe)
+    total_call_seconds = get_call_time_in_seconds(valid_call_history_dataframe)
+
+    report = InterviewerCallPattern(
+        hours_worked=hours_worked,
+        call_time=convert_call_time_seconds_to_datetime_format(total_call_seconds),
+        hours_on_calls_percentage=get_percentage_of_hours_on_calls(hours_worked, total_call_seconds),
+        average_calls_per_hour=get_average_calls_per_hour(valid_call_history_dataframe, hours_worked),
+        respondents_interviewed=get_respondents_interviewed(valid_call_history_dataframe),
+        households_completed_successfully=get_number_of_households_completed_successfully(
+            "numberwang", valid_call_history_dataframe),
+        average_respondents_interviewed_per_hour=get_average_respondents_interviewed_per_hour(
+            valid_call_history_dataframe, hours_worked),
+        no_contacts_percentage=get_percentage_of_call_for_status(
+            "no contact", valid_call_history_dataframe),
+        appointments_for_contacts_percentage=get_percentage_of_call_for_status(
+            "appointment made", valid_call_history_dataframe),
+    )
     return report
 
 

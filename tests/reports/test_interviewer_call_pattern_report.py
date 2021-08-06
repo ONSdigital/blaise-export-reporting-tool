@@ -65,7 +65,7 @@ def test_generate_report_returns_error(call_history_dataframe):
 
     with pytest.raises(BertException) as error:
         generate_report(call_history_dataframe)
-    assert error.value.message == "generate_report failed: Can only use .dt accessor with datetimelike values"
+    assert error.value.message == 'Could not calculate get_hours_worked(): Can only use .dt accessor with datetimelike values'
     assert error.value.code == 400
 
 
