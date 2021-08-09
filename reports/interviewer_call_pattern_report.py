@@ -75,7 +75,7 @@ def create_dataframe(call_history):
         result = pd.DataFrame(data=call_history)
     except Exception as err:
         raise BertException(f"create_dataframe failed: {err}", 400)
-    return None, result
+    return result
 
 
 def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, start_date_string, end_date_string, survey_tla):
