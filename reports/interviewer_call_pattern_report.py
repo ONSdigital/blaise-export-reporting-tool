@@ -13,25 +13,12 @@ COLUMNS_TO_VALIDATE = ["call_start_time", "call_end_time", "number_of_interviews
 def get_invalid_fields(data):
     invalid_fields = ""
 
-    if data.loc[data['status'].str.contains('Timed out during questionnaire', case=False)].any().any():
-        invalid_fields = "'status' column returned a timed out session"
+    if data.loc[data['status'].str.contains('Timed out', case=False)].any().any():
+        invalid_fields = "'status' column returned a timed out questionnaire, "
 
     data = data.filter(COLUMNS_TO_VALIDATE)
-    invalid_fields = invalid_fields+", ".join(data.columns[data.filter(COLUMNS_TO_VALIDATE).isna().any()])
-    return invalid_fields
-
-
-def scratch(data):
-    invalid_fields = []
-
-    if data.loc[data['status'].str.contains('Timed out during questionnaire', case=False)].any().any():
-        invalid_fields.append("'status': Timed out record found")
-
-    data = data.filter(COLUMNS_TO_VALIDATE)
-    if data.isna().any().any():
-        invalid_fields.append(", ".join(data.columns[data.isna().any()].tolist()))
-
-    print(type(invalid_fields))
+    invalid_fields = invalid_fields+", ".join(data.columns[data.isna().any()])
+    print(invalid_fields)
     return invalid_fields
 
 
