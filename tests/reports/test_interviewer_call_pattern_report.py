@@ -3,7 +3,8 @@ import pandas as pd
 import pytest
 
 from reports.interviewer_call_pattern_report import get_call_pattern_records_by_interviewer_and_date_range, \
-    generate_report, InterviewerCallPattern, validate_dataframe, drop_and_return_invalidated_records, \
+    generate_report, InterviewerCallPattern, validate_dataframe, drop_and_return_null_records, \
+    drop_and_return_timed_out_records, \
     get_invalid_fields, get_hours_worked, get_call_time_in_seconds, get_percentage_of_hours_on_calls, \
     get_average_calls_per_hour, get_respondents_interviewed, get_number_of_households_completed_successfully, \
     get_average_respondents_interviewed_per_hour, get_percentage_of_call_for_status, \
@@ -66,6 +67,9 @@ def test_generate_report_returns_error(call_history_dataframe, capsys):
 
 
 def test_validate_dataframe_with_no_invalid_data(call_history_dataframe):
+    call_history_dataframe.loc[call_history_dataframe['status'].str.contains('Timed out during questionnaire', case=False), [
+        'status']] = 'happy'
+
     error, valid_dataframe, invalid_dataframe = validate_dataframe(call_history_dataframe)
     assert valid_dataframe.columns.to_series().str.islower().all()
     assert error is None
@@ -80,7 +84,7 @@ def test_validate_dataframe_with_invalid_data(call_history_dataframe):
     assert valid_dataframe.columns.to_series().str.islower().all()
     assert error is None
     assert type(valid_dataframe) == pd.DataFrame
-    assert len(invalid_dataframe.index) == 2
+    assert len(invalid_dataframe.index) == 3
 
 
 def test_validate_dataframe_returns_error(call_history_dataframe):
@@ -95,10 +99,23 @@ def test_validate_dataframe_returns_error(call_history_dataframe):
     assert invalid_dataframe is None
 
 
-def test_drop_and_return_invalidated_records(call_history_dataframe):
-    actual_valid_records, actual_invalid_records = drop_and_return_invalidated_records(call_history_dataframe)
+@pytest.mark.parametrize(
+    "status_message",
+    [
+        "Timed out",
+    ],
+)
+def test_drop_and_return_timed_out_records(call_history_dataframe, status_message):
+    actual_valid_records, actual_invalid_records = drop_and_return_timed_out_records(call_history_dataframe, status_message)
+    assert len(actual_valid_records.index) == 7
+    assert len(actual_invalid_records.index) == 1
+
+
+def test_drop_and_return_null_records(call_history_dataframe, invalid_call_history_dataframe):
+    actual_valid_records, actual_invalid_records = drop_and_return_null_records(call_history_dataframe,
+                                                                                invalid_call_history_dataframe)
     assert len(actual_valid_records.index) == 8
-    assert len(actual_invalid_records.index) == 0
+    assert len(actual_invalid_records.index) == 1
 
 
 @pytest.mark.parametrize(
@@ -115,7 +132,7 @@ def test_get_invalid_fields(column_names, call_history_dataframe):
     for col in column_names:
         call_history_dataframe.loc[
             call_history_dataframe['questionnaire_id'] == "05cf69af-3a4e-47df-819a-928350fdda5a", col] = np.nan
-    assert get_invalid_fields(call_history_dataframe) == ", ".join(column_names)
+    assert get_invalid_fields(call_history_dataframe) == "'status' column returned a timed out session"+", ".join(column_names)
 
 
 def test_get_hours_worked(call_history_dataframe):

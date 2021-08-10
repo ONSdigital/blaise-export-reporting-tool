@@ -181,7 +181,7 @@ def call_history_dataframe():
             'questionnaire_id': '05cf69af-1a4e-47df-819a-928350fdda5a',
             'questionnaire_name': 'LMS2101_AA1',
             'serial_number': '1001081',
-            'status': 'Finished (Non response)',
+            'status': 'Timed out during questionnaire',
             'survey': 'LMS',
             'update_info': None,
             'wave': 1

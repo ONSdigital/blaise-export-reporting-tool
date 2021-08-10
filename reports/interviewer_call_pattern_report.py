@@ -10,8 +10,28 @@ COLUMNS_TO_VALIDATE = ["call_start_time", "call_end_time", "number_of_interviews
 
 
 def get_invalid_fields(data):
+    invalid_fields = ""
+
+    if data.loc[data['status'].str.contains('Timed out during questionnaire', case=False)].any().any():
+        invalid_fields = "'status' column returned a timed out session"
+
     data = data.filter(COLUMNS_TO_VALIDATE)
-    return ", ".join(data.columns[data.isna().any()].tolist())
+    invalid_fields = invalid_fields+", ".join(data.columns[data.filter(COLUMNS_TO_VALIDATE).isna().any()])
+    return invalid_fields
+
+
+def scratch(data):
+    invalid_fields = []
+
+    if data.loc[data['status'].str.contains('Timed out during questionnaire', case=False)].any().any():
+        invalid_fields.append("'status': Timed out record found")
+
+    data = data.filter(COLUMNS_TO_VALIDATE)
+    if data.isna().any().any():
+        invalid_fields.append(", ".join(data.columns[data.isna().any()].tolist()))
+
+    print(type(invalid_fields))
+    return invalid_fields
 
 
 def add_invalid_fields_to_report(report, invalid_dataframe, call_history_dataframe):
@@ -45,11 +65,25 @@ def generate_report(valid_call_history_dataframe):
     return None, report
 
 
-def drop_and_return_invalidated_records(dataframe):
-    valid_records = dataframe.copy()
+def drop_and_return_null_records(valid_df, invalid_df):
+    valid_records = valid_df.copy()
     valid_records['number_of_interviews'].replace('', np.nan, inplace=True)
 
     valid_records.dropna(subset=COLUMNS_TO_VALIDATE, inplace=True)
+    null_records = valid_df[~valid_df.index.isin(valid_records.index)]
+
+    invalid_records = null_records.append(invalid_df, ignore_index=True)
+
+    valid_records.reset_index(drop=True, inplace=True)
+    invalid_records.reset_index(drop=True, inplace=True)
+
+    return valid_records, invalid_records
+
+
+def drop_and_return_timed_out_records(dataframe, status_message):
+    valid_records = dataframe.copy()
+
+    valid_records.drop(valid_records.loc[valid_records['status'].str.contains(status_message, case=False)].index, inplace=True)
     invalid_records = dataframe[~dataframe.index.isin(valid_records.index)]
 
     valid_records.reset_index(drop=True, inplace=True)
@@ -63,9 +97,16 @@ def validate_dataframe(data):
     valid_data = data.copy()
     valid_data.columns = valid_data.columns.str.lower()
 
+    status_message = 'Timed out during questionnaire'
+    timed_out_data_found = valid_data.loc[valid_data['status'].str.contains(status_message, case=False)].any().any()
+
+    if timed_out_data_found:
+        valid_data, invalid_data = drop_and_return_timed_out_records(valid_data, status_message)
+
     missing_data_found = valid_data.filter(COLUMNS_TO_VALIDATE).isna().any().any()
     if missing_data_found:
-        valid_data, invalid_data = drop_and_return_invalidated_records(data)
+        valid_data, invalid_data = drop_and_return_null_records(valid_data, invalid_data)
+
     try:
         valid_data = valid_data.astype({"number_of_interviews": "int32", "dial_secs": "float64"})
     except Exception as err:
