@@ -17,9 +17,7 @@ def get_invalid_fields(data):
         invalid_fields = "'status' column returned a timed out questionnaire, "
 
     data = data.filter(COLUMNS_TO_VALIDATE)
-    invalid_fields = invalid_fields+", ".join(data.columns[data.isna().any()])
-    print(invalid_fields)
-    return invalid_fields
+    return invalid_fields+", ".join(data.columns[data.isna().any()])
 
 
 def add_invalid_fields_to_report(report, invalid_dataframe, call_history_dataframe):
