@@ -1,4 +1,7 @@
-from data_sources.questionnaire_data import get_questionnaire_data, get_list_of_installed_questionnaires
+from data_sources.questionnaire_data import (
+    get_questionnaire_data,
+    get_list_of_installed_questionnaires,
+)
 from functions.csv_functions import write_list_of_dicts_to_csv
 from functions.folder_functions import (
     get_tmp_directory_path,
@@ -23,20 +26,23 @@ def get_mi_hub_respondent_data(config):
             "DateTimeStamp",
         }
     ]
+    result = {}
     for questionnaire in installed_questionnaire_list:
         questionnaire_name = questionnaire.get("name")
         mi_hub_respondent_data = get_mi_hub_respondent_data_for_questionnaire(
             questionnaire_fields_to_get, config, questionnaire_name
         )
-        create_questionnaire_name_folder_in_tmp_directory(questionnaire_name)
-        tmp_folder = get_tmp_directory_path()
-        csv_file = f"{tmp_folder}/{questionnaire_name}/respondent_data.csv"
-        write_list_of_dicts_to_csv(csv_file, mi_hub_respondent_data, MiHubRespondentData.fields())
+        result[questionnaire_name] = mi_hub_respondent_data
+    return result
 
 
-def get_mi_hub_respondent_data_for_questionnaire(blaise_fields_to_get, config, questionnaire_name):
+def get_mi_hub_respondent_data_for_questionnaire(
+    blaise_fields_to_get, config, questionnaire_name
+):
     records = []
-    records.extend(get_questionnaire_data(questionnaire_name, config, blaise_fields_to_get))
+    records.extend(
+        get_questionnaire_data(questionnaire_name, config, blaise_fields_to_get)
+    )
     mi_hub_respondent_data = []
     for record in records:
         mi_hub_respondent_data_record = MiHubRespondentData(
