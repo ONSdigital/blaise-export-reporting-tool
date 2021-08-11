@@ -2,25 +2,28 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from reports.interviewer_call_pattern_report import get_call_pattern_records_by_interviewer_and_date_range, \
-    generate_report, InterviewerCallPattern, validate_dataframe, drop_and_return_invalidated_records, \
-    get_invalid_fields, get_hours_worked, get_call_time_in_seconds, get_percentage_of_hours_on_calls, \
-    get_average_calls_per_hour, get_respondents_interviewed, get_number_of_households_completed_successfully, \
-    get_average_respondents_interviewed_per_hour, get_percentage_of_call_for_status, \
-    convert_call_time_seconds_to_datetime_format, add_invalid_fields_to_report
+from models.error_capture import BertException
+from models.interviewer_call_pattern_model import InterviewerCallPattern
+from reports.interviewer_call_pattern_report import (
+    convert_call_time_seconds_to_datetime_format,
+    generate_report, get_average_calls_per_hour,
+    get_average_respondents_interviewed_per_hour, get_call_pattern_records_by_interviewer_and_date_range,
+    get_call_time_in_seconds, get_hours_worked, get_invalid_fields,
+    get_number_of_households_completed_successfully, get_percentage_of_call_for_status,
+    get_percentage_of_hours_on_calls, get_respondents_interviewed, validate_dataframe,
+)
 
 
 def test_get_call_pattern_records_by_interviewer_and_date_range_returns_error():
-    error, call_pattern_records = get_call_pattern_records_by_interviewer_and_date_range("ricer", "blah", "blah")
-    error_message, error_code = error
-    assert error_code == 400
-    assert error_message == "Invalid date range parameters provided"
+    with pytest.raises(BertException) as error:
+        get_call_pattern_records_by_interviewer_and_date_range("ricer", "blah", "blah")
+
+    assert error.value.message == "Invalid date range parameters provided"
+    assert error.value.code == 400
 
 
 def test_generate_report(call_history_dataframe):
-    error, result = generate_report(call_history_dataframe)
-    assert error is None
-    assert result == InterviewerCallPattern(
+    assert generate_report(call_history_dataframe) == InterviewerCallPattern(
         hours_worked='2:27:57',
         call_time='0:02:45',
         hours_on_calls_percentage='1.86%',
@@ -33,72 +36,46 @@ def test_generate_report(call_history_dataframe):
     )
 
 
-@pytest.mark.parametrize(
-    "column_names",
-    [
-        (["call_start_time"]),
-        (["call_end_time"]),
-        (["number_of_interviews"]),
-        (["call_start_time", "call_end_time"]),
-        (["call_start_time", "call_end_time", "number_of_interviews"]),
-    ],
-)
-def test_add_invalid_fields_to_report(column_names, interviewer_call_pattern_report, invalid_call_history_dataframe,
-                                      call_history_dataframe):
-    for col in column_names:
-        invalid_call_history_dataframe.loc[
-            invalid_call_history_dataframe['questionnaire_id'] == "05cf69af-1a4e-47df-819a-928350fdda5a", col] = np.nan
-    add_invalid_fields_to_report(
-        interviewer_call_pattern_report,
-        invalid_call_history_dataframe,
-        call_history_dataframe
-    )
-    assert interviewer_call_pattern_report.invalid_fields == ", ".join(column_names)
-
-
-def test_generate_report_returns_error(call_history_dataframe, capsys):
+def test_generate_report_returns_error(call_history_dataframe, invalid_call_history_dataframe):
     call_history_dataframe.loc[call_history_dataframe['questionnaire_id'] == '05cf69af-3a4e-47df-819a-928350fdda5a', [
         'call_start_time']] = 'blah'
-    generate_report(call_history_dataframe)
-    captured = capsys.readouterr()
-    assert captured.out == ('Could not calculate get_hours_worked(): Can only use .dt accessor with '
-                            'datetimelike values\n')
+
+    with pytest.raises(BertException) as error:
+        generate_report(call_history_dataframe, invalid_call_history_dataframe, 1)
+    assert error.value.message == 'Could not calculate get_hours_worked(): Can only use .dt accessor with datetimelike values'
+    assert error.value.code == 400
 
 
 def test_validate_dataframe_with_no_invalid_data(call_history_dataframe):
-    error, valid_dataframe, invalid_dataframe = validate_dataframe(call_history_dataframe)
+    call_history_dataframe.loc[call_history_dataframe['status'].str.contains('Timed out during questionnaire', case=False), [
+        'status']] = 'happy'
+
+    valid_dataframe, discounted_records, discounted_fields = validate_dataframe(call_history_dataframe)
     assert valid_dataframe.columns.to_series().str.islower().all()
-    assert error is None
     assert type(valid_dataframe) == pd.DataFrame
-    assert len(invalid_dataframe.index) == 0
+    assert discounted_records == ''
 
 
 def test_validate_dataframe_with_invalid_data(call_history_dataframe):
     call_history_dataframe.loc[
         call_history_dataframe["questionnaire_id"] == "05cf69af-3a4e-47df-819a-928350fdda5a", "call_end_time"] = np.nan
-    error, valid_dataframe, invalid_dataframe = validate_dataframe(call_history_dataframe)
+
+    valid_dataframe, discounted_records, discounted_fields = validate_dataframe(call_history_dataframe)
     assert valid_dataframe.columns.to_series().str.islower().all()
-    assert error is None
     assert type(valid_dataframe) == pd.DataFrame
-    assert len(invalid_dataframe.index) == 2
+    assert discounted_records == f"3/{len(call_history_dataframe.index)}"
+    assert discounted_fields == "'status' column had timed out call status, 'call_end_time' column had missing data"
 
 
 def test_validate_dataframe_returns_error(call_history_dataframe):
     call_history_dataframe.loc[
         call_history_dataframe[
             "questionnaire_id"] == "05cf69af-3a4e-47df-819a-928350fdda5a", "number_of_interviews"] = "hey-yo!"
-    error, valid_dataframe, invalid_dataframe = validate_dataframe(call_history_dataframe)
-    error_message, error_code = error
-    assert error_message == "validate_dataframe failed: invalid literal for int() with base 10: \'hey-yo!\'"
-    assert error_code == 400
-    assert valid_dataframe is None
-    assert invalid_dataframe is None
 
-
-def test_drop_and_return_invalidated_records(call_history_dataframe):
-    actual_valid_records, actual_invalid_records = drop_and_return_invalidated_records(call_history_dataframe)
-    assert len(actual_valid_records.index) == 8
-    assert len(actual_invalid_records.index) == 0
+    with pytest.raises(BertException) as error:
+        validate_dataframe(call_history_dataframe)
+    assert error.value.message == "validate_dataframe failed: invalid literal for int() with base 10: \'hey-yo!\'"
+    assert error.value.code == 400
 
 
 @pytest.mark.parametrize(
@@ -112,10 +89,15 @@ def test_drop_and_return_invalidated_records(call_history_dataframe):
     ],
 )
 def test_get_invalid_fields(column_names, call_history_dataframe):
+    msg = ["'status' column had timed out call status"]
     for col in column_names:
         call_history_dataframe.loc[
             call_history_dataframe['questionnaire_id'] == "05cf69af-3a4e-47df-819a-928350fdda5a", col] = np.nan
-    assert get_invalid_fields(call_history_dataframe) == ", ".join(column_names)
+        msg.append(f"'{col}' column had missing data")
+
+    result = ", ".join(msg)
+    assert get_invalid_fields(call_history_dataframe) == result
+    assert result.count(",") == len(column_names)
 
 
 def test_get_hours_worked(call_history_dataframe):
