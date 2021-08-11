@@ -34,6 +34,8 @@ def get_cati_mi_hub_call_history(config, questionnaire_list):
     results = get_cati_mi_hub_call_history_from_database(config)
     cati_mi_hub_call_history_list = []
     for item in results:
+        if not check_if_questionnaire_id_is_in_questionnaire_list(item.get("InstrumentId"), questionnaire_list):
+            continue
         cati_mi_hub_call_history = MiHubCallHistory(
             questionnaire_id=item.get("InstrumentId"),
             serial_number=item.get("PrimaryKeyValue"),
@@ -53,6 +55,12 @@ def get_cati_mi_hub_call_history(config, questionnaire_list):
     print(f"Found {len(results)} mi hub call history records in the CATI database")
     return cati_mi_hub_call_history_list
 
+
+def check_if_questionnaire_id_is_in_questionnaire_list(instrument_id, questionnaire_list):
+    for questionnaire in questionnaire_list:
+        if instrument_id == questionnaire.get("id"):
+            return True
+    return False
 
 
 def group_by_questionnaire(data):
