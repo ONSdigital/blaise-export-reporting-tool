@@ -3,8 +3,8 @@ import datetime
 import numpy as np
 import pandas as pd
 
-from models.interviewer_call_pattern_model import InterviewerCallPattern
 from models.error_capture import BertException
+from models.interviewer_call_pattern_model import InterviewerCallPattern
 from reports.interviewer_call_history_report import get_call_history_records_by_interviewer_and_date_range
 
 COLUMNS_TO_VALIDATE = ["call_start_time", "call_end_time", "number_of_interviews"]
@@ -212,7 +212,7 @@ def get_invalid_fields(data):
     invalid_fields = []
 
     if data.loc[data['status'].str.contains('Timed out', case=False)].any().any():
-        invalid_fields.append("'status' column returned a timed out questionnaire")
+        invalid_fields.append("'status' column had timed out call status")
 
     data = data.filter(COLUMNS_TO_VALIDATE)
     for field in data.columns[data.isna().any()]:

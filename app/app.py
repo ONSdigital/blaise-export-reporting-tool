@@ -1,9 +1,9 @@
 from flask import Flask, jsonify, request
 
 from data_sources.datastore_data import get_call_history_report_status
+from functions.date_functions import date_handler
 from models.config_model import Config
 from models.error_capture import BertException
-from functions.request_handlers import date_handler
 from reports.appointment_resource_planning_report import get_appointment_resource_planning_by_date
 from reports.interviewer_call_history_report import get_call_history_records_by_interviewer_and_date_range
 from reports.interviewer_call_pattern_report import get_call_pattern_records_by_interviewer_and_date_range
