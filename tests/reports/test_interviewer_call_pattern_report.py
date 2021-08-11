@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from models.interviewer_call_pattern_model import InterviewerCallPattern
 from models.error_capture import BertException
+from models.interviewer_call_pattern_model import InterviewerCallPattern
 from reports.interviewer_call_pattern_report import (
     convert_call_time_seconds_to_datetime_format,
     generate_report, get_average_calls_per_hour,
@@ -64,7 +64,7 @@ def test_validate_dataframe_with_invalid_data(call_history_dataframe):
     assert valid_dataframe.columns.to_series().str.islower().all()
     assert type(valid_dataframe) == pd.DataFrame
     assert discounted_records == f"3/{len(call_history_dataframe.index)}"
-    assert discounted_fields == "'status' column returned a timed out questionnaire, 'call_end_time' column had missing data"
+    assert discounted_fields == "'status' column had timed out call status, 'call_end_time' column had missing data"
 
 
 def test_validate_dataframe_returns_error(call_history_dataframe):
@@ -89,7 +89,7 @@ def test_validate_dataframe_returns_error(call_history_dataframe):
     ],
 )
 def test_get_invalid_fields(column_names, call_history_dataframe):
-    msg = ["'status' column returned a timed out questionnaire"]
+    msg = ["'status' column had timed out call status"]
     for col in column_names:
         call_history_dataframe.loc[
             call_history_dataframe['questionnaire_id'] == "05cf69af-3a4e-47df-819a-928350fdda5a", col] = np.nan
