@@ -35,8 +35,8 @@ def validate_dataframe(data):
     discounted_fields = ""
 
     valid_data.columns = valid_data.columns.str.lower()
-    if find_invalid_data(valid_data):
-        valid_data, discounted_records, discounted_fields = find_invalid_data(data)
+    if invalid_data_found(valid_data):
+        valid_data, discounted_records, discounted_fields = get_invalid_data(data)
 
     try:
         valid_data = valid_data.astype({"number_of_interviews": "int32", "dial_secs": "float64"})
@@ -45,12 +45,14 @@ def validate_dataframe(data):
     return valid_data, discounted_records, discounted_fields
 
 
-def find_invalid_data(data):
+def invalid_data_found(data):
     timed_out_data_found = data.loc[data['status'].str.contains('Timed out', case=False)].any().any()
     missing_data_found = data.filter(COLUMNS_TO_VALIDATE).isna().any().any()
 
     if timed_out_data_found or missing_data_found:
-        return get_invalid_data(data)
+        return True
+
+    return False
 
 
 def get_invalid_data(data):
@@ -207,10 +209,12 @@ def get_percentage_of_call_for_status(status, call_history_dataframe):
 
 
 def get_invalid_fields(data):
-    invalid_fields = ""
+    invalid_fields = []
 
     if data.loc[data['status'].str.contains('Timed out', case=False)].any().any():
-        invalid_fields = "'status' column returned a timed out questionnaire, "
+        invalid_fields.append("'status' column returned a timed out questionnaire")
 
     data = data.filter(COLUMNS_TO_VALIDATE)
-    return invalid_fields+", ".join(data.columns[data.isna().any()])
+    for field in data.columns[data.isna().any()]:
+        invalid_fields.append(f"'{field}' column had missing data")
+    return ", ".join(invalid_fields)

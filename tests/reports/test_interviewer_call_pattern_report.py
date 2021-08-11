@@ -64,7 +64,7 @@ def test_validate_dataframe_with_invalid_data(call_history_dataframe):
     assert valid_dataframe.columns.to_series().str.islower().all()
     assert type(valid_dataframe) == pd.DataFrame
     assert discounted_records == f"3/{len(call_history_dataframe.index)}"
-    assert discounted_fields == "'status' column returned a timed out questionnaire, call_end_time"
+    assert discounted_fields == "'status' column returned a timed out questionnaire, 'call_end_time' column had missing data"
 
 
 def test_validate_dataframe_returns_error(call_history_dataframe):
@@ -89,12 +89,15 @@ def test_validate_dataframe_returns_error(call_history_dataframe):
     ],
 )
 def test_get_invalid_fields(column_names, call_history_dataframe):
+    msg = ["'status' column returned a timed out questionnaire"]
     for col in column_names:
         call_history_dataframe.loc[
             call_history_dataframe['questionnaire_id'] == "05cf69af-3a4e-47df-819a-928350fdda5a", col] = np.nan
+        msg.append(f"'{col}' column had missing data")
 
-    x = get_invalid_fields(call_history_dataframe)
-    assert x == "'status' column returned a timed out questionnaire, "+", ".join(column_names)
+    result = ", ".join(msg)
+    assert get_invalid_fields(call_history_dataframe) == result
+    assert result.count(",") == len(column_names)
 
 
 def test_get_hours_worked(call_history_dataframe):
