@@ -54,6 +54,7 @@ def get_cati_mi_hub_call_history(config, questionnaire_list):
     return cati_mi_hub_call_history_list
 
 
+
 def group_by_questionnaire(data):
     result = {}
     for record in data:
