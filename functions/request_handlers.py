@@ -13,15 +13,3 @@ def date_handler(request):
         raise(BertException("Invalid request, date is not valid", 400))
 
     return start_date, end_date
-
-
-def survey_tla_handler(request):
-    survey_tla = request.args.get("survey-tla", None)
-
-    if survey_tla is None or survey_tla == "":
-        return None
-
-    if not survey_tla.isalpha() or len(survey_tla) != 3:
-        raise(BertException(f"Invalid request, {survey_tla} is not a valid survey tla", 400))
-
-    return survey_tla.upper()

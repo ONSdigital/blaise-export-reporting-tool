@@ -10,11 +10,9 @@ from reports.interviewer_call_history_report import get_call_history_records_by_
 COLUMNS_TO_VALIDATE = ["call_start_time", "call_end_time", "number_of_interviews"]
 
 
-def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, start_date_string, end_date_string, survey_tla):
-
+def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, start_date_string, end_date_string):
     call_history_records = get_call_history_records_by_interviewer_and_date_range(
-        interviewer_name, start_date_string, end_date_string, survey_tla
-    )
+        interviewer_name, start_date_string, end_date_string)
     if not call_history_records:
         return {}
 
