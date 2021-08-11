@@ -10,22 +10,69 @@ from reports.interviewer_call_history_report import get_call_history_records_by_
 COLUMNS_TO_VALIDATE = ["call_start_time", "call_end_time", "number_of_interviews"]
 
 
-def get_invalid_fields(data):
-    invalid_fields = ""
+def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, start_date_string, end_date_string, survey_tla):
 
-    if data.loc[data['status'].str.contains('Timed out', case=False)].any().any():
-        invalid_fields = "'status' column returned a timed out questionnaire, "
+    call_history_records = get_call_history_records_by_interviewer_and_date_range(
+        interviewer_name, start_date_string, end_date_string, survey_tla
+    )
+    if not call_history_records:
+        return {}
 
-    data = data.filter(COLUMNS_TO_VALIDATE)
-    return invalid_fields+", ".join(data.columns[data.isna().any()])
-
-
-def add_invalid_fields_to_report(report, invalid_dataframe, call_history_dataframe):
-    report.discounted_invalid_records = f"{len(invalid_dataframe.index)}/{len(call_history_dataframe.index)}"
-    report.invalid_fields = f"{get_invalid_fields(invalid_dataframe)}"
+    call_history_dataframe = create_dataframe(call_history_records)
+    valid_dataframe, discounted_records, discounted_fields = validate_dataframe(call_history_dataframe)
+    return generate_report(valid_dataframe, discounted_records, discounted_fields)
 
 
-def generate_report(valid_call_history_dataframe):
+def create_dataframe(call_history):
+    try:
+        result = pd.DataFrame(data=call_history)
+    except Exception as err:
+        raise BertException(f"create_dataframe failed: {err}", 400)
+    return result
+
+
+def validate_dataframe(data):
+    valid_data = data.copy()
+    discounted_records = ""
+    discounted_fields = ""
+
+    valid_data.columns = valid_data.columns.str.lower()
+    if find_invalid_data(valid_data):
+        valid_data, discounted_records, discounted_fields = find_invalid_data(data)
+
+    try:
+        valid_data = valid_data.astype({"number_of_interviews": "int32", "dial_secs": "float64"})
+    except Exception as err:
+        raise BertException(f"validate_dataframe failed: {err}", 400)
+    return valid_data, discounted_records, discounted_fields
+
+
+def find_invalid_data(data):
+    timed_out_data_found = data.loc[data['status'].str.contains('Timed out', case=False)].any().any()
+    missing_data_found = data.filter(COLUMNS_TO_VALIDATE).isna().any().any()
+
+    if timed_out_data_found or missing_data_found:
+        return get_invalid_data(data)
+
+
+def get_invalid_data(data):
+    valid_records = data.copy()
+    valid_records['number_of_interviews'].replace('', np.nan, inplace=True)
+
+    valid_records.drop(valid_records.loc[valid_records['status'].str.contains('Timed out', case=False)].index, inplace=True)
+    valid_records.dropna(subset=COLUMNS_TO_VALIDATE, inplace=True)
+
+    invalid_records = data[~data.index.isin(valid_records.index)]
+    valid_records.reset_index(drop=True, inplace=True)
+    invalid_records.reset_index(drop=True, inplace=True)
+
+    discounted_records = f"{len(invalid_records.index)}/{len(data.index)}"
+    discounted_fields = get_invalid_fields(invalid_records)
+
+    return valid_records, discounted_records, discounted_fields
+
+
+def generate_report(valid_call_history_dataframe, discounted_records=None, discounted_fields=None):
     hours_worked = get_hours_worked(valid_call_history_dataframe)
     total_call_seconds = get_call_time_in_seconds(valid_call_history_dataframe)
 
@@ -44,82 +91,11 @@ def generate_report(valid_call_history_dataframe):
         appointments_for_contacts_percentage=get_percentage_of_call_for_status(
             "appointment made", valid_call_history_dataframe),
     )
-    return report
 
+    if discounted_records is not None:
+        report.discounted_invalid_records = discounted_records
+        report.invalid_fields = discounted_fields
 
-def drop_and_return_null_records(valid_df, invalid_df):
-    valid_records = valid_df.copy()
-    valid_records['number_of_interviews'].replace('', np.nan, inplace=True)
-
-    valid_records.dropna(subset=COLUMNS_TO_VALIDATE, inplace=True)
-    null_records = valid_df[~valid_df.index.isin(valid_records.index)]
-
-    invalid_records = null_records.append(invalid_df, ignore_index=True)
-
-    valid_records.reset_index(drop=True, inplace=True)
-    invalid_records.reset_index(drop=True, inplace=True)
-
-    return valid_records, invalid_records
-
-
-def drop_and_return_timed_out_records(dataframe, status_message):
-    valid_records = dataframe.copy()
-
-    valid_records.drop(valid_records.loc[valid_records['status'].str.contains(status_message, case=False)].index, inplace=True)
-    invalid_records = dataframe[~dataframe.index.isin(valid_records.index)]
-
-    valid_records.reset_index(drop=True, inplace=True)
-    invalid_records.reset_index(drop=True, inplace=True)
-
-    return valid_records, invalid_records
-
-
-def validate_dataframe(data):
-    invalid_data = pd.DataFrame()
-    valid_data = data.copy()
-    valid_data.columns = valid_data.columns.str.lower()
-
-    status_message = 'Timed out during questionnaire'
-    timed_out_data_found = valid_data.loc[valid_data['status'].str.contains(status_message, case=False)].any().any()
-
-    if timed_out_data_found:
-        valid_data, invalid_data = drop_and_return_timed_out_records(valid_data, status_message)
-
-    missing_data_found = valid_data.filter(COLUMNS_TO_VALIDATE).isna().any().any()
-    if missing_data_found:
-        valid_data, invalid_data = drop_and_return_null_records(valid_data, invalid_data)
-
-    try:
-        valid_data = valid_data.astype({"number_of_interviews": "int32", "dial_secs": "float64"})
-    except Exception as err:
-        raise BertException(f"validate_dataframe failed: {err}", 400)
-    return valid_data, invalid_data
-
-
-def create_dataframe(call_history):
-    try:
-        result = pd.DataFrame(data=call_history)
-    except Exception as err:
-        raise BertException(f"create_dataframe failed: {err}", 400)
-    return result
-
-
-def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, start_date_string, end_date_string, survey_tla):
-
-    call_history_records = get_call_history_records_by_interviewer_and_date_range(
-        interviewer_name, start_date_string, end_date_string, survey_tla
-    )
-    if not call_history_records:
-        return {}
-
-    call_history_dataframe = create_dataframe(call_history_records)
-
-    valid_dataframe, invalid_dataframe = validate_dataframe(call_history_dataframe)
-
-    report = generate_report(valid_dataframe)
-
-    if not invalid_dataframe.empty:
-        add_invalid_fields_to_report(report, invalid_dataframe, call_history_dataframe)
     return report
 
 
@@ -158,6 +134,15 @@ def convert_call_time_seconds_to_datetime_format(seconds):
     return result
 
 
+def get_percentage_of_hours_on_calls(hours_worked, total_call_seconds):
+    try:
+        value = 100 * float(total_call_seconds) / float(get_total_seconds_from_string(hours_worked))
+        result = f"{limit_two_decimal_places(value)}%"
+    except Exception as err:
+        raise BertException(f"Could not calculate get_percentage_of_hours_on_calls(): {err}", 400)
+    return result
+
+
 def get_total_seconds_from_string(hours_worked):
     try:
         h, m, s = hours_worked.split(':')
@@ -172,15 +157,6 @@ def limit_two_decimal_places(float_value):
         result = float("{:.2f}".format(float_value))
     except Exception as err:
         raise BertException(f"Could not convert {float_value} to float: {err}")
-    return result
-
-
-def get_percentage_of_hours_on_calls(hours_worked, total_call_seconds):
-    try:
-        value = 100 * float(total_call_seconds) / float(get_total_seconds_from_string(hours_worked))
-        result = f"{limit_two_decimal_places(value)}%"
-    except Exception as err:
-        raise BertException(f"Could not calculate get_percentage_of_hours_on_calls(): {err}", 400)
     return result
 
 
@@ -230,3 +206,13 @@ def get_percentage_of_call_for_status(status, call_history_dataframe):
     except Exception as err:
         raise BertException(f"Could not calculate get_percentage_of_call_for_status(): {err}", 400)
     return result
+
+
+def get_invalid_fields(data):
+    invalid_fields = ""
+
+    if data.loc[data['status'].str.contains('Timed out', case=False)].any().any():
+        invalid_fields = "'status' column returned a timed out questionnaire, "
+
+    data = data.filter(COLUMNS_TO_VALIDATE)
+    return invalid_fields+", ".join(data.columns[data.isna().any()])
