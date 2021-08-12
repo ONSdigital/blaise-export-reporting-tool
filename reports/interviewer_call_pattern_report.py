@@ -11,6 +11,8 @@ COLUMNS_TO_VALIDATE = ["call_start_time", "call_end_time", "number_of_interviews
 
 
 def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, start_date_string, end_date_string):
+    print(
+        f"Getting call pattern data for interviewer '{interviewer_name}' between '{start_date_string}' and '{end_date_string}'")
     call_history_records = get_call_history_records_by_interviewer_and_date_range(
         interviewer_name, start_date_string, end_date_string)
     if not call_history_records:
