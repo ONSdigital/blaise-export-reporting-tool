@@ -25,14 +25,18 @@ class CatiAppointmentResourcePlanningTable(DataBaseBase):
 
     @classmethod
     def get_appointments_for_date(cls, config, date):
-        query = f"""
+        query = f"""        
         SELECT InstrumentId, TIME_FORMAT(AppointmentStartTime, "%H:%i") AS AppointmentTime,
-        CASE WHEN GroupName = "" THEN "English" WHEN GroupName = "TNS" THEN "Other" WHEN GroupName = "WLS" THEN "Welsh" END AS AppointmentLanguage,
+        CASE
+        WHEN GroupName = "TNS" OR SelectFields LIKE '%<Field FieldName="QDataBag.IntGroup">TNS</Field>%' THEN "Other"
+        WHEN GroupName = "WLS" OR SelectFields LIKE '%<Field FieldName="QDataBag.IntGroup">WLS</Field>%' THEN "Welsh"
+        ELSE "English"
+        END AS AppointmentLanguage,
         COUNT(*) AS Total
         FROM {cls.table_name()}
         WHERE AppointmentType != "0"
         AND AppointmentStartDate LIKE "{date}%"
-        GROUP BY InstrumentId, AppointmentTime, GroupName
+        GROUP BY InstrumentId, AppointmentTime, AppointmentLanguage
         ORDER BY AppointmentTime ASC, AppointmentLanguage ASC
         """
         return cls.query(config, query)
