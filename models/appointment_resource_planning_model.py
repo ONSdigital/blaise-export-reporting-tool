@@ -26,18 +26,23 @@ class CatiAppointmentResourcePlanningTable(DataBaseBase):
     @classmethod
     def get_appointments_for_date(cls, config, date):
         query = f"""        
-        SELECT InstrumentId, TIME_FORMAT(AppointmentStartTime, "%H:%i") AS AppointmentTime,
-        CASE
-        WHEN GroupName = "TNS" OR SelectFields LIKE '%<Field FieldName="QDataBag.IntGroup">TNS</Field>%' THEN "Other"
-        WHEN GroupName = "WLS" OR SelectFields LIKE '%<Field FieldName="QDataBag.IntGroup">WLS</Field>%' THEN "Welsh"
-        ELSE "English"
-        END AS AppointmentLanguage,
-        COUNT(*) AS Total
-        FROM {cls.table_name()}
-        WHERE AppointmentType != "0"
-        AND AppointmentStartDate LIKE "{date}%"
-        GROUP BY InstrumentId, AppointmentTime, AppointmentLanguage
-        ORDER BY AppointmentTime ASC, AppointmentLanguage ASC
+            SELECT DaybatchCaseInfo.InstrumentId, TIME_FORMAT(AppointmentStartTime, "%H:%i") AS AppointmentTime,
+            CASE
+                WHEN GroupName = "TNS"
+                    OR SelectFields LIKE '%<Field FieldName="QDataBag.IntGroup">TNS</Field>%'
+                    OR AdditionalData LIKE '%<Field Name="QDataBag.IntGroup" Status="Response" Value="\'TNS\'"/>%' THEN "Other"
+                WHEN GroupName = "WLS"
+                    OR SelectFields LIKE '%<Field FieldName="QDataBag.IntGroup">WLS</Field>%'
+                    OR AdditionalData LIKE '%<Field Name="QDataBag.IntGroup" Status="Response" Value="\'WLS\'"/>%' THEN "Welsh"
+            ELSE "English"
+            END AS AppointmentLanguage,
+            COUNT(*) AS Total
+            FROM {cls.table_name()}
+            LEFT JOIN DialHistory ON DialHistory.InstrumentId = DaybatchCaseInfo.InstrumentId AND DialHistory.PrimaryKeyValue = DaybatchCaseInfo.PrimaryKeyValue
+            WHERE AppointmentType != "0"
+            AND AppointmentStartDate LIKE "{date}%"
+            GROUP BY InstrumentId, AppointmentTime, AppointmentLanguage
+            ORDER BY AppointmentTime ASC, AppointmentLanguage ASC
         """
         return cls.query(config, query)
 
