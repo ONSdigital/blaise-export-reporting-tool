@@ -30,17 +30,18 @@ class CatiAppointmentResourcePlanningTable(DataBaseBase):
             CASE
                 WHEN GroupName = "TNS"
                     OR SelectFields LIKE '%<Field FieldName="QDataBag.IntGroup">TNS</Field>%'
-                    OR AdditionalData LIKE '%<Field Name="QDataBag.IntGroup" Status="Response" Value="\'TNS\'"/>%' THEN "Other"
+                    OR AdditionalData LIKE '%<Field Name="QDataBag.IntGroup" Status="Response" Value="\\'TNS\\'"/>%' THEN "Other"
                 WHEN GroupName = "WLS"
                     OR SelectFields LIKE '%<Field FieldName="QDataBag.IntGroup">WLS</Field>%'
-                    OR AdditionalData LIKE '%<Field Name="QDataBag.IntGroup" Status="Response" Value="\'WLS\'"/>%' THEN "Welsh"
+                    OR AdditionalData LIKE '%<Field Name="QDataBag.IntGroup" Status="Response" Value="\\'WLS\\'"/>%' THEN "Welsh"
             ELSE "English"
             END AS AppointmentLanguage,
             COUNT(*) AS Total
             FROM {cls.table_name()}
-            LEFT JOIN DialHistory ON DialHistory.InstrumentId = DaybatchCaseInfo.InstrumentId AND DialHistory.PrimaryKeyValue = DaybatchCaseInfo.PrimaryKeyValue
+            LEFT JOIN DialHistory ON DialHistory.InstrumentId = DaybatchCaseInfo.InstrumentId
+                AND DialHistory.PrimaryKeyValue = DaybatchCaseInfo.PrimaryKeyValue
             WHERE AppointmentType != "0"
-            AND AppointmentStartDate LIKE "{date}%"
+                AND AppointmentStartDate LIKE "{date}%"
             GROUP BY InstrumentId, AppointmentTime, AppointmentLanguage
             ORDER BY AppointmentTime ASC, AppointmentLanguage ASC
         """
