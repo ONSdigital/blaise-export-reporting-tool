@@ -14,6 +14,22 @@ from reports.interviewer_call_pattern_report import (
 )
 
 
+def test_get_call_pattern_report_raises_exception_when_data_is_completely_invalid(call_history_records, mocker):
+    interviewer_name = 'el4president'
+    date = '2022-01-24'
+    discounted_records = "numberwang"
+    discounted_fields = "aaaaaaaallll the fields"
+
+    mocker.patch("reports.interviewer_call_pattern_report.get_call_history_records_by_interviewer_and_date_range", return_value=call_history_records)
+    mocker.patch("reports.interviewer_call_pattern_report.validate_dataframe", return_value=(pd.DataFrame(), discounted_records, discounted_fields))
+
+    with pytest.raises(BertException) as err:
+        get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, date, date)
+    assert err.value.message == f"""No valid data returned for '{interviewer_name}' between '{date}' and 
+        '{date}'. Please review the following fields in the Call History data: {discounted_fields}"""
+    assert err.value.code == 400
+
+
 def test_get_call_pattern_records_by_interviewer_and_date_range_returns_error():
     with pytest.raises(BertException) as error:
         get_call_pattern_records_by_interviewer_and_date_range("ricer", "blah", "blah")
@@ -187,3 +203,5 @@ def test_get_percentage_of_call_for_status(status, expected, call_history_datafr
 )
 def test_convert_call_time_seconds_to_datetime_format(seconds, expected):
     assert convert_call_time_seconds_to_datetime_format(seconds) == expected
+
+
