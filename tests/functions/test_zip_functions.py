@@ -16,13 +16,3 @@ def test_create_zip():
     assert len(zip_info) == 2
     assert zip_info[0].filename == "foo.csv"
     assert zip_info[1].filename == "bar.csv"
-
-
-def test_zip_data_group_with_no_group():
-    groups = {}
-    assert zip_data_group(groups, "foobar") == {}
-
-
-def test_zip_data_group_with_group():
-    groups = {"foobar": {"fwibble": "fish"}}
-    assert zip_data_group(groups, "foobar") == {"fwibble": "fish"}
