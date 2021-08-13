@@ -1,5 +1,4 @@
 import datetime
-from functions.csv_functions import write_csv
 import os
 
 from dotenv import load_dotenv
@@ -9,8 +8,9 @@ from data_sources.datastore_data import (
     get_call_history,
     upload_call_history_to_datastore,
 )
+from functions.csv_functions import write_csv
 from functions.google_storage_functions import init_google_storage
-from functions.zip_functions import create_zip, zip_group
+from functions.zip_functions import create_zip, zip_data_group
 from models.config_model import Config
 from reports.mi_hub_call_history_report import get_mi_hub_call_history
 from reports.mi_hub_respondent_data_report import get_mi_hub_respondent_data
@@ -34,31 +34,31 @@ def deliver_mi_hub_reports(_event, _context):
     grouped_call_history_reports = get_mi_hub_call_history(config)
     grouped_respondent_data_reports = get_mi_hub_respondent_data(config)
 
-    zip_groups = {}
+    zip_data_grouped_by_questionnaire = {}
 
     for questionnaire, call_history_report in grouped_call_history_reports.items():
         call_history_csv = write_csv(call_history_report)
-        zip_files_for_questionnaire = zip_group(zip_groups, questionnaire)
-        zip_files_for_questionnaire["call_history.csv"] = call_history_csv
-        zip_groups[questionnaire] = zip_files_for_questionnaire
+        files_for_questionnaire_zip = zip_data_group(zip_data_grouped_by_questionnaire, questionnaire)
+        files_for_questionnaire_zip["call_history.csv"] = call_history_csv
+        zip_data_grouped_by_questionnaire[questionnaire] = files_for_questionnaire_zip
 
     for (
-        questionnaire,
-        respondent_data_report,
+            questionnaire,
+            respondent_data_report,
     ) in grouped_respondent_data_reports.items():
         respondent_data_csv = write_csv(respondent_data_report)
-        zip_files_for_questionnaire = zip_group(zip_groups, questionnaire)
-        zip_files_for_questionnaire["respondent_data.csv"] = respondent_data_csv
-        zip_groups[questionnaire] = zip_files_for_questionnaire
+        files_for_questionnaire_zip = zip_data_group(zip_data_grouped_by_questionnaire, questionnaire)
+        files_for_questionnaire_zip["respondent_data.csv"] = respondent_data_csv
+        zip_data_grouped_by_questionnaire[questionnaire] = files_for_questionnaire_zip
 
-    dt_string = datetime.datetime.now().strftime("%d%m%Y_%H%M%S")
-    for questionnaire, zip_files in zip_groups.items():
+    datetime_string = datetime.datetime.now().strftime("%d%m%Y_%H%M%S")
+    for questionnaire, files in zip_data_grouped_by_questionnaire.items():
         zip_file_data = []
-        for filename, content in zip_files.items():
+        for filename, content in files.items():
             zip_file_data.append({"filename": filename, "content": content})
         zipped = create_zip(zip_file_data)
 
-        mi_filename = f"mi_{questionnaire}_{dt_string}"
+        mi_filename = f"mi_{questionnaire}_{datetime_string}"
         google_storage.upload_zip(f"{mi_filename}.zip", zipped)
 
 

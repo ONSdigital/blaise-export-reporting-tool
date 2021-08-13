@@ -1,8 +1,7 @@
-import os
-import zipfile
 import io
+import zipfile
 
-from functions.zip_functions import create_zip, zip_group
+from functions.zip_functions import create_zip, zip_data_group
 
 
 def test_create_zip():
@@ -19,11 +18,11 @@ def test_create_zip():
     assert zip_info[1].filename == "bar.csv"
 
 
-def test_zip_group_no_group():
+def test_zip_data_group_with_no_group():
     groups = {}
-    assert zip_group(groups, "foobar") == {}
+    assert zip_data_group(groups, "foobar") == {}
 
 
-def test_zip_group_with_group():
+def test_zip_data_group_with_group():
     groups = {"foobar": {"fwibble": "fish"}}
-    assert zip_group(groups, "foobar") == {"fwibble": "fish"}
+    assert zip_data_group(groups, "foobar") == {"fwibble": "fish"}
