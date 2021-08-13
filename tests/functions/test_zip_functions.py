@@ -1,7 +1,7 @@
 import io
 import zipfile
 
-from functions.zip_functions import create_zip, zip_data_group
+from functions.zip_functions import create_zip
 
 
 def test_create_zip():
