@@ -52,12 +52,6 @@ def test_call_pattern_report_returns_error(mock_get_call_pattern_records_by_inte
     assert response.get_data(as_text=True) == '{"error": "Invalid date range parameters provided"}'
 
 
-
-
-
-
-
-
 @patch("app.app.get_appointment_resource_planning_by_date")
 def test_appointment_resource_planning(mock_get_appointment_resource_planning_by_date, client):
     mock_get_appointment_resource_planning_by_date.return_value = None, []
