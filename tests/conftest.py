@@ -379,3 +379,72 @@ def interviewer_call_pattern_report():
         discounted_invalid_records="0",
         invalid_fields="n/a",
     )
+
+
+@pytest.fixture
+def call_history_records():
+    return [
+        {
+            'appointment_info': None,
+            'busy_dials': 0,
+            'call_end_time': DatetimeWithNanoseconds(2021, 8, 7, 1, 45, 18, tzinfo=datetime.timezone.utc),
+            'call_number': 2,
+            'call_result': 'NoAnswer',
+            'call_start_time': DatetimeWithNanoseconds(2021, 8, 7, 1, 44, 26, tzinfo=datetime.timezone.utc),
+            'cohort': None,
+            'dial_number': 1,
+            'dial_secs': 52,
+            'interviewer': 'el4president',
+            'number_of_interviews': 1,
+            'outcome_code': 310,
+            'questionnaire_id': 'remember-24-01-9dc791f0cb07',
+            'questionnaire_name': 'OPN2108R',
+            'serial_number': 24012022,
+            'status': 'Finished (No contact)',
+            'survey': 'OPN',
+            'update_info': None,
+            'wave': None
+        },
+        {
+            'appointment_info': None,
+            'busy_dials': 0,
+            'call_end_time': DatetimeWithNanoseconds(2021, 8, 7, 1, 56, 35, tzinfo=datetime.timezone.utc),
+            'call_number': 2,
+            'call_result': 'NoAnswer',
+            'call_start_time': DatetimeWithNanoseconds(2021, 8, 7, 1, 55, 39, tzinfo=datetime.timezone.utc),
+            'cohort': None,
+            'dial_number': 1,
+            'dial_secs': 56,
+            'interviewer': 'el4president',
+            'number_of_interviews': 1,
+            'outcome_code': 310,
+            'questionnaire_id': 'remember-24-01-9dc791f0cb07',
+            'questionnaire_name': 'OPN2108R',
+            'serial_number': 24012022,
+            'status': 'Finished (No contact)',
+            'survey': 'OPN',
+            'update_info': None,
+            'wave': None
+        },
+        {
+            'appointment_info': None,
+            'busy_dials': 0,
+            'call_end_time': DatetimeWithNanoseconds(2021, 8, 7, 1, 58, 18, tzinfo=datetime.timezone.utc),
+            'call_number': 2,
+            'call_result': 'NoAnswer',
+            'call_start_time': DatetimeWithNanoseconds(2021, 8, 7, 1, 57, 15, tzinfo=datetime.timezone.utc),
+            'cohort': None,
+            'dial_number': 1,
+            'dial_secs': 63,
+            'interviewer': 'el4president',
+            'number_of_interviews': 1,
+            'outcome_code': 310,
+            'questionnaire_id': 'remember-24-01-9dc791f0cb07',
+            'questionnaire_name': 'OPN2108R',
+            'serial_number': 24012022,
+            'status': 'Finished (No contact)',
+            'survey': 'OPN',
+            'update_info': None,
+            'wave': None
+        },
+    ]
