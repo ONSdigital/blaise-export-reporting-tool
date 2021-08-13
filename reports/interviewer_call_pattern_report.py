@@ -20,7 +20,13 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
 
     call_history_dataframe = create_dataframe(call_history_records)
     valid_dataframe, discounted_records, discounted_fields = validate_dataframe(call_history_dataframe)
-    return generate_report(valid_dataframe, discounted_records, discounted_fields)
+
+    if valid_dataframe.empty:
+        raise BertException(f"""No valid data returned for '{interviewer_name}' between '{start_date_string}' and 
+        '{end_date_string}'. Please review the following fields in the Call History data: {discounted_fields}""", 400)
+
+    report = generate_report(valid_dataframe, discounted_records, discounted_fields)
+    return report
 
 
 def create_dataframe(call_history):
