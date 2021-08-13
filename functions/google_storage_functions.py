@@ -28,7 +28,7 @@ class GoogleStorage:
         blob_destination.upload_from_filename(source)
         print(f"Uploaded file to storage bucket - {source}")
 
-    def upload_zip_mem(self, dest, data):
+    def upload_zip(self, dest, data):
         blob_destination = self.bucket.blob(dest)
         print(f"Uploading file to storage bucket - {dest}")
         blob_destination.upload_from_string(data, content_type="application/zip")

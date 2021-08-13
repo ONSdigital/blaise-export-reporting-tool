@@ -1,24 +1,9 @@
 import csv
 from dataclasses import asdict, is_dataclass
-from typing import List, Dict
 import io
 
 
-def write_list_of_dicts_to_csv(csv_file, list_of_dicts, fieldnames):
-    try:
-        with open(csv_file, "w", newline="") as csv_file:
-            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-            writer.writeheader()
-            for data in list_of_dicts:
-                if is_dataclass(data):
-                    writer.writerow(asdict(data))
-                else:
-                    writer.writerow(data)
-    except IOError:
-        print("I/O error")
-
-
-def write_csv_mem(data):
+def write_csv(data):
     buffer = io.StringIO()
     csv_writer = csv.DictWriter(buffer, fieldnames=get_fieldnames(data))
     csv_writer.writeheader()

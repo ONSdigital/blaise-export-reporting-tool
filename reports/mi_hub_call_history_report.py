@@ -5,11 +5,6 @@ from data_sources.questionnaire_data import (
     get_questionnaire_data,
     get_questionnaire_name_from_id,
 )
-from functions.csv_functions import write_list_of_dicts_to_csv
-from functions.folder_functions import (
-    create_questionnaire_name_folder_in_tmp_directory,
-    get_tmp_directory_path,
-)
 from models.mi_hub_call_history_model import MiHubCallHistory
 
 
