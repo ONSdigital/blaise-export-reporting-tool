@@ -39,4 +39,4 @@ def get_fieldnames(data):
     fieldname_row = data[0]
     if is_dataclass(fieldname_row):
         return fieldname_row.fields()
-    return fieldname_row.keys()
+    return list(fieldname_row.keys())
