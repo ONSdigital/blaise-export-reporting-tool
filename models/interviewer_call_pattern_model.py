@@ -18,3 +18,12 @@ class InterviewerCallPattern:
 
     def json(self):
         return json.dumps(asdict(self))
+
+
+@dataclass
+class InterviewerCallPatternWithNoValidData:
+    discounted_invalid_records: str = "0"
+    invalid_fields: str = "n/a"
+
+    def json(self):
+        return json.dumps(asdict(self))
