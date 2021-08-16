@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 from models.error_capture import BertException
-from models.interviewer_call_pattern_model import InterviewerCallPattern
+from models.interviewer_call_pattern_model import InterviewerCallPattern, InterviewerCallPatternWithNoValidData
 from reports.interviewer_call_history_report import get_call_history_records_by_interviewer_and_date_range
 
 COLUMNS_TO_VALIDATE = ["call_start_time", "call_end_time", "number_of_interviews"]
@@ -22,8 +22,10 @@ def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, sta
     valid_dataframe, discounted_records, discounted_fields = validate_dataframe(call_history_dataframe)
 
     if valid_dataframe.empty:
-        raise BertException(f"""No valid data returned for '{interviewer_name}' between '{start_date_string}' and 
-        '{end_date_string}'. Please review the following fields in the Call History data: {discounted_fields}""", 400)
+        report = InterviewerCallPatternWithNoValidData()
+        report.discounted_invalid_records = discounted_records
+        report.invalid_fields = discounted_fields
+        return report
 
     report = generate_report(valid_dataframe, discounted_records, discounted_fields)
     return report
@@ -67,7 +69,8 @@ def get_invalid_data(data):
     valid_records = data.copy()
     valid_records['number_of_interviews'].replace('', np.nan, inplace=True)
 
-    valid_records.drop(valid_records.loc[valid_records['status'].str.contains('Timed out', case=False)].index, inplace=True)
+    valid_records.drop(valid_records.loc[valid_records['status'].str.contains('Timed out', case=False)].index,
+                       inplace=True)
     valid_records.dropna(subset=COLUMNS_TO_VALIDATE, inplace=True)
 
     invalid_records = data[~data.index.isin(valid_records.index)]
