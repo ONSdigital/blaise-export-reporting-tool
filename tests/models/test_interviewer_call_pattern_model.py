@@ -1,4 +1,4 @@
-from models.interviewer_call_pattern_model import InterviewerCallPattern
+from models.interviewer_call_pattern_model import InterviewerCallPattern, InterviewerCallPatternWithNoValidData
 
 
 def test_interviewer_call_pattern():
@@ -16,3 +16,11 @@ def test_interviewer_call_pattern():
         invalid_fields="",
     )
     assert interviewer_call_pattern is not None
+
+
+def test_interviewer_call_pattern_with_no_valid_data():
+    interviewer_call_pattern_with_no_valid_data = InterviewerCallPatternWithNoValidData(
+        discounted_invalid_records="",
+        invalid_fields="",
+    )
+    assert interviewer_call_pattern_with_no_valid_data is not None
