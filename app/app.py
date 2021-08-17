@@ -25,13 +25,15 @@ def call_history_report_status():
 @app.route("/api/reports/call-history/<interviewer>")
 def call_history(interviewer):
     start_date, end_date = date_handler(request)
-    return jsonify(get_call_history_records_by_interviewer_and_date_range(interviewer, start_date, end_date))
+    survey_tla = survey_tla_handler(request)
+    return jsonify(get_call_history_records_by_interviewer_and_date_range(interviewer, start_date, end_date, survey_tla))
 
 
 @app.route("/api/reports/call-pattern/<interviewer>")
 def call_pattern(interviewer):
     start_date, end_date = date_handler(request)
-    results = get_call_pattern_records_by_interviewer_and_date_range(interviewer, start_date, end_date)
+    survey_tla = survey_tla_handler(request)
+    results = get_call_pattern_records_by_interviewer_and_date_range(interviewer, start_date, end_date, survey_tla)
     if results == {}:
         return {}
     else:
