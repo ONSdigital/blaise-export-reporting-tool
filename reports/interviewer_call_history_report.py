@@ -4,8 +4,7 @@ from functions.date_functions import parse_date_string_to_datetime
 from models.error_capture import BertException
 
 
-def get_call_history_records_for_all_surveys(interviewer_name, start_date, end_date):
-    client = datastore.Client()
+def get_call_history_records_for_all_surveys(client, interviewer_name, start_date, end_date):
     query = client.query(kind="CallHistory")
     query.add_filter("interviewer", "=", interviewer_name)
     query.add_filter("call_start_time", ">=", start_date)
@@ -17,10 +16,9 @@ def get_call_history_records_for_all_surveys(interviewer_name, start_date, end_d
     return results
 
 
-def get_call_history_records_by_survey(interviewer_name, start_date, end_date, survey_tla):
+def get_call_history_records_by_survey(client, interviewer_name, start_date, end_date, survey_tla):
     print(f"Filtering call history data by survey '{survey_tla}'")
 
-    client = datastore.Client()
     query = client.query(kind="CallHistoryBySurvey")
     query.add_filter("interviewer", "=", interviewer_name)
     query.add_filter("call_start_time", ">=", start_date)
@@ -41,7 +39,8 @@ def get_call_history_records(interviewer_name, start_date_string, end_date_strin
     if start_date is None or end_date is None:
         raise BertException("Invalid date range parameters provided", 400)
 
+    client = datastore.Client()
     if survey_tla is not None:
-        return get_call_history_records_by_survey(interviewer_name, start_date, end_date, survey_tla)
+        return get_call_history_records_by_survey(client, interviewer_name, start_date, end_date, survey_tla)
 
-    return get_call_history_records_for_all_surveys(interviewer_name, start_date, end_date)
+    return get_call_history_records_for_all_surveys(client, interviewer_name, start_date, end_date)

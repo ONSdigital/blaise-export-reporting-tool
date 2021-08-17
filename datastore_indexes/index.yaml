@@ -3,7 +3,8 @@ indexes:
     properties:
       - name: interviewer
       - name: call_start_time
-  - kind: CallHistoryBySurvey
+
+  - kind: CallHistory
     properties:
       - name: survey
       - name: interviewer
