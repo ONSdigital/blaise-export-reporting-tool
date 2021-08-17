@@ -18,7 +18,7 @@ def date_handler(request):
 def survey_tla_handler(request):
     survey_tla = request.args.get("survey-tla", None)
 
-    if survey_tla is None or survey_tla == "" or survey_tla.lower() == "all":
+    if survey_tla is None or survey_tla == "":
         return None
 
     if not survey_tla.isalpha() or len(survey_tla) != 3:
