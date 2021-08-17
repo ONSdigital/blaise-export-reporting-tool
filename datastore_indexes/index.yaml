@@ -1,5 +1,6 @@
 indexes:
   - kind: CallHistory
     properties:
+      - name: survey
       - name: interviewer
       - name: call_start_time
