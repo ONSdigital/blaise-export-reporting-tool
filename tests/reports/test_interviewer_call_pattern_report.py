@@ -20,7 +20,7 @@ def test_get_call_pattern_report_when_data_is_completely_invalid(call_history_re
     mock_discounted_invalid_records = "numberwang"
     mock_invalid_fields = "aaaaaaaallll the fields"
 
-    mocker.patch("reports.interviewer_call_pattern_report.get_call_history_records_by_interviewer_and_date_range",
+    mocker.patch("reports.interviewer_call_pattern_report.get_call_history_records",
                  return_value=call_history_records)
     mocker.patch("reports.interviewer_call_pattern_report.validate_dataframe",
                  return_value=(pd.DataFrame(), mock_discounted_invalid_records, mock_invalid_fields))
