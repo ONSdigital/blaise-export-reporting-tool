@@ -2,7 +2,8 @@ from datetime import datetime
 
 import pytest
 
-from functions.date_functions import date_handler, parse_date_string_to_datetime
+from functions.date_functions import parse_date_string_to_datetime
+from functions.request_handlers import date_handler
 from models.error_capture import BertException
 
 
