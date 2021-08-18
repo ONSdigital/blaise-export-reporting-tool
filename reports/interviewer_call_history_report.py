@@ -5,7 +5,7 @@ from google.cloud import datastore
 from functions.date_functions import parse_date_string_to_datetime
 from models.error_capture import BertException
 
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 
 
 def get_call_history_records_for_all_surveys(client, interviewer_name, start_date, end_date):
@@ -26,7 +26,7 @@ def get_call_history_records_for_all_surveys(client, interviewer_name, start_dat
 def get_call_history_records_by_survey(client, interviewer_name, start_date, end_date, survey_tla):
     logging.info(f"Filtering call history data by survey '{survey_tla}'")
 
-    query = client.query(kind="CallHistoryBySurvey")
+    query = client.query(kind="CallHistory")
     query.add_filter("interviewer", "=", interviewer_name)
     query.add_filter("call_start_time", ">=", start_date)
     query.add_filter("call_start_time", "<=", end_date)

@@ -2,7 +2,7 @@ from models.error_capture import BertException
 from functions.date_functions import validate_date
 
 import logging
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 
 
 def date_handler(request):

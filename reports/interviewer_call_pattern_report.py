@@ -10,7 +10,7 @@ from reports.interviewer_call_history_report import get_call_history_records
 
 COLUMNS_TO_VALIDATE = ["call_start_time", "call_end_time", "number_of_interviews"]
 
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 
 
 def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, start_date_string,
