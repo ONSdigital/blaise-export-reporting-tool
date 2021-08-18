@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request
 
 from data_sources.datastore_data import get_call_history_report_status
-from functions.date_functions import date_handler
 from models.config_model import Config
 from models.error_capture import BertException
 from functions.request_handlers import date_handler, survey_tla_handler
