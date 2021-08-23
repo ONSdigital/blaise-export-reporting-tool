@@ -6,6 +6,8 @@
 [![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/ONSdigital/blaise-export-reporting-tool.svg)](https://github.com/ONSdigital/blaise-export-reporting-tool/pulls)
 [![Github last commit](https://img.shields.io/github/last-commit/ONSdigital/blaise-export-reporting-tool.svg)](https://github.com/ONSdigital/blaise-export-reporting-tool/commits)
 [![Github contributors](https://img.shields.io/github/contributors/ONSdigital/blaise-export-reporting-tool.svg)](https://github.com/ONSdigital/blaise-export-reporting-tool/graphs/contributors)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/ONSdigital/blaise-export-reporting-tool.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ONSdigital/blaise-export-reporting-tool/alerts/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/ONSdigital/blaise-export-reporting-tool.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ONSdigital/blaise-export-reporting-tool/context:python)
 
 This project contains several services for extracting and delivering management information.
 
