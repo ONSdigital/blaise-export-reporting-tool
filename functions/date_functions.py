@@ -13,19 +13,6 @@ def validate_date(date_text):
         return False
 
 
-def date_handler(request):
-    start_date = request.args.get("start-date", None)
-    end_date = request.args.get("end-date", None)
-
-    if start_date is None or end_date is None:
-        raise (BertException("Invalid request, missing required date parameters", 400))
-
-    if not validate_date(start_date) or not validate_date(end_date):
-        raise (BertException("Invalid request, date is not valid", 400))
-
-    return start_date, end_date
-
-
 def parse_date_string_to_datetime(date_string, end_of_day=False):
     x = re.search("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$", date_string)
     if not x:
