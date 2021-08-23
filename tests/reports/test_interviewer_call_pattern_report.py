@@ -20,7 +20,7 @@ def test_get_call_pattern_report_when_data_is_completely_invalid(call_history_re
     mock_discounted_invalid_records = "numberwang"
     mock_invalid_fields = "aaaaaaaallll the fields"
 
-    mocker.patch("reports.interviewer_call_pattern_report.get_call_history_records_by_interviewer_and_date_range",
+    mocker.patch("reports.interviewer_call_pattern_report.get_call_history_records",
                  return_value=call_history_records)
     mocker.patch("reports.interviewer_call_pattern_report.validate_dataframe",
                  return_value=(pd.DataFrame(), mock_discounted_invalid_records, mock_invalid_fields))
@@ -28,7 +28,8 @@ def test_get_call_pattern_report_when_data_is_completely_invalid(call_history_re
     assert get_call_pattern_records_by_interviewer_and_date_range(
         mock_interviewer_name,
         mock_date,
-        mock_date) == InterviewerCallPatternWithNoValidData(
+        mock_date,
+        None) == InterviewerCallPatternWithNoValidData(
         discounted_invalid_records=mock_discounted_invalid_records,
         invalid_fields=mock_invalid_fields
     )
@@ -36,7 +37,7 @@ def test_get_call_pattern_report_when_data_is_completely_invalid(call_history_re
 
 def test_get_call_pattern_records_by_interviewer_and_date_range_returns_error():
     with pytest.raises(BertException) as error:
-        get_call_pattern_records_by_interviewer_and_date_range("ricer", "blah", "blah")
+        get_call_pattern_records_by_interviewer_and_date_range("ricer", "blah", "blah", None)
     assert error.value.message == "Invalid date range parameters provided"
     assert error.value.code == 400
 

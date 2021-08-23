@@ -19,17 +19,17 @@ def test_call_history_report_status(mock_get_call_history_report_status, client)
     assert response.get_data() is not None
 
 
-@patch("app.app.get_call_history_records_by_interviewer_and_date_range")
-def test_call_history_report(mock_get_call_history_records_by_interviewer_and_date_range, client):
-    mock_get_call_history_records_by_interviewer_and_date_range.return_value = []
+@patch("app.app.get_call_history_records")
+def test_call_history_report(mock_get_call_history_records, client):
+    mock_get_call_history_records.return_value = []
     response = client.get("/api/reports/call-history/matpal?start-date=2021-01-01&end-date=2021-01-01&survey-tla=opn")
     assert response.status_code == 200
     assert json.loads(response.get_data(as_text=True)) == []
 
 
-@patch("app.app.get_call_history_records_by_interviewer_and_date_range")
-def test_call_history_report_returns_error(mock_get_call_history_records_by_interviewer_and_date_range, client):
-    mock_get_call_history_records_by_interviewer_and_date_range.side_effect = BertException("Invalid date range parameters provided", 400)
+@patch("app.app.get_call_history_records")
+def test_call_history_report_returns_error(mock_get_call_history_records, client):
+    mock_get_call_history_records.side_effect = BertException("Invalid date range parameters provided", 400)
     response = client.get("/api/reports/call-history/matpal?start-date=2021-01-01&end-date=2021-01-01")
     assert response.status_code == 400
     assert response.get_data(as_text=True) == '{"error": "Invalid date range parameters provided"}'

@@ -1,20 +1,25 @@
 import datetime
+import logging
 
 import numpy as np
 import pandas as pd
 
 from models.error_capture import BertException
 from models.interviewer_call_pattern_model import InterviewerCallPattern, InterviewerCallPatternWithNoValidData
-from reports.interviewer_call_history_report import get_call_history_records_by_interviewer_and_date_range
+from reports.interviewer_call_history_report import get_call_history_records
 
 COLUMNS_TO_VALIDATE = ["call_start_time", "call_end_time", "number_of_interviews"]
 
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 
-def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, start_date_string, end_date_string):
-    print(
-        f"Getting call pattern data for interviewer '{interviewer_name}' between '{start_date_string}' and '{end_date_string}'")
-    call_history_records = get_call_history_records_by_interviewer_and_date_range(
-        interviewer_name, start_date_string, end_date_string)
+
+def get_call_pattern_records_by_interviewer_and_date_range(interviewer_name, start_date_string,
+                                                           end_date_string, survey_tla):
+    logging.info(f"Getting call pattern data for interviewer '{interviewer_name}' between '{start_date_string}' and '{end_date_string}...'")
+
+    call_history_records = get_call_history_records(
+        interviewer_name, start_date_string, end_date_string, survey_tla
+    )
     if not call_history_records:
         return {}
 
