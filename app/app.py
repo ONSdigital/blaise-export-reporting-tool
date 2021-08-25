@@ -6,7 +6,7 @@ from models.error_capture import BertException
 from functions.request_handlers import date_handler, survey_tla_handler
 from reports.appointment_resource_planning_report import get_appointment_resource_planning_by_date
 from reports.interviewer_call_history_report import get_call_history_records
-from reports.interviewer_call_pattern_report import get_call_pattern_records_by_interviewer_and_date_range
+from reports.interviewer_call_pattern_report import get_call_pattern_report
 
 app = Flask(__name__)
 
@@ -32,7 +32,7 @@ def call_history(interviewer):
 def call_pattern(interviewer):
     start_date, end_date = date_handler(request)
     survey_tla = survey_tla_handler(request)
-    results = get_call_pattern_records_by_interviewer_and_date_range(interviewer, start_date, end_date, survey_tla)
+    results = get_call_pattern_report(interviewer, start_date, end_date, survey_tla)
     if results == {}:
         return {}
     else:

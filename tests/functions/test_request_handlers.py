@@ -61,6 +61,11 @@ def test_survey_tla_handler_returns_none_when_survey_tla_value_is_not_provided(c
     assert survey_tla_handler(request) is None
 
 
+def test_survey_tla_handler_returns_none_when_survey_tla_value_is_undefined(client):
+    request = client.post(f"/api/reports/call-history/matpal?start-date=2021-01-01&end-date=2021-01-01&survey-tla=undefined").request
+    assert survey_tla_handler(request) is None
+
+
 @pytest.mark.parametrize(
     "survey_tla",
     [
