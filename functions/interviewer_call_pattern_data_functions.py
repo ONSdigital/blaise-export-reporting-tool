@@ -69,9 +69,9 @@ def average_calls_per_hour(call_history_dataframe, string_hours_worked):
 
 def respondents_interviewed(call_history_dataframe):
     try:
-        result = round(call_history_dataframe['number_of_interviews'].sum())
+        result = call_history_dataframe['number_of_interviews'].sum()
     except Exception as err:
-        raise BertException(f"Could not calculate get_respondents_interviewed(): {err}", 400)
+        raise BertException(f"Could not calculate respondents_interviewed(): {err}", 400)
     return result
 
 
