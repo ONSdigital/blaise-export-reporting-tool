@@ -55,4 +55,6 @@ def get_call_history_records(interviewer_name, start_date_string, end_date_strin
         return get_call_history_records_by_survey(client, interviewer_name, start_date, end_date, survey_tla)
 
     logging.debug(f"survey_tla is '{survey_tla}. Retrieving records for all surveys...'")
-    return get_call_history_records_for_all_surveys(client, interviewer_name, start_date, end_date)
+    results = get_call_history_records_for_all_surveys(client, interviewer_name, start_date, end_date)
+    logging.debug(f"results successfully retrieved from Datastore")
+    return results
