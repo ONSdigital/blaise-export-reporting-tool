@@ -77,11 +77,11 @@ def respondents_interviewed(call_history_dataframe):
 
 def average_respondents_interviewed_per_hour(call_history_dataframe, string_hours_worked):
     try:
-        call_history_dataframe.astype({"number_of_interviews": "int32"}, errors='ignore')
+        call_history_dataframe = call_history_dataframe.astype({"number_of_interviews": "int32"}, errors='ignore')
 
         integer_hours_worked = get_total_seconds_from_string(string_hours_worked) / 3600
         respondents_interviewed = call_history_dataframe['number_of_interviews'].sum()
-        result = round(respondents_interviewed / integer_hours_worked, 2)
+        result = round(int(respondents_interviewed) / integer_hours_worked, 2)
 
     except Exception as err:
         print(f"respondents_interviewed: {type(respondents_interviewed)}, integer_hours_worked: {type(integer_hours_worked)}")
