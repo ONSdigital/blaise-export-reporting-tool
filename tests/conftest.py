@@ -2206,7 +2206,7 @@ def interviewer_call_pattern_report():
     return InterviewerCallPattern(
         hours_worked="7:24:00",
         call_time="0:00:00",
-        hours_on_calls="0%",
+        hours_on_calls_percentage="0%",
         average_calls_per_hour=3.14,
         respondents_interviewed=5,
         average_respondents_interviewed_per_hour=123,

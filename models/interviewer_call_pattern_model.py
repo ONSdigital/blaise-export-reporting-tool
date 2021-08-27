@@ -6,7 +6,7 @@ from dataclasses import asdict, dataclass
 class InterviewerCallPattern:
     hours_worked: str
     call_time: str
-    hours_on_calls: str
+    hours_on_calls_percentage: str
     average_calls_per_hour: float
     respondents_interviewed: int
     average_respondents_interviewed_per_hour: float

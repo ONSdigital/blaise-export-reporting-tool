@@ -5,7 +5,7 @@ def test_interviewer_call_pattern_mandatory_fields():
     interviewer_call_pattern = InterviewerCallPattern(
         hours_worked="",
         call_time="",
-        hours_on_calls="",
+        hours_on_calls_percentage="",
         average_calls_per_hour=0.0,
         respondents_interviewed=0,
         average_respondents_interviewed_per_hour=0.0,
@@ -21,7 +21,7 @@ def test_interviewer_call_pattern_all_fields():
     interviewer_call_pattern = InterviewerCallPattern(
         hours_worked="",
         call_time="",
-        hours_on_calls="",
+        hours_on_calls_percentage="",
         average_calls_per_hour=0.0,
         respondents_interviewed=0,
         average_respondents_interviewed_per_hour=0.0,

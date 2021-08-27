@@ -38,7 +38,7 @@ def convert_seconds_to_datetime_format(seconds):
     return result
 
 
-def hours_on_calls(hours_worked, total_call_seconds):
+def hours_on_calls_percentage(hours_worked, total_call_seconds):
     try:
         value = 100 * float(total_call_seconds) / float(get_total_seconds_from_string(hours_worked))
         result = f"{round(value, 2)}%"
@@ -95,7 +95,7 @@ def results_for_calls_with_status(column_name, status, valid_df, denominator):
         percentage = 100 * numerator / denominator
     except Exception as err:
         raise BertException(f"Could not calculate the total for status containing '{status}': {err}", 400)
-    return f"{numerator}/{denominator}", round(percentage, 2)
+    return f"{numerator}/{denominator}, {round(percentage, 2)}"
 
 
 def convert_seconds_to_datetime_format(seconds):

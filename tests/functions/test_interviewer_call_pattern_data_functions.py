@@ -2,9 +2,9 @@ import pytest
 
 from functions.interviewer_call_pattern_data_functions import (
     get_hours_worked, get_call_time_in_seconds, get_total_seconds_from_string,
-    convert_seconds_to_datetime_format, hours_on_calls, average_calls_per_hour, respondents_interviewed,
-    average_respondents_interviewed_per_hour, results_for_calls_with_status)
-from reports.interviewer_call_pattern_report import validate_dataframe
+    convert_seconds_to_datetime_format, hours_on_calls_percentage, average_calls_per_hour, respondents_interviewed,
+    average_respondents_interviewed_per_hour)
+from reports.interviewer_call_pattern_report import validate_dataframe, results_for_calls_with_status, no_contact_breakdown
 
 
 def test_get_hours_worked(valid_dataframe):
@@ -43,7 +43,7 @@ def test_convert_call_time_seconds_to_datetime_format(seconds, expected):
     ],
 )
 def test_get_percentage_of_hours_on_calls(hours_worked, total_call_seconds, expected):
-    assert hours_on_calls(hours_worked, total_call_seconds) == expected
+    assert hours_on_calls_percentage(hours_worked, total_call_seconds) == expected
 
 
 @pytest.mark.parametrize(
@@ -91,54 +91,13 @@ def test_get_average_respondents_interviewed_per_hour(hours_worked, expected, va
 @pytest.mark.parametrize(
     "status, expected",
     [
-        ("non response", "2/45"),
-        ("no contact", "27/45"),
-        ("questionnaire|completed", "9/45"),
-        ("appointment made", "1/45"),
-        ("cattywampus", "0/45"),
+        ("non response", "2/45, 4.44%"),
+        ("no contact", "27/45, 60.0%"),
+        ("completed", "1/45, 2.22%"),
+        ("appointment made", "1/45, 2.22%"),
+        ("numberwang", "0/45, 0.0%"),
+        ("cattywampus", "0/45, 0.0%"),
     ],
 )
-def test_get_results_for_calls_with_status_total(status, expected, status_dataframe):
-    assert results_for_calls_with_status('status', status, status_dataframe, 45)[0] == expected
-
-
-@pytest.mark.parametrize(
-    "status, expected",
-    [
-        ("non response", 4.44),
-        ("no contact", 60.0),
-        ("questionnaire|completed", 20.0),
-        ("appointment made", 2.22),
-        ("numberwang", 0),
-    ],
-)
-def test_get_results_for_calls_with_status_percentage(status, expected, status_dataframe):
-    assert results_for_calls_with_status('status', status, status_dataframe, 45)[1] == expected
-
-
-def test_status_results_total_one_hundred_percent(dataframe_with_some_invalid_fields):
-    denominator = len(dataframe_with_some_invalid_fields.index)
-    valid_dataframe, invalid_dataframe = validate_dataframe(dataframe_with_some_invalid_fields)
-
-    non_response = results_for_calls_with_status('status', 'non response', valid_dataframe, denominator)[1]
-    no_contact = results_for_calls_with_status('status', 'no contact', valid_dataframe, denominator)[1]
-    questionnaire_completed = results_for_calls_with_status('status', 'questionnaire|completed', valid_dataframe, denominator)[1]
-    appointment_made = results_for_calls_with_status('status', 'appointment made', valid_dataframe, denominator)[1]
-
-    discounted = 100 * len(invalid_dataframe.index) / denominator
-
-    assert (non_response + no_contact + questionnaire_completed +
-            appointment_made + discounted) == pytest.approx(100)
-
-
-def test_no_contact_results_total_one_hundred_percent(status_dataframe):
-    no_contact_dataframe = status_dataframe[status_dataframe["status"].str.contains('no contact', case=False, na=False)]
-    denominator = len(no_contact_dataframe.index)
-
-    answerservice = results_for_calls_with_status('call_result', 'answerservice', no_contact_dataframe, denominator)[1]
-    busy = results_for_calls_with_status('call_result', 'busy', no_contact_dataframe, denominator)[1]
-    disconnect = results_for_calls_with_status('call_result', 'disconnect', no_contact_dataframe, denominator)[1]
-    noanswer = results_for_calls_with_status('call_result', 'noanswer', no_contact_dataframe, denominator)[1]
-    other = results_for_calls_with_status('call_result', 'other', no_contact_dataframe, denominator)[1]
-
-    assert answerservice + busy + disconnect + noanswer + other == pytest.approx(100)
+def test_get_results_for_calls_with_status(status, expected, status_dataframe):
+    assert results_for_calls_with_status('status', status, status_dataframe, 45) == expected
