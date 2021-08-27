@@ -79,7 +79,7 @@ def average_respondents_interviewed_per_hour(call_history_dataframe, string_hour
     try:
         integer_hours_worked = get_total_seconds_from_string(string_hours_worked) / 3600
         respondents_interviewed = call_history_dataframe['number_of_interviews'].sum()
-        result = round(respondents_interviewed / integer_hours_worked, 2)
+        result = round(int(respondents_interviewed) / integer_hours_worked, 2)
     except Exception as err:
         raise BertException(f"Could not calculate get_average_respondents_interviewed_per_hour(): {err}", 400)
     return result
