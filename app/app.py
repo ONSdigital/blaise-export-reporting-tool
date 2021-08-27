@@ -36,7 +36,7 @@ def call_pattern(interviewer):
     if results == {}:
         return {}
     else:
-        return results.json()
+        return results
 
 
 @app.route("/api/reports/appointment-resource-planning/<date>")

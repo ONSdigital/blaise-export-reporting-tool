@@ -39,7 +39,7 @@ def get_call_pattern_report(
     report = get_no_contacts_breakdown(report, valid_dataframe)
     report = get_discounted_records(report, invalid_dataframe, original_number_of_records)
 
-    return report
+    return report.json()
 
 
 def create_and_parse_call_history_dataframe(call_history):
