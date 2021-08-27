@@ -84,8 +84,8 @@ def average_respondents_interviewed_per_hour(call_history_dataframe, string_hour
         result = round(respondents_interviewed / integer_hours_worked, 2)
 
     except Exception as err:
-        raise BertException(f"Could not calculate get_average_respondents_interviewed_per_hour(): {err}, {err.with_traceback()}", 400)
         print(f"respondents_interviewed: {type(respondents_interviewed)}, integer_hours_worked: {type(integer_hours_worked)}")
+        raise BertException(f"Could not calculate get_average_respondents_interviewed_per_hour(): {err}, {err.with_traceback()}", 400)
     return result
 
 
