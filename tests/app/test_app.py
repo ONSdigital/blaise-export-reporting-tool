@@ -51,6 +51,14 @@ def test_call_pattern_report_returns_error(mock_get_call_pattern_records, client
     assert response.get_data(as_text=True) == '{"error": "Invalid date range parameters provided"}'
 
 
+@patch("app.app.get_call_pattern_report")
+def test_call_pattern_report_returns_empty_dict(mock_get_call_pattern_records, client):
+    mock_get_call_pattern_records.return_value = {}
+    response = client.get("/api/reports/call-pattern/matpal?start-date=2021-01-01&end-date=2021-01-01")
+    assert response.status_code == 200
+    assert json.loads(response.get_data(as_text=True)) == {}
+
+
 @patch("app.app.get_appointment_resource_planning_by_date")
 def test_appointment_resource_planning(mock_get_appointment_resource_planning_by_date, client):
     mock_get_appointment_resource_planning_by_date.return_value = None, []
