@@ -24,7 +24,7 @@ def get_call_pattern_report(interviewer_name, start_date_string, end_date_string
 
     if valid_dataframe.empty:
         report = InterviewerCallPatternWithNoValidData()
-        report.discounted_invalid_records = discounted_records
+        report.discounted_invalid_cases = discounted_records
         report.invalid_fields = discounted_fields
         return report
 
