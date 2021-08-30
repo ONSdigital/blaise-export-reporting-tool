@@ -22,13 +22,13 @@ def test_get_call_pattern_report_returns_a_report_with_only_the_discounted_infor
         call_history_with_all_invalid_records, dataframe_with_all_invalid_fields, mocker):
     mock_interviewer_name = 'el4president'
     mock_date = '2022-01-24'
-    mock_discounted_invalid_records = "4/4, 100.0%"
+    mock_discounted_invalid_cases = "4/4, 100.0%"
     mock_invalid_fields = "'status' column had timed out call status, 'call_end_time' column had missing data, 'number_of_interviews' column had missing data"
 
     mocker.patch("reports.interviewer_call_pattern_report.get_call_history_records",
                  return_value=call_history_with_all_invalid_records)
     mocker.patch("reports.interviewer_call_pattern_report.validate_dataframe",
-                 return_value=(pd.DataFrame(), mock_discounted_invalid_records, mock_invalid_fields))
+                 return_value=(pd.DataFrame(), mock_discounted_invalid_cases, mock_invalid_fields))
 
     actual_report = get_call_pattern_report(
         mock_interviewer_name,
@@ -40,7 +40,7 @@ def test_get_call_pattern_report_returns_a_report_with_only_the_discounted_infor
     denominator = len(call_history_with_all_invalid_records)
     percentage = 100 * numerator / denominator
 
-    assert actual_report.discounted_invalid_records == f"{numerator}/{denominator}, {percentage}%"
+    assert actual_report.discounted_invalid_cases == f"{numerator}/{denominator}, {percentage}%"
     assert actual_report.invalid_fields == get_invalid_fields(dataframe_with_all_invalid_fields)
 
 
@@ -251,3 +251,4 @@ def test_no_contact_results_total_one_hundred_percent(status_dataframe):
     other = get_percentage_from(no_contact_breakdown('other', no_contact_dataframe))
 
     assert answerservice + busy + disconnect + noanswer + other == pytest.approx(100)
+
