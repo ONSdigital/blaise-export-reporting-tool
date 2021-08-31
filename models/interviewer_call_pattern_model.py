@@ -9,11 +9,17 @@ class InterviewerCallPattern:
     hours_on_calls_percentage: str
     average_calls_per_hour: float
     respondents_interviewed: int
-    households_completed_successfully: int
     average_respondents_interviewed_per_hour: float
-    no_contacts_percentage: str
-    appointments_for_contacts_percentage: str
-    discounted_invalid_records: str = "0"
+    refusals: str
+    no_contacts: str
+    completed_successfully: str
+    appointments_for_contacts: str
+    no_contact_answer_service: str = "n/a"
+    no_contact_busy: str = "n/a"
+    no_contact_disconnect: str = "n/a"
+    no_contact_no_answer: str = "n/a"
+    no_contact_other: str = "n/a"
+    discounted_invalid_cases: str = "0"
     invalid_fields: str = "n/a"
 
     def json(self):
@@ -22,7 +28,7 @@ class InterviewerCallPattern:
 
 @dataclass
 class InterviewerCallPatternWithNoValidData:
-    discounted_invalid_records: str = "0"
+    discounted_invalid_cases: str = "0"
     invalid_fields: str = "n/a"
 
     def json(self):
