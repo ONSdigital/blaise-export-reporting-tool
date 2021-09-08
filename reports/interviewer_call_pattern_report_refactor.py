@@ -1,14 +1,16 @@
 from google.cloud import datastore
 import datetime
 import pandas as pd
-
+import numpy as np
 
 def get_call_pattern_report():
     records = get_call_history_records()
     if records.empty:
         return {}
+
     hours_worked = calculate_hours_worked(records)
-    return {hours_worked}
+    discounted_invalid_cases = calculate
+    return {"hours_worked": hours_worked}
 
 def get_call_history_records():
     client = datastore.Client()
@@ -16,6 +18,9 @@ def get_call_history_records():
     return pd.DataFrame(list(query.fetch()))
 
 def calculate_hours_worked(records):
+    records = records[records.call_end_time != '']
+    records = records.dropna(subset=["call_end_time"])
+
     # group by date
     daily_call_history_by_date = records.groupby(
         [records['call_start_time'].dt.date]).agg({'call_start_time': min, 'call_end_time': max})
