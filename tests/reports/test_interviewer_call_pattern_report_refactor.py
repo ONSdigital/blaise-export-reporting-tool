@@ -12,7 +12,6 @@ def test_get_call_pattern_report_returns_an_empty_dict_if_no_records_were_found(
 
     assert get_call_pattern_report() == {}
 
-
 def test_get_call_pattern_report_returns_hours_worked_when_a_record_is_found(mocker):
     datastore_records = [
         {
@@ -45,7 +44,6 @@ def test_get_call_pattern_report_returns_hours_worked_when_a_record_is_found(moc
         return_value=pd.DataFrame(datastore_records))
     result = get_call_pattern_report()
     assert result["hours_worked"] == "6:00:00"
-
 
 def test_get_call_pattern_report_returns_hours_worked_when_multiple_records_from_a_single_day_are_found(mocker):
     datastore_records = [

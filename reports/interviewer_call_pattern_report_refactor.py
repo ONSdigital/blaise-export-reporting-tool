@@ -1,7 +1,7 @@
 from google.cloud import datastore
 import datetime
 import pandas as pd
-import numpy as np
+
 
 def get_call_pattern_report():
     records = get_call_history_records()
@@ -9,7 +9,8 @@ def get_call_pattern_report():
         return {}
 
     hours_worked = calculate_hours_worked(records)
-    discounted_invalid_cases = calculate
+    discounted_invalid_cases = calculate_number_of_invalid_cases
+
     return {"hours_worked": hours_worked}
 
 def get_call_history_records():
