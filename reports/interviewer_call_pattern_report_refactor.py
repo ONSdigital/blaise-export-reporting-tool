@@ -17,6 +17,10 @@ def get_call_pattern_report():
     call_time = calculate_call_time(records)
     hours_on_call_percentage = calculate_hours_on_call_percentage(records)
     average_calls_per_hour = calculate_average_calls_per_hour(records)
+    refusals = calculate_refusals(records)
+    no_contact = calculate_no_contact(records)
+    completed_successfully = calculate_completed_successfully(records)
+    appointments = calculate_appointments_made(records)
 
     return {
         "hours_worked": str(datetime.timedelta(seconds=hours_worked_in_seconds)),
@@ -24,7 +28,11 @@ def get_call_pattern_report():
         "invalid_fields": reason_for_invalid_fields,
         "call_time": str(datetime.timedelta(seconds=call_time)),
         "hours_on_call_percentage": f"{hours_on_call_percentage}%",
-        "average_calls_per_hour": average_calls_per_hour
+        "average_calls_per_hour": average_calls_per_hour,
+        "refusals": format_fraction_and_percentage_as_string(refusals, len(records)),
+        "no_contact": format_fraction_and_percentage_as_string(no_contact, len(records)),
+        "completed_successfully": format_fraction_and_percentage_as_string(completed_successfully, len(records)),
+        "appointments": format_fraction_and_percentage_as_string(appointments, len(records)),
     }
 
 
@@ -94,4 +102,23 @@ def calculate_hours_on_call_percentage(records: pd.DataFrame) -> float:
 def calculate_average_calls_per_hour(records) -> float:
     hours_worked = calculate_hours_worked_in_seconds(records) / 3600
     number_of_valid_records = records["call_end_time"].count()
+
     return number_of_valid_records / float(hours_worked)
+
+
+def calculate_refusals(records) -> int:
+    records = records.dropna(subset=["call_end_time"])
+    return len(records.loc[records["status"] == "Finished (Non response)"])
+
+def calculate_no_contact(records) -> int:
+    records = records.dropna(subset=["call_end_time"])
+    return len(records.loc[records["status"] == "Finished (No contact)"])
+
+def calculate_completed_successfully(records) -> int:
+    records = records.dropna(subset=["call_end_time"])
+    return len(records.loc[records["status"] == "Completed"])
+
+
+def calculate_appointments_made(records) -> int:
+    records = records.dropna(subset=["call_end_time"])
+    return len(records.loc[records["status"] == "Finished (Appointment made)"])
