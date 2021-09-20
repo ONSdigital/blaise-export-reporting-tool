@@ -527,7 +527,7 @@ def test_get_call_pattern_report_returns_reason_for_no_contact_when_a_record_is_
             start_date_time=datetime_helper(day=7, hour=10),
             end_date_time=datetime_helper(day=7, hour=11),
             status="Finished (No contact)",
-            call_result="Disconnect"
+            call_result="NoAnswer"
         ),
     ]
 
@@ -536,4 +536,68 @@ def test_get_call_pattern_report_returns_reason_for_no_contact_when_a_record_is_
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report()
-    assert result["no_contact_disconnect"] == "1/1, 100.00%"
+    assert result["no_contact_no_answer"] == "1/1, 100.00%"
+
+
+def test_get_call_pattern_report_returns_reason_for_no_contact_when_multiple_records_are_found_and_one_record_has_a_call_result_of_NoAnswer(mocker):
+    datastore_records = [
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=10),
+            end_date_time=datetime_helper(day=7, hour=11),
+            status="Finished (No contact)",
+            call_result="NoAnswer"
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=10),
+            end_date_time=datetime_helper(day=7, hour=11),
+        ),
+    ]
+
+    mocker.patch(
+        "reports.interviewer_call_pattern_report_refactor.get_call_history_records",
+        return_value=pd.DataFrame(datastore_records))
+
+    result = get_call_pattern_report()
+    assert result["no_contact_no_answer"] == "1/2, 50.00%"
+
+
+def test_get_call_pattern_report_returns_reason_for_no_contact_when_a_record_is_found_with_call_result_of_Other(
+        mocker):
+    datastore_records = [
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=10),
+            end_date_time=datetime_helper(day=7, hour=11),
+            status="Finished (No contact)",
+            call_result="Others"
+        ),
+    ]
+
+    mocker.patch(
+        "reports.interviewer_call_pattern_report_refactor.get_call_history_records",
+        return_value=pd.DataFrame(datastore_records))
+
+    result = get_call_pattern_report()
+    assert result["no_contact_other"] == "1/1, 100.00%"
+
+
+def test_get_call_pattern_report_returns_reason_for_no_contact_when_multiple_records_are_found_and_one_record_has_a_call_result_of_Other(
+        mocker):
+    datastore_records = [
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=10),
+            end_date_time=datetime_helper(day=7, hour=11),
+            status="Finished (No contact)",
+            call_result="NoAnswer"
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=10),
+            end_date_time=datetime_helper(day=7, hour=11),
+        ),
+    ]
+
+    mocker.patch(
+        "reports.interviewer_call_pattern_report_refactor.get_call_history_records",
+        return_value=pd.DataFrame(datastore_records))
+
+    result = get_call_pattern_report()
+    assert result["no_contact_no_answer"] == "1/2, 50.00%"

@@ -26,6 +26,8 @@ def get_call_pattern_report():
     no_contact_answer_service = calculate_no_contact_answer_service(records)
     no_contact_busy = calculate_no_contact_busy(records)
     no_contact_disconnect = calculate_co_contact_disconnect(records)
+    no_contact_no_answer = calculate_no_contact_no_answer(records)
+    no_contact_other = calculate_no_contact_other(records)
 
     return {
         "hours_worked": str(datetime.timedelta(seconds=hours_worked_in_seconds)),
@@ -41,6 +43,8 @@ def get_call_pattern_report():
         "no_contact_answer_service": format_fraction_and_percentage_as_string(no_contact_answer_service, len(records)),
         "no_contact_busy": format_fraction_and_percentage_as_string(no_contact_busy, len(records)),
         "no_contact_disconnect": format_fraction_and_percentage_as_string(no_contact_disconnect, len(records)),
+        "no_contact_no_answer": format_fraction_and_percentage_as_string(no_contact_no_answer, len(records)),
+        "no_contact_other": format_fraction_and_percentage_as_string(no_contact_other, len(records)),
     }
 
 
@@ -155,3 +159,17 @@ def calculate_co_contact_disconnect(records) -> int:
     return len(records.loc[
                    (records["status"] == "Finished (No contact)") &
                    (records["call_result"] == "Disconnect")])
+
+def calculate_no_contact_no_answer(records) -> int:
+    records = records.dropna(subset=["call_end_time"])
+
+    return len(records.loc[
+                   (records["status"] == "Finished (No contact)") &
+                   (records["call_result"] == "NoAnswer")])
+
+def calculate_no_contact_other(records) -> int:
+    records = records.dropna(subset=["call_end_time"])
+
+    return len(records.loc[
+                   (records["status"] == "Finished (No contact)") &
+                   (records["call_result"] == "Others")])
