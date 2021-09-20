@@ -1,7 +1,9 @@
-from google.cloud import datastore
+"""Functionality to produce MI Call Pattern Report."""
 import datetime
 import pandas as pd
 import numpy as np
+
+from google.cloud import datastore
 
 
 def get_call_pattern_report():
@@ -21,6 +23,9 @@ def get_call_pattern_report():
     no_contact = calculate_no_contact(records)
     completed_successfully = calculate_completed_successfully(records)
     appointments = calculate_appointments_made(records)
+    no_contact_answer_service = calculate_no_contact_answer_service(records)
+    no_contact_busy = calculate_no_contact_busy(records)
+    no_contact_disconnect = calculate_co_contact_disconnect(records)
 
     return {
         "hours_worked": str(datetime.timedelta(seconds=hours_worked_in_seconds)),
@@ -33,6 +38,9 @@ def get_call_pattern_report():
         "no_contact": format_fraction_and_percentage_as_string(no_contact, len(records)),
         "completed_successfully": format_fraction_and_percentage_as_string(completed_successfully, len(records)),
         "appointments": format_fraction_and_percentage_as_string(appointments, len(records)),
+        "no_contact_answer_service": format_fraction_and_percentage_as_string(no_contact_answer_service, len(records)),
+        "no_contact_busy": format_fraction_and_percentage_as_string(no_contact_busy, len(records)),
+        "no_contact_disconnect": format_fraction_and_percentage_as_string(no_contact_disconnect, len(records)),
     }
 
 
@@ -45,7 +53,7 @@ def get_call_history_records():
 def replace_empty_strings_with_nans(records: pd.DataFrame) -> pd.DataFrame:
     """Fill all cells containing empty strings or None values with NAN values.
 
-    NAN is easier to filter when selecting the valid and invalid records.
+    NAN is easier to filter than empty strings when selecting the valid and invalid records.
     """
     return records.replace("", np.nan).fillna(value=np.nan)
 
@@ -74,7 +82,7 @@ def calculate_hours_worked_in_seconds(records: pd.DataFrame) -> int:
     return daily_call_history_by_date['hours_worked'].sum().total_seconds()
 
 
-def calculate_number_of_invalid_records(records: pd.DataFrame) -> str:
+def calculate_number_of_invalid_records(records: pd.DataFrame) -> int:
     return len(records[records["call_end_time"].isna()])
 
 
@@ -85,9 +93,10 @@ def provide_reason_for_invalid_records(records: pd.DataFrame) -> str:
 
     if 'Timed out' in status:
         return "'status' column had timed out call status"
-    return ""
+    return "'End call time' column had missing data"
 
-def calculate_call_time(records: pd.DataFrame) -> str:
+
+def calculate_call_time(records: pd.DataFrame) -> int:
     return round(records['dial_secs'].sum())
 
 
@@ -110,9 +119,11 @@ def calculate_refusals(records) -> int:
     records = records.dropna(subset=["call_end_time"])
     return len(records.loc[records["status"] == "Finished (Non response)"])
 
+
 def calculate_no_contact(records) -> int:
     records = records.dropna(subset=["call_end_time"])
     return len(records.loc[records["status"] == "Finished (No contact)"])
+
 
 def calculate_completed_successfully(records) -> int:
     records = records.dropna(subset=["call_end_time"])
@@ -122,3 +133,25 @@ def calculate_completed_successfully(records) -> int:
 def calculate_appointments_made(records) -> int:
     records = records.dropna(subset=["call_end_time"])
     return len(records.loc[records["status"] == "Finished (Appointment made)"])
+
+
+def calculate_no_contact_answer_service(records) -> int:
+    records = records.dropna(subset=["call_end_time"])
+
+    return len(records.loc[
+                   (records["status"] == "Finished (No contact)") &
+                   (records["call_result"] == "AnswerService")])
+
+def calculate_no_contact_busy(records) -> int:
+    records = records.dropna(subset=["call_end_time"])
+
+    return len(records.loc[
+                   (records["status"] == "Finished (No contact)") &
+                   (records["call_result"] == "Busy")])
+
+def calculate_co_contact_disconnect(records) -> int:
+    records = records.dropna(subset=["call_end_time"])
+
+    return len(records.loc[
+                   (records["status"] == "Finished (No contact)") &
+                   (records["call_result"] == "Disconnect")])
