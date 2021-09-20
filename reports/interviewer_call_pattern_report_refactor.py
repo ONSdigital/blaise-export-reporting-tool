@@ -19,15 +19,15 @@ def get_call_pattern_report():
     call_time = calculate_call_time(records)
     hours_on_call_percentage = calculate_hours_on_call_percentage(records)
     average_calls_per_hour = calculate_average_calls_per_hour(records)
-    refusals = calculate_refusals(records)
-    no_contact = calculate_no_contact(records)
-    completed_successfully = calculate_completed_successfully(records)
-    appointments = calculate_appointments_made(records)
-    no_contact_answer_service = calculate_no_contact_answer_service(records)
-    no_contact_busy = calculate_no_contact_busy(records)
-    no_contact_disconnect = calculate_co_contact_disconnect(records)
-    no_contact_no_answer = calculate_no_contact_no_answer(records)
-    no_contact_other = calculate_no_contact_other(records)
+    refusals = count_records_with_status(records, "Finished (Non response)")
+    no_contact = count_records_with_status(records, "Finished (No contact)")
+    completed_successfully = count_records_with_status(records, "Completed")
+    appointments = count_records_with_status(records, "Finished (Appointment made)")
+    no_contact_answer_service = count_records_with_finished_status_and_call_result(records, "AnswerService")
+    no_contact_busy = count_records_with_finished_status_and_call_result(records, "Busy")
+    no_contact_disconnect = count_records_with_finished_status_and_call_result(records, "Disconnect")
+    no_contact_no_answer = count_records_with_finished_status_and_call_result(records, "NoAnswer")
+    no_contact_other = count_records_with_finished_status_and_call_result(records, "Others")
 
     return {
         "hours_worked": str(datetime.timedelta(seconds=hours_worked_in_seconds)),
@@ -119,57 +119,14 @@ def calculate_average_calls_per_hour(records) -> float:
     return number_of_valid_records / float(hours_worked)
 
 
-def calculate_refusals(records) -> int:
+def count_records_with_status(records, status) -> int:
     records = records.dropna(subset=["call_end_time"])
-    return len(records.loc[records["status"] == "Finished (Non response)"])
+    return len(records.loc[records["status"] == status])
 
 
-def calculate_no_contact(records) -> int:
-    records = records.dropna(subset=["call_end_time"])
-    return len(records.loc[records["status"] == "Finished (No contact)"])
-
-
-def calculate_completed_successfully(records) -> int:
-    records = records.dropna(subset=["call_end_time"])
-    return len(records.loc[records["status"] == "Completed"])
-
-
-def calculate_appointments_made(records) -> int:
-    records = records.dropna(subset=["call_end_time"])
-    return len(records.loc[records["status"] == "Finished (Appointment made)"])
-
-
-def calculate_no_contact_answer_service(records) -> int:
+def count_records_with_finished_status_and_call_result(records, call_result) -> int:
     records = records.dropna(subset=["call_end_time"])
 
     return len(records.loc[
                    (records["status"] == "Finished (No contact)") &
-                   (records["call_result"] == "AnswerService")])
-
-def calculate_no_contact_busy(records) -> int:
-    records = records.dropna(subset=["call_end_time"])
-
-    return len(records.loc[
-                   (records["status"] == "Finished (No contact)") &
-                   (records["call_result"] == "Busy")])
-
-def calculate_co_contact_disconnect(records) -> int:
-    records = records.dropna(subset=["call_end_time"])
-
-    return len(records.loc[
-                   (records["status"] == "Finished (No contact)") &
-                   (records["call_result"] == "Disconnect")])
-
-def calculate_no_contact_no_answer(records) -> int:
-    records = records.dropna(subset=["call_end_time"])
-
-    return len(records.loc[
-                   (records["status"] == "Finished (No contact)") &
-                   (records["call_result"] == "NoAnswer")])
-
-def calculate_no_contact_other(records) -> int:
-    records = records.dropna(subset=["call_end_time"])
-
-    return len(records.loc[
-                   (records["status"] == "Finished (No contact)") &
-                   (records["call_result"] == "Others")])
+                   (records["call_result"] == call_result)])
