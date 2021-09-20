@@ -15,7 +15,7 @@ def get_call_pattern_report():
 
     hours_worked_in_seconds = calculate_hours_worked_in_seconds(records)
     number_of_invalid_records = calculate_number_of_invalid_records(records)
-    reason_for_invalid_fields = provide_reason_for_invalid_records(records)
+    reasons_for_invalid_fields = provide_reasons_for_invalid_records(records)
     call_time = calculate_call_time(records)
     hours_on_call_percentage = calculate_hours_on_call_percentage(records)
     average_calls_per_hour = calculate_average_calls_per_hour(records)
@@ -32,7 +32,7 @@ def get_call_pattern_report():
     return {
         "hours_worked": str(datetime.timedelta(seconds=hours_worked_in_seconds)),
         "discounted_invalid_cases": format_fraction_and_percentage_as_string(number_of_invalid_records, len(records)),
-        "invalid_fields": reason_for_invalid_fields,
+        "invalid_fields": ",".join(reasons_for_invalid_fields),
         "call_time": str(datetime.timedelta(seconds=call_time)),
         "hours_on_call_percentage": f"{hours_on_call_percentage}%",
         "average_calls_per_hour": average_calls_per_hour,
@@ -73,6 +73,7 @@ def format_fraction_and_percentage_as_string(numerator: int, denominator: int) -
 
 def calculate_hours_worked_in_seconds(records: pd.DataFrame) -> int:
     records = records.dropna(subset=["call_end_time"])
+    records = records.loc[records["status"] != "Timed out during questionnaire"]
 
     # Group records by date.
     daily_call_history_by_date = records.groupby(
@@ -87,20 +88,32 @@ def calculate_hours_worked_in_seconds(records: pd.DataFrame) -> int:
 
 
 def calculate_number_of_invalid_records(records: pd.DataFrame) -> int:
-    return len(records[records["call_end_time"].isna()])
+    return len(records.loc[(records["call_start_time"].isna()) |
+                           (records["call_end_time"].isna()) |
+                           (records["status"] == "Timed out during questionnaire")])
 
 
-def provide_reason_for_invalid_records(records: pd.DataFrame) -> str:
+def provide_reasons_for_invalid_records(records: pd.DataFrame) -> list:
     """."""
-    invalid_records = records[records["call_end_time"].isna()]
-    status = invalid_records['status'].unique()
+    reasons = []
+    if len(records[records["call_start_time"].isna()]) > 0:
+        reasons.append("'Start call time' column had missing data")
+    if len(records[records["call_end_time"].isna()]) > 0:
+        reasons.append(provide_reason_for_no_call_end_time(records))
+    if len(records[records["status"] == "Timed out during questionnaire"]) > 0:
+        reasons.append("'status' column returned a timed out session")
+    return reasons
 
-    if 'Timed out' in status:
+def provide_reason_for_no_call_end_time(records) -> str:
+    unique_statuses = records['status'].unique()
+
+    if 'Timed out' in unique_statuses:
         return "'status' column had timed out call status"
     return "'End call time' column had missing data"
 
 
 def calculate_call_time(records: pd.DataFrame) -> int:
+    records = records.loc[records["status"] != "Timed out during questionnaire"]
     return round(records['dial_secs'].sum())
 
 
@@ -120,13 +133,10 @@ def calculate_average_calls_per_hour(records) -> float:
 
 
 def count_records_with_status(records, status) -> int:
-    records = records.dropna(subset=["call_end_time"])
     return len(records.loc[records["status"] == status])
 
 
 def count_records_with_finished_status_and_call_result(records, call_result) -> int:
-    records = records.dropna(subset=["call_end_time"])
-
     return len(records.loc[
                    (records["status"] == "Finished (No contact)") &
                    (records["call_result"] == call_result)])
