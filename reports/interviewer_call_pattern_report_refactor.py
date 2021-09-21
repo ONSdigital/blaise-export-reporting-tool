@@ -38,11 +38,13 @@ def get_call_pattern_report():
         "no_contact": format_fraction_and_percentage_as_string(no_contact, len(records)),
         "completed_successfully": format_fraction_and_percentage_as_string(completed_successfully, len(records)),
         "appointments": format_fraction_and_percentage_as_string(appointments, len(records)),
-        "no_contact_answer_service": format_fraction_and_percentage_as_string(no_contact_answer_service, len(records)),
-        "no_contact_busy": format_fraction_and_percentage_as_string(no_contact_busy, len(records)),
-        "no_contact_disconnect": format_fraction_and_percentage_as_string(no_contact_disconnect, len(records)),
-        "no_contact_no_answer": format_fraction_and_percentage_as_string(no_contact_no_answer, len(records)),
-        "no_contact_other": format_fraction_and_percentage_as_string(no_contact_other, len(records)),
+
+        "no_contact_answer_service": format_fraction_and_percentage_as_string(no_contact_answer_service, number_of_no_contacts(records)),
+        "no_contact_busy": format_fraction_and_percentage_as_string(no_contact_busy, number_of_no_contacts(records)),
+        "no_contact_disconnect": format_fraction_and_percentage_as_string(no_contact_disconnect, number_of_no_contacts(records)),
+        "no_contact_no_answer": format_fraction_and_percentage_as_string(no_contact_no_answer, number_of_no_contacts(records)),
+        "no_contact_other": format_fraction_and_percentage_as_string(no_contact_other, number_of_no_contacts(records)),
+
         "discounted_invalid_cases": format_fraction_and_percentage_as_string(number_of_invalid_records, len(records)),
         "invalid_fields": ",".join(reasons_for_invalid_fields),
     }
@@ -67,6 +69,8 @@ def format_fraction_and_percentage_as_string(numerator: int, denominator: int) -
 
     Example: 2/4, 50%
     """
+    if denominator == 0:
+        return "0/0, 100.00%"
     percentage = format(numerator / denominator * 100, '.2f')
     return f"{numerator}/{denominator}, {percentage}%"
 
@@ -135,6 +139,10 @@ def calculate_average_calls_per_hour(records) -> float:
 
 def count_records_with_status(records, status) -> int:
     return len(records.loc[records["status"] == status])
+
+
+def number_of_no_contacts(records) -> int:
+        return count_records_with_status(records, "Finished (No contact)")
 
 
 def count_records_with_finished_status_and_call_result(records, call_result) -> int:
