@@ -8,6 +8,9 @@ from google.cloud import datastore
 
 columns_to_drop = ["call_start_time", "call_end_time"]
 
+# TODO: filter records by interviewer, start_date, end_date and survey
+# TODO: if data missing in ANY column then return ''x' column had missing data' in invalid_fields
+
 def get_call_pattern_report(interviewer_name, start_date_string, end_date_string, survey_tla):
     records = get_call_history_records()
     if records.empty:

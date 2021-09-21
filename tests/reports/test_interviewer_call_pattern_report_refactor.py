@@ -980,3 +980,21 @@ def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_f
     assert "'Start call time' column had missing data" in list_of_reasons
     assert "'status' column returned a timed out session" in list_of_reasons
     assert "'status' column had timed out call status" in list_of_reasons
+
+
+def test_get_call_pattern_report_returns_column_has_missing_data_message_when_data_are_missing_from_a_column(
+        mocker):
+    datastore_records = [
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=10),
+            end_date_time=datetime_helper(day=7, hour=11),
+            call_result=None
+        ),
+    ]
+
+    mocker.patch(
+        "reports.interviewer_call_pattern_report_refactor.get_call_history_records",
+        return_value=pd.DataFrame(datastore_records))
+
+    result = get_call_pattern_report()
+    assert result["invalid_fields"] == "'call_result' column had missing data"
