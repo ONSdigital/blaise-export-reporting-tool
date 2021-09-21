@@ -14,8 +14,6 @@ def get_call_pattern_report():
     records = replace_empty_strings_with_nans(records)
 
     hours_worked_in_seconds = calculate_hours_worked_in_seconds(records)
-    number_of_invalid_records = calculate_number_of_invalid_records(records)
-    reasons_for_invalid_fields = provide_reasons_for_invalid_records(records)
     call_time = calculate_call_time(records)
     hours_on_call_percentage = calculate_hours_on_call_percentage(records)
     average_calls_per_hour = calculate_average_calls_per_hour(records)
@@ -28,14 +26,14 @@ def get_call_pattern_report():
     no_contact_disconnect = count_records_with_finished_status_and_call_result(records, "Disconnect")
     no_contact_no_answer = count_records_with_finished_status_and_call_result(records, "NoAnswer")
     no_contact_other = count_records_with_finished_status_and_call_result(records, "Others")
+    number_of_invalid_records = calculate_number_of_invalid_records(records)
+    reasons_for_invalid_fields = provide_reasons_for_invalid_records(records)
 
     return {
         "hours_worked": str(datetime.timedelta(seconds=hours_worked_in_seconds)),
-        "discounted_invalid_cases": format_fraction_and_percentage_as_string(number_of_invalid_records, len(records)),
-        "invalid_fields": ",".join(reasons_for_invalid_fields),
         "call_time": str(datetime.timedelta(seconds=call_time)),
         "hours_on_call_percentage": f"{hours_on_call_percentage}%",
-        "average_calls_per_hour": average_calls_per_hour,
+        "average_calls_per_hour": round(average_calls_per_hour, 2),
         "refusals": format_fraction_and_percentage_as_string(refusals, len(records)),
         "no_contact": format_fraction_and_percentage_as_string(no_contact, len(records)),
         "completed_successfully": format_fraction_and_percentage_as_string(completed_successfully, len(records)),
@@ -45,6 +43,8 @@ def get_call_pattern_report():
         "no_contact_disconnect": format_fraction_and_percentage_as_string(no_contact_disconnect, len(records)),
         "no_contact_no_answer": format_fraction_and_percentage_as_string(no_contact_no_answer, len(records)),
         "no_contact_other": format_fraction_and_percentage_as_string(no_contact_other, len(records)),
+        "discounted_invalid_cases": format_fraction_and_percentage_as_string(number_of_invalid_records, len(records)),
+        "invalid_fields": ",".join(reasons_for_invalid_fields),
     }
 
 
@@ -103,6 +103,7 @@ def provide_reasons_for_invalid_records(records: pd.DataFrame) -> list:
     if len(records[records["status"] == "Timed out during questionnaire"]) > 0:
         reasons.append("'status' column returned a timed out session")
     return reasons
+
 
 def provide_reason_for_no_call_end_time(records) -> str:
     unique_statuses = records['status'].unique()

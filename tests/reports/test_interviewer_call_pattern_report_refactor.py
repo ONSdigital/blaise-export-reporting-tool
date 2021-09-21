@@ -763,7 +763,7 @@ def test_get_call_pattern_report_returns_reason_for_no_contact_when_multiple_rec
     assert result["no_contact_no_answer"] == "1/2, 50.00%"
 
 
-def test_get_call_pattern_report_returns_x_when_call_time_is_greater_than_hours_worked(mocker):
+def test_get_call_pattern_report_returns_expected_when_call_time_is_greater_than_hours_worked(mocker):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             start_date_time=datetime_helper(day=7, hour=10),
@@ -787,3 +787,146 @@ def test_get_call_pattern_report_returns_x_when_call_time_is_greater_than_hours_
     assert result["call_time"] == "1:00:00"
     assert result["invalid_fields"] == "'status' column returned a timed out session"
     assert result["discounted_invalid_cases"] == "1/2, 50.00%"
+
+
+def test_get_call_pattern_report_returns_expected_output_when_all_data_is_valid(mocker):
+    datastore_records = [
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=10),
+            end_date_time=datetime_helper(day=7, hour=11),
+            dial_secs=600,
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=13),
+            end_date_time=datetime_helper(day=7, hour=14),
+            dial_secs=1200,
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=16),
+            end_date_time=datetime_helper(day=7, hour=17),
+            dial_secs=600,
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=8, hour=9),
+            end_date_time=datetime_helper(day=8, hour=10),
+            dial_secs=300,
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=8, hour=12),
+            end_date_time=datetime_helper(day=8, hour=13),
+            dial_secs=600,
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=8, hour=15),
+            end_date_time=datetime_helper(day=8, hour=16),
+            dial_secs=1200,
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=9, hour=10),
+            end_date_time=datetime_helper(day=9, hour=11),
+            dial_secs=600,
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=9, hour=13),
+            end_date_time=datetime_helper(day=9, hour=14),
+            dial_secs=300,
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=9, hour=16),
+            end_date_time=datetime_helper(day=9, hour=17),
+            dial_secs=600,
+        ),
+    ]
+
+    mocker.patch(
+        "reports.interviewer_call_pattern_report_refactor.get_call_history_records",
+        return_value=pd.DataFrame(datastore_records))
+
+    result = get_call_pattern_report()
+    assert result["hours_worked"] == "21:00:00"
+    assert result["call_time"] == "1:40:00"
+    assert result["hours_on_call_percentage"] == "7.94%"
+    assert result["average_calls_per_hour"] == 0.43
+    assert result["refusals"] == "0/9, 0.00%"
+    assert result["no_contact"] == "0/9, 0.00%"
+    assert result["completed_successfully"] == "9/9, 100.00%"
+    assert result["appointments"] == "0/9, 0.00%"
+    assert result["no_contact_answer_service"] == "0/9, 0.00%"
+    assert result["no_contact_busy"] == "0/9, 0.00%"
+    assert result["no_contact_disconnect"] == "0/9, 0.00%"
+    assert result["no_contact_no_answer"] == "0/9, 0.00%"
+    assert result["no_contact_other"] == "0/9, 0.00%"
+    assert result["discounted_invalid_cases"] == "0/9, 0.00%"
+    assert result["invalid_fields"] == ""
+
+@pytest.mark.skip()
+def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_found(mocker):
+    datastore_records = [
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=10),
+            end_date_time=datetime_helper(day=7, hour=11),
+            dial_secs=600,
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=None,  # No start call time.
+            end_date_time=datetime_helper(day=7, hour=14),
+            dial_secs=1200,
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=16),
+            end_date_time=datetime_helper(day=7, hour=17),
+            dial_secs=600,
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=8, hour=9),
+            end_date_time=datetime_helper(day=8, hour=10),
+            dial_secs=300,
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=8, hour=12),
+            end_date_time=None,  # No end call time.
+            dial_secs=600,
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=8, hour=15),
+            end_date_time=datetime_helper(day=8, hour=16),
+            dial_secs=1200,
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=9, hour=10),
+            end_date_time=datetime_helper(day=9, hour=11),
+            dial_secs=None,  # No dial secs.
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=None,  # No start call time.
+            end_date_time=None,  # No end call time.
+            dial_secs=300,
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=9, hour=16),
+            end_date_time=datetime_helper(day=9, hour=17),
+            dial_secs=600,
+        ),
+    ]
+
+    mocker.patch(
+        "reports.interviewer_call_pattern_report_refactor.get_call_history_records",
+        return_value=pd.DataFrame(datastore_records))
+
+    result = get_call_pattern_report()
+    assert result["hours_worked"] == "21:00:00"
+    assert result["call_time"] == "1:40:00"
+    assert result["hours_on_call_percentage"] == "7.94%"
+    assert result["average_calls_per_hour"] == 0.43
+    assert result["refusals"] == "0/9, 0.00%"
+    assert result["no_contact"] == "0/9, 0.00%"
+    assert result["completed_successfully"] == "9/9, 100.00%"
+    assert result["appointments"] == "0/9, 0.00%"
+    assert result["no_contact_answer_service"] == "0/9, 0.00%"
+    assert result["no_contact_busy"] == "0/9, 0.00%"
+    assert result["no_contact_disconnect"] == "0/9, 0.00%"
+    assert result["no_contact_no_answer"] == "0/9, 0.00%"
+    assert result["no_contact_other"] == "0/9, 0.00%"
+    assert result["discounted_invalid_cases"] == "0/9, 0.00%"
+    assert result["invalid_fields"] == ""
+
