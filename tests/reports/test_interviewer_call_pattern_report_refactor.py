@@ -896,41 +896,49 @@ def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_f
             start_date_time=datetime_helper(day=8, hour=11),
             end_date_time=datetime_helper(day=8, hour=13),
             dial_secs=600,
+            status="Completed"
         ),
         interviewer_call_pattern_report_sample_case(
             start_date_time=datetime_helper(day=8, hour=15),
             end_date_time=datetime_helper(day=8, hour=17),
             dial_secs=600,
+            status="Completed"
         ),
         interviewer_call_pattern_report_sample_case(
             start_date_time=datetime_helper(day=9, hour=11),
             end_date_time=datetime_helper(day=9, hour=13),
             dial_secs=600,
+            status="Completed"
         ),
         interviewer_call_pattern_report_sample_case(
             start_date_time=datetime_helper(day=9, hour=15),
             end_date_time=datetime_helper(day=9, hour=17),
             dial_secs=600,
+            status="Completed"
         ),
         interviewer_call_pattern_report_sample_case(
             start_date_time=datetime_helper(day=10, hour=11),
             end_date_time=datetime_helper(day=10, hour=13),
             dial_secs=600,
+            status="Completed"
         ),
         interviewer_call_pattern_report_sample_case(
             start_date_time=datetime_helper(day=10, hour=15),
             end_date_time=datetime_helper(day=10, hour=17),
             dial_secs=600,
+            status="Completed"
         ),
         interviewer_call_pattern_report_sample_case(
             start_date_time=None,
             end_date_time=datetime_helper(day=8, hour=10),
             dial_secs=600,
+            status="Error"
         ),
         interviewer_call_pattern_report_sample_case(
             start_date_time=datetime_helper(day=9, hour=9),
             end_date_time=None,
             dial_secs=600,
+            status="Error"
         ),
         interviewer_call_pattern_report_sample_case(
             start_date_time=datetime_helper(day=10, hour=9),
@@ -957,12 +965,18 @@ def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_f
     assert result["average_calls_per_hour"] == 0.33
     assert result["refusals"] == "0/10, 0.00%"
     assert result["no_contact"] == "0/10, 0.00%"
-    assert result["completed_successfully"] == "6/10, 100.00%"
+    assert result["completed_successfully"] == "6/10, 60.00%"
     assert result["appointments"] == "0/10, 0.00%"
     assert result["no_contact_answer_service"] == "0/0, 100.00%"
-    assert result["no_contact_busy"] == "0/0, 100.00%%"
-    assert result["no_contact_disconnect"] == "0/0, 100.00%%"
+    assert result["no_contact_busy"] == "0/0, 100.00%"
+    assert result["no_contact_disconnect"] == "0/0, 100.00%"
     assert result["no_contact_no_answer"] == "0/0, 100.00%"
-    assert result["no_contact_other"] == "0/0, 100.00%%"
+    assert result["no_contact_other"] == "0/0, 100.00%"
     assert result["discounted_invalid_cases"] == "4/10, 40.00%"
-    assert result["invalid_fields"] == "'Start call time' column had missing data, 'status' column returned a timed out session, 'status' column had timed out call status, 'End call time' column had missing data"
+
+    list_of_reasons = result["invalid_fields"].split(",")
+
+    assert len(list_of_reasons) == 3
+    assert "'Start call time' column had missing data" in list_of_reasons
+    assert "'status' column returned a timed out session" in list_of_reasons
+    assert "'status' column had timed out call status" in list_of_reasons
