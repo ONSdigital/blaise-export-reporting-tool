@@ -11,12 +11,14 @@ def interviewer_call_pattern_report_sample_case(
         end_date_time=datetime_helper(7, 15),
         dial_secs=8,
         status="Completed",
-        call_result="Questionnaire"
+        call_result="Questionnaire",
+        interviewer="James",
 ):
     return {
         "call_start_time": start_date_time,
         "call_end_time": end_date_time,
         "dial_secs": dial_secs,
         "status": status,
-        "call_result": call_result
+        "call_result": call_result,
+        "interviewer": interviewer,
     }

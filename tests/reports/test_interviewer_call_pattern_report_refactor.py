@@ -1,9 +1,8 @@
-from google.api_core.datetime_helpers import DatetimeWithNanoseconds
-from reports.interviewer_call_pattern_report_refactor import get_call_pattern_report
-import datetime
 import pandas as pd
-from tests.helpers.interviewer_call_pattern_helpers import interviewer_call_pattern_report_sample_case, datetime_helper
 import pytest
+
+from tests.helpers.interviewer_call_pattern_helpers import interviewer_call_pattern_report_sample_case, datetime_helper
+from reports.interviewer_call_pattern_report_refactor import get_call_pattern_report
 
 
 def test_get_call_pattern_report_returns_an_empty_dict_if_no_records_were_found(mocker):
@@ -223,36 +222,6 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_wher
     assert result["discounted_invalid_cases"] == "3/4, 75.00%"
 
 
-def test_get_call_pattern_report_returns_timed_out_message_when_status_is_timed_out_when_there_is_no_end_time(mocker):
-    datastore_records = [
-        interviewer_call_pattern_report_sample_case(
-            start_date_time=datetime_helper(day=7, hour=10),
-            end_date_time=datetime_helper(day=7, hour=12),
-        ),
-        interviewer_call_pattern_report_sample_case(
-            start_date_time=datetime_helper(day=7, hour=11),
-            end_date_time=None,
-            status="Timed out"
-        ),
-        interviewer_call_pattern_report_sample_case(
-            start_date_time=datetime_helper(day=8, hour=10),
-            end_date_time=None,
-            status="Timed out"
-        ),
-        interviewer_call_pattern_report_sample_case(
-            start_date_time=datetime_helper(day=8, hour=11),
-            end_date_time=datetime_helper(day=8, hour=12),
-        ),
-    ]
-
-    mocker.patch(
-        "reports.interviewer_call_pattern_report_refactor.get_call_history_records",
-        return_value=pd.DataFrame(datastore_records))
-
-    result = get_call_pattern_report()
-    assert result["invalid_fields"] == "'status' column had timed out call status"
-
-
 def test_get_call_pattern_report_returns_expected_message_when_no_start_time_found(mocker):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
@@ -278,7 +247,7 @@ def test_get_call_pattern_report_returns_expected_message_when_no_start_time_fou
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report()
-    assert result["invalid_fields"] == "'Start call time' column had missing data"
+    assert result["invalid_fields"] == "'call_start_time' column had missing data"
 
 
 def test_get_call_pattern_report_returns_no_message_when_no_invalid_records_are_found(mocker):
@@ -333,7 +302,7 @@ def test_get_call_pattern_report_returns_expected_message_when_no_end_time_found
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report()
-    assert result["invalid_fields"] == "'End call time' column had missing data"
+    assert result["invalid_fields"] == "'call_end_time' column had missing data"
 
 
 def test_get_call_pattern_report_returns_expected_message_when_no_start_or_end_time_found(mocker):
@@ -364,8 +333,8 @@ def test_get_call_pattern_report_returns_expected_message_when_no_start_or_end_t
     list_of_reasons = result["invalid_fields"].split(",")
 
     assert len(list_of_reasons) == 2
-    assert "'End call time' column had missing data" in list_of_reasons
-    assert "'Start call time' column had missing data" in list_of_reasons
+    assert "'call_start_time' column had missing data" in list_of_reasons
+    assert "'call_end_time' column had missing data" in list_of_reasons
 
 
 def test_get_call_pattern_report_returns_call_time_when_one_record_found(mocker):
@@ -815,7 +784,7 @@ def test_get_call_pattern_report_returns_expected_when_call_time_is_greater_than
     result = get_call_pattern_report()
     assert result["hours_worked"] == "1:00:00"
     assert result["call_time"] == "1:00:00"
-    assert result["invalid_fields"] == "'status' column returned a timed out session"
+    assert result["invalid_fields"] == "'status' column had timed out call status"
     assert result["discounted_invalid_cases"] == "1/2, 50.00%"
 
 
@@ -977,18 +946,21 @@ def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_f
     list_of_reasons = result["invalid_fields"].split(",")
 
     assert len(list_of_reasons) == 3
-    assert "'Start call time' column had missing data" in list_of_reasons
-    assert "'status' column returned a timed out session" in list_of_reasons
+    assert "'call_start_time' column had missing data" in list_of_reasons
+    assert "'call_end_time' column had missing data" in list_of_reasons
     assert "'status' column had timed out call status" in list_of_reasons
 
 
-def test_get_call_pattern_report_returns_column_has_missing_data_message_when_data_are_missing_from_a_column(
-        mocker):
+def test_get_call_pattern_report_returns_a_single_reason_message_when_no_call_end_time_is_found_and_status_is_not_timed_out(mocker):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             start_date_time=datetime_helper(day=7, hour=10),
-            end_date_time=datetime_helper(day=7, hour=11),
-            call_result=None
+            end_date_time=datetime_helper(day=7, hour=12),
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=11),
+            end_date_time=None,
+            status="Completed"
         ),
     ]
 
@@ -997,4 +969,59 @@ def test_get_call_pattern_report_returns_column_has_missing_data_message_when_da
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report()
-    assert result["invalid_fields"] == "'call_result' column had missing data"
+    assert result["invalid_fields"] == "'call_end_time' column had missing data"
+
+
+def test_get_call_pattern_report_returns_multiple_reason_messages_when_no_call_end_time_is_found_and_status_is_timed_out(mocker):
+    datastore_records = [
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=10),
+            end_date_time=datetime_helper(day=7, hour=12),
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=11),
+            end_date_time=None,
+            status="Timed out"
+        ),
+    ]
+
+    mocker.patch(
+        "reports.interviewer_call_pattern_report_refactor.get_call_history_records",
+        return_value=pd.DataFrame(datastore_records))
+
+    result = get_call_pattern_report()
+    list_of_reasons = result["invalid_fields"].split(",")
+
+    assert len(list_of_reasons) == 2
+    assert "'call_end_time' column had missing data" in list_of_reasons
+    assert "'status' column had timed out call status" in list_of_reasons
+
+
+def test_get_call_pattern_report_returns_unique_reasons_when_multiple_cases_with_similar_conditions_are_found(mocker):
+    datastore_records = [
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=10),
+            end_date_time=datetime_helper(day=7, hour=12),
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=11),
+            end_date_time=None,
+            status="Timed out"
+        ),
+        interviewer_call_pattern_report_sample_case(
+            start_date_time=datetime_helper(day=7, hour=11),
+            end_date_time=None,
+            status="Timed out"
+        ),
+    ]
+
+    mocker.patch(
+        "reports.interviewer_call_pattern_report_refactor.get_call_history_records",
+        return_value=pd.DataFrame(datastore_records))
+
+    result = get_call_pattern_report()
+    list_of_reasons = result["invalid_fields"].split(",")
+
+    assert len(list_of_reasons) == 2
+    assert "'call_end_time' column had missing data" in list_of_reasons
+    assert "'status' column had timed out call status" in list_of_reasons

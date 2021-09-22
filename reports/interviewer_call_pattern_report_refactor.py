@@ -6,12 +6,12 @@ import numpy as np
 from google.cloud import datastore
 
 
-columns_to_drop = ["call_start_time", "call_end_time"]
+columns_to_check_for_nulls = ["call_start_time", "call_end_time"]
 
 # TODO: filter records by interviewer, start_date, end_date and survey
-# TODO: if data missing in ANY column then return ''x' column had missing data' in invalid_fields
 
-def get_call_pattern_report(interviewer_name, start_date_string, end_date_string, survey_tla):
+# interviewer_name, start_date_string, end_date_string, survey_tla
+def get_call_pattern_report():
     records = get_call_history_records()
     if records.empty:
         return {}
@@ -40,7 +40,7 @@ def get_call_pattern_report(interviewer_name, start_date_string, end_date_string
     }
 
 
-def get_call_history_records() -> pd.DataFrame:
+def get_call_history_records(interviewer_name, start_date_string, end_date_string, survey_tla) -> pd.DataFrame:
     client = datastore.Client()
     query = client.query(kind="CallHistory")
 
@@ -69,21 +69,13 @@ def calculate_hours_worked_in_seconds(records: pd.DataFrame) -> int:
 
 def provide_reasons_for_invalid_records(records: pd.DataFrame) -> list:
     reasons = []
-    if len(records[records["call_start_time"].isna()]) > 0:
-        reasons.append("'Start call time' column had missing data")
-    if len(records[records["call_end_time"].isna()]) > 0:
-        reasons.append(provide_reason_for_no_call_end_time(records))
-    if len(records[records["status"] == "Timed out during questionnaire"]) > 0:
-        reasons.append("'status' column returned a timed out session")
+    if records[records["status"].str.contains("Timed out", case=False)].any().any():
+        reasons.append("'status' column had timed out call status")
+
+    for field in columns_to_check_for_nulls:
+        if len(records[records[field].isna()]) > 0:
+            reasons.append(f"'{field}' column had missing data")
     return reasons
-
-
-def provide_reason_for_no_call_end_time(records: pd.DataFrame) -> str:
-    unique_statuses = records['status'].unique()
-
-    if 'Timed out' in unique_statuses:
-        return "'status' column had timed out call status"
-    return "'End call time' column had missing data"
 
 
 def calculate_call_time_in_seconds(records: pd.DataFrame) -> int:
@@ -132,6 +124,6 @@ def percentage_of_invalid_records(valid_records: pd.DataFrame, records: pd.DataF
 def get_valid_records(records: pd.DataFrame) -> pd.DataFrame:
     records = records.replace("", np.nan).fillna(value=np.nan)
     valid_records = records.drop(records.loc[records['status'].str.contains('Timed out', case=False)].index)
-    valid_records = valid_records.dropna(subset=columns_to_drop)
+    valid_records = valid_records.dropna(subset=columns_to_check_for_nulls)
 
     return valid_records
