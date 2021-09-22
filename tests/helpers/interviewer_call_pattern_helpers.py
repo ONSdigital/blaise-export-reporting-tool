@@ -7,18 +7,21 @@ def datetime_helper(day, hour):
 
 
 def interviewer_call_pattern_report_sample_case(
-        start_date_time=datetime_helper(7, 9),
-        end_date_time=datetime_helper(7, 15),
+        call_start_time=datetime_helper(7, 9),
+        call_end_time=datetime_helper(7, 15),
         dial_secs=8,
         status="Completed",
         call_result="Questionnaire",
-        interviewer="James",
 ):
+
     return {
-        "call_start_time": start_date_time,
-        "call_end_time": end_date_time,
+        "call_start_time": call_start_time,
+        "call_end_time": call_end_time,
         "dial_secs": dial_secs,
         "status": status,
         "call_result": call_result,
-        "interviewer": interviewer,
+        "interviewer": "James",
+        "survey_tla": "OPN",
+        "start_date_as_string": "2021-09-22",
+        "end_date_as_string": "2021-09-22",
     }
