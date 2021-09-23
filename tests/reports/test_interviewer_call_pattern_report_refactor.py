@@ -1093,3 +1093,30 @@ def test_calculate_average_calls_per_hour(call_start_time, call_end_time, expect
         call_start_time=call_start_time,
         call_end_time=call_end_time,
     )])) == expected
+
+
+@pytest.mark.parametrize(
+    "status_1, status_2, status_3, status_to_test, expected",
+    [
+        ("Completed", "Completed", "Timed out", "Completed", 2),
+        ("Completed", "Timed out", "Timed out", "Completed", 1),
+        ("Completed", "Completed", "Timed out", "Timed out", 1),
+    ],
+)
+def test_number_of_records_which_has_status(status_1, status_2, status_3, status_to_test, expected):
+    arrange = pd.DataFrame([
+        interviewer_call_pattern_report_sample_case(status=status_1),
+        interviewer_call_pattern_report_sample_case(status=status_2),
+        interviewer_call_pattern_report_sample_case(status=status_3),
+    ])
+    assert number_of_records_which_has_status(arrange, status_to_test) == expected
+
+
+def test_number_of_records_which_has_status_raises_error_when_no_status_column_found():
+    arrange = pd.DataFrame([{
+        "call_status": "Completed"
+    }])
+
+    with pytest.raises(BertException) as excinfo:
+        number_of_records_which_has_status(arrange, "Completed")
+    assert "number_of_records_which_has_status failed" in excinfo.value.message
