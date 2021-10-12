@@ -1,4 +1,3 @@
-import pandas as pd
 import pytest
 
 from tests.helpers.interviewer_call_pattern_helpers import interviewer_call_pattern_report_sample_case, datetime_helper
@@ -630,6 +629,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
     result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
     assert result["no_contact_busy"] == "1/2, 50.00%"
 
+
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Disconnect(mocker):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
@@ -681,7 +681,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
             call_start_time=datetime_helper(day=7, hour=10),
             call_end_time=datetime_helper(day=7, hour=11),
             status="Finished (No contact)",
-            call_result="NoAnswer"
+            call_result="NoAnswer",
         ),
     ]
 
@@ -699,13 +699,13 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
             call_start_time=datetime_helper(day=7, hour=10),
             call_end_time=datetime_helper(day=7, hour=11),
             status="Finished (No contact)",
-            call_result="AnswerService"
+            call_result="AnswerService",
         ),
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=12),
             call_end_time=datetime_helper(day=7, hour=13),
             status="Finished (No contact)",
-            call_result="NoAnswer"
+            call_result="NoAnswer",
         ),
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=14),
@@ -728,7 +728,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
             call_start_time=datetime_helper(day=7, hour=10),
             call_end_time=datetime_helper(day=7, hour=11),
             status="Finished (No contact)",
-            call_result="Others"
+            call_result="Others",
         ),
     ]
 
@@ -747,13 +747,13 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
             call_start_time=datetime_helper(day=7, hour=10),
             call_end_time=datetime_helper(day=7, hour=11),
             status="Finished (No contact)",
-            call_result="AnswerService"
+            call_result="AnswerService",
         ),
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=12),
             call_end_time=datetime_helper(day=7, hour=13),
             status="Finished (No contact)",
-            call_result="Others"
+            call_result="Others",
         ),
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=14),
@@ -864,6 +864,17 @@ def test_get_call_pattern_report_returns_expected_output_when_all_data_is_valid(
     assert result["no_contact_other"] == "0/0, 100.00%"
     assert result["discounted_invalid_cases"] == "0/9, 0.00%"
     assert result["invalid_fields"] == ""
+
+
+def test_get_valid_records_raises_error_when_no_valid_records_are_found():
+    arrange = pd.DataFrame([{
+        "call_start_time": datetime_helper(day=7, hour=9),
+        "end_time": None,
+    }])
+
+    with pytest.raises(BertException) as excinfo:
+        get_valid_records(arrange)
+    assert "get_valid_records failed" in excinfo.value.message
 
 
 def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_found(mocker):
