@@ -9,7 +9,7 @@ from reports.interviewer_call_pattern_report import (
     invalid_data_found, get_invalid_data, generate_report, get_hours_worked,
     get_call_time_in_seconds, convert_call_time_seconds_to_datetime_format,
     get_percentage_of_hours_on_calls, get_total_seconds_from_string,
-    get_invalid_fields, results_for_calls_with_status, no_contact_breakdown, get_average_calls_per_hour, get_respondents_interviewed, get_average_respondents_interviewed_per_hour)
+    get_invalid_fields, results_for_calls_with_status, get_average_calls_per_hour, no_contact_breakdown, get_respondents_interviewed, get_average_respondents_interviewed_per_hour)
 
 
 def test_get_call_pattern_report_returns_an_empty_dict_if_no_records_were_found(mocker):
