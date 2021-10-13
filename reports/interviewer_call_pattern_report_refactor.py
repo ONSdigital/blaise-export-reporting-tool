@@ -9,6 +9,7 @@ from google.cloud import datastore
 
 from functions.date_functions import parse_date_string_to_datetime
 from models.error_capture import BertException
+from typing import Dict
 
 columns_to_check_for_nulls = ["call_start_time", "call_end_time"]
 
@@ -18,7 +19,7 @@ def get_call_pattern_report_refactor(
         start_date_string: str,
         end_date_string: str,
         survey_tla: str,
-) -> dict[str, str]:
+) -> Dict[str, str]:
     """Return interviewer call pattern report for a given interviewer, period of time, and optionally filter by survey.
 
     Args:
@@ -217,7 +218,7 @@ def percentage_of_invalid_records(records: pd.DataFrame) -> str:
     return str(format_fraction_and_percentage_as_string(total_number_of_invalid_records, total_number_of_records))
 
 
-def provide_reasons_for_invalid_records(records: pd.DataFrame) -> list[str]:
+def provide_reasons_for_invalid_records(records: pd.DataFrame) -> list:
     """Return a list of unique reasons for invalid records.
 
     Args:
