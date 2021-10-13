@@ -9,7 +9,6 @@ from google.cloud import datastore
 
 from functions.date_functions import parse_date_string_to_datetime
 from models.error_capture import BertException
-from typing import Dict
 
 columns_to_check_for_nulls = ["call_start_time", "call_end_time"]
 
@@ -19,7 +18,7 @@ def get_call_pattern_report_refactor(
         start_date_string: str,
         end_date_string: str,
         survey_tla: str,
-) -> Dict[str, str]:
+) -> dict[str, str]:
     """Return interviewer call pattern report for a given interviewer, period of time, and optionally filter by survey.
 
     Args:
