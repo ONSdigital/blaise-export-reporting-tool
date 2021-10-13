@@ -10,7 +10,7 @@ from reports.interviewer_call_history_report import get_call_history_records
 columns_to_check_for_nulls = ["call_start_time", "call_end_time"]
 
 
-def get_call_pattern_report(
+def get_call_pattern_report_refactor(
         interviewer_name: str,
         start_date_string: str,
         end_date_string: str,
