@@ -9,7 +9,7 @@ def get_call_history_records(
         interviewer_name: str,
         start_date_string: str,
         end_date_string: str,
-        survey_tla: str,
+        survey_tla: str = None,
 ) -> pd.DataFrame:
     """
     Query datastore and return a pandas dataframe.
