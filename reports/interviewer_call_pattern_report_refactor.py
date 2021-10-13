@@ -315,7 +315,7 @@ def format_fraction_and_percentage_as_string(numerator: int, denominator: int) -
         The result in a fraction, percentage format (i.e. 2/4, 50%)
     """
     if denominator == 0:
-        return "0/0, 100.00%"
+        return "0/0, 0.00%"
     percentage = format(numerator / denominator * 100, '.2f')
 
     return f"{numerator}/{denominator}, {percentage}%"
