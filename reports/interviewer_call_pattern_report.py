@@ -218,3 +218,11 @@ def results_for_calls_with_status(column_name, status, df, denominator):
     except Exception as err:
         raise BertException(f"Could not calculate the total for status containing '{status}': {err}", 400)
     return f"{numerator}/{denominator}, {round(percentage, 2)}%"
+
+
+def no_contact_breakdown(status, df):
+    no_contact_df = df[df['status'].str.contains('no contact', case=False, na=False)]
+    if no_contact_df.empty:
+        return "n/a"
+    no_contact_df.reset_index()
+    return results_for_calls_with_status('call_result', status, no_contact_df, len(no_contact_df))
