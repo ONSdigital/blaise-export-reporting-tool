@@ -1,4 +1,5 @@
 import datetime
+
 import numpy as np
 import pandas as pd
 
@@ -12,9 +13,9 @@ COLUMNS_TO_VALIDATE = ["call_start_time", "call_end_time", "number_of_interviews
 def get_call_pattern_report(interviewer_name, start_date_string, end_date_string, survey_tla):
     print(
         f"Getting call pattern data for interviewer '{interviewer_name}' between '{start_date_string}' and '{end_date_string}'")
-    call_history_records = get_call_history_records(
-        interviewer_name, start_date_string, end_date_string, survey_tla)
-    if not call_history_records:
+    call_history_records = pd.DataFrame(get_call_history_records(
+        interviewer_name, start_date_string, end_date_string, survey_tla))
+    if call_history_records.empty:
         return {}
 
     original_number_of_records = len(call_history_records)

@@ -1,6 +1,5 @@
 import pandas as pd
 import pytest
-
 from pandas.testing import assert_frame_equal
 
 from models.interviewer_call_pattern_model import InterviewerCallPattern
@@ -9,7 +8,8 @@ from reports.interviewer_call_pattern_report import (
     invalid_data_found, get_invalid_data, generate_report, get_hours_worked,
     get_call_time_in_seconds, convert_call_time_seconds_to_datetime_format,
     get_percentage_of_hours_on_calls, get_total_seconds_from_string,
-    get_invalid_fields, results_for_calls_with_status, get_average_calls_per_hour, no_contact_breakdown, get_respondents_interviewed, get_average_respondents_interviewed_per_hour)
+    get_invalid_fields, results_for_calls_with_status, get_average_calls_per_hour, no_contact_breakdown,
+    get_respondents_interviewed, get_average_respondents_interviewed_per_hour)
 
 
 def test_get_call_pattern_report_returns_an_empty_dict_if_no_records_were_found(mocker):
@@ -105,7 +105,22 @@ def test_invalid_data_found_returns_true(missing_dataframe):
 
 
 def test_generate_report(valid_dataframe):
-    assert generate_report(valid_dataframe, 10) == InterviewerCallPattern(hours_worked='0:48:05', call_time='0:12:50', hours_on_calls_percentage='26.69%', average_calls_per_hour=12.48, respondents_interviewed=10, average_respondents_interviewed_per_hour=12.48, refusals='2/10, 20.0%', no_contacts='0/10, 0.0%', completed_successfully='2/10, 20.0%', appointments_for_contacts='6/10, 60.0%', no_contact_answer_service='n/a', no_contact_busy='n/a', no_contact_disconnect='n/a', no_contact_no_answer='n/a', no_contact_other='n/a', discounted_invalid_cases='0', invalid_fields='n/a')
+    assert generate_report(valid_dataframe, 10) == InterviewerCallPattern(hours_worked='0:48:05', call_time='0:12:50',
+                                                                          hours_on_calls_percentage='26.69%',
+                                                                          average_calls_per_hour=12.48,
+                                                                          respondents_interviewed=10,
+                                                                          average_respondents_interviewed_per_hour=12.48,
+                                                                          refusals='2/10, 20.0%',
+                                                                          no_contacts='0/10, 0.0%',
+                                                                          completed_successfully='2/10, 20.0%',
+                                                                          appointments_for_contacts='6/10, 60.0%',
+                                                                          no_contact_answer_service='n/a',
+                                                                          no_contact_busy='n/a',
+                                                                          no_contact_disconnect='n/a',
+                                                                          no_contact_no_answer='n/a',
+                                                                          no_contact_other='n/a',
+                                                                          discounted_invalid_cases='0',
+                                                                          invalid_fields='n/a')
 
 
 @pytest.mark.parametrize(
@@ -129,7 +144,6 @@ def test_get_invalid_data_returns_correct_discounted_information(
         interviewer_call_pattern_report,
         invalid_dataframe,
         expected_totals, expected_fields):
-
     df, actual_totals, actual_fields = get_invalid_data(
         invalid_dataframe)
 
@@ -226,10 +240,14 @@ def test_status_results_total_one_hundred_percent(dataframe_with_some_invalid_fi
         percentage = the_string.split("%")[0].split(",")[1].strip()
         return float(percentage)
 
-    non_response = get_percentage_from(results_for_calls_with_status('status', 'non response', valid_dataframe, denominator))
-    no_contact = get_percentage_from(results_for_calls_with_status('status', 'no contact', valid_dataframe, denominator))
-    questionnaire_completed = get_percentage_from(results_for_calls_with_status('status', 'questionnaire|completed', valid_dataframe, denominator))
-    appointment_made = get_percentage_from(results_for_calls_with_status('status', 'appointment made', valid_dataframe, denominator))
+    non_response = get_percentage_from(
+        results_for_calls_with_status('status', 'non response', valid_dataframe, denominator))
+    no_contact = get_percentage_from(
+        results_for_calls_with_status('status', 'no contact', valid_dataframe, denominator))
+    questionnaire_completed = get_percentage_from(
+        results_for_calls_with_status('status', 'questionnaire|completed', valid_dataframe, denominator))
+    appointment_made = get_percentage_from(
+        results_for_calls_with_status('status', 'appointment made', valid_dataframe, denominator))
 
     total = discounted_records.split("/")
     discounted = 100 * int(total[0]) / int(total[1].split(",")[0])
@@ -251,4 +269,3 @@ def test_no_contact_results_total_one_hundred_percent(status_dataframe):
     other = get_percentage_from(no_contact_breakdown('other', no_contact_dataframe))
 
     assert answerservice + busy + disconnect + noanswer + other == pytest.approx(100)
-
