@@ -8,6 +8,7 @@ import pandas as pd
 from google.cloud import datastore
 
 from functions.date_functions import parse_date_string_to_datetime
+from models.interviewer_call_pattern_model import InterviewerCallPattern
 from models.error_capture import BertException
 
 columns_to_check_for_nulls = ["call_start_time", "call_end_time"]
@@ -18,7 +19,7 @@ def get_call_pattern_report_refactor(
         start_date_string: str,
         end_date_string: str,
         survey_tla: str,
-) -> dict[str, str]:
+) -> InterviewerCallPattern:
     """Return interviewer call pattern report for a given interviewer, period of time, and optionally filter by survey.
 
     Args:
@@ -37,23 +38,41 @@ def get_call_pattern_report_refactor(
     if records.empty:
         return {}
 
-    return {
-        "hours_worked": str(calculate_hours_worked_as_datetime(records)),
-        "call_time": str(calculate_call_time_as_datetime(records)),
-        "hours_on_call_percentage": calculate_hours_on_call_percentage(records),
-        "average_calls_per_hour": calculate_average_calls_per_hour(records),
-        "refusals": percentage_of_records_with_status(records, "Finished (Non response)"),
-        "no_contact": percentage_of_records_with_status(records, "Finished (No contact)"),
-        "completed_successfully": percentage_of_records_with_status(records, "Completed"),
-        "appointments": percentage_of_records_with_status(records, "Finished (Appointment made)"),
-        "no_contact_answer_service": percentage_of_no_contact_records_with_call_result(records, "AnswerService"),
-        "no_contact_busy": percentage_of_no_contact_records_with_call_result(records, "Busy"),
-        "no_contact_disconnect": percentage_of_no_contact_records_with_call_result(records, "Disconnect"),
-        "no_contact_no_answer": percentage_of_no_contact_records_with_call_result(records, "NoAnswer"),
-        "no_contact_other": percentage_of_no_contact_records_with_call_result(records, "Others"),
-        "discounted_invalid_cases": percentage_of_invalid_records(records),
-        "invalid_fields": ",".join(provide_reasons_for_invalid_records(records)),
-    }
+    return InterviewerCallPattern(
+        hours_worked=str(calculate_hours_worked_as_datetime(records)),
+        call_time=str(calculate_call_time_as_datetime(records)),
+        hours_on_calls_percentage=calculate_hours_on_call_percentage(records),
+        average_calls_per_hour=calculate_average_calls_per_hour(records),
+        refusals=percentage_of_records_with_status(records, "Finished (Non response)"),
+        no_contacts=percentage_of_records_with_status(records, "Finished (No contact)"),
+        completed_successfully=percentage_of_records_with_status(records, "Completed"),
+        appointments_for_contacts=percentage_of_records_with_status(records, "Finished (Appointment made)"),
+        no_contact_answer_service=percentage_of_no_contact_records_with_call_result(records, "AnswerService"),
+        no_contact_busy=percentage_of_no_contact_records_with_call_result(records, "Busy"),
+        no_contact_disconnect=percentage_of_no_contact_records_with_call_result(records, "Disconnect"),
+        no_contact_no_answer=percentage_of_no_contact_records_with_call_result(records, "NoAnswer"),
+        no_contact_other=percentage_of_no_contact_records_with_call_result(records, "Others"),
+        discounted_invalid_cases=percentage_of_invalid_records(records),
+        invalid_fields=",".join(provide_reasons_for_invalid_records(records))
+    )
+
+    # return {
+    #     "hours_worked": str(calculate_hours_worked_as_datetime(records)),
+    #     "call_time": str(calculate_call_time_as_datetime(records)),
+    #     "hours_on_call_percentage": calculate_hours_on_call_percentage(records),
+    #     "average_calls_per_hour": calculate_average_calls_per_hour(records),
+    #     "refusals": percentage_of_records_with_status(records, "Finished (Non response)"),
+    #     "no_contact": percentage_of_records_with_status(records, "Finished (No contact)"),
+    #     "completed_successfully": percentage_of_records_with_status(records, "Completed"),
+    #     "appointments": percentage_of_records_with_status(records, "Finished (Appointment made)"),
+    #     "no_contact_answer_service": percentage_of_no_contact_records_with_call_result(records, "AnswerService"),
+    #     "no_contact_busy": percentage_of_no_contact_records_with_call_result(records, "Busy"),
+    #     "no_contact_disconnect": percentage_of_no_contact_records_with_call_result(records, "Disconnect"),
+    #     "no_contact_no_answer": percentage_of_no_contact_records_with_call_result(records, "NoAnswer"),
+    #     "no_contact_other": percentage_of_no_contact_records_with_call_result(records, "Others"),
+    #     "discounted_invalid_cases": percentage_of_invalid_records(records),
+    #     "invalid_fields": ",".join(provide_reasons_for_invalid_records(records)),
+    # }
 
 
 def get_call_history_records(
