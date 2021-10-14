@@ -19,7 +19,7 @@ def get_call_pattern_report_refactor(
         start_date_string: str,
         end_date_string: str,
         survey_tla: str,
-) -> InterviewerCallPatternRefactored:
+) -> object:
     """Return interviewer call pattern report for a given interviewer, period of time, and optionally filter by survey.
 
     Args:
