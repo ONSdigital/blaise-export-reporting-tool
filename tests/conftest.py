@@ -2202,4 +2202,27 @@ def interviewer_call_pattern_report():
         invalid_fields="n/a",
     )
 
-
+@pytest.fixture()
+def hours_worked_greater_than_24_hours():
+    results = [{
+        'appointment_info': None,
+        'busy_dials': 0,
+        'call_end_time': DatetimeWithNanoseconds(2021, 8, 8, 00, 50, 00, tzinfo=datetime.timezone.utc),
+        'call_number': 1,
+        'call_result': 'NoAnswer',
+        'call_start_time': DatetimeWithNanoseconds(2021, 8, 7, 00, 00, 00, tzinfo=datetime.timezone.utc),
+        'cohort': None,
+        'dial_number': 1,
+        'dial_secs': 89400,
+        'interviewer': 'el4president',
+        'number_of_interviews': "1",
+        'outcome_code': 310,
+        'questionnaire_id': 'remember-24-01-9dc791f0cb07',
+        'questionnaire_name': 'OPN2108R',
+        'serial_number': 24012022,
+        'status': 'Finished (No contact)',
+        'survey': 'OPN',
+        'update_info': None,
+        'wave': None
+    }]
+    return pd.DataFrame(results)

@@ -56,24 +56,6 @@ def get_call_pattern_report_refactor(
         invalid_fields=",".join(provide_reasons_for_invalid_records(records))
     )
 
-    # return {
-    #     "hours_worked": str(calculate_hours_worked_as_datetime(records)),
-    #     "call_time": str(calculate_call_time_as_datetime(records)),
-    #     "hours_on_call_percentage": calculate_hours_on_call_percentage(records),
-    #     "average_calls_per_hour": calculate_average_calls_per_hour(records),
-    #     "refusals": percentage_of_records_with_status(records, "Finished (Non response)"),
-    #     "no_contact": percentage_of_records_with_status(records, "Finished (No contact)"),
-    #     "completed_successfully": percentage_of_records_with_status(records, "Completed"),
-    #     "appointments": percentage_of_records_with_status(records, "Finished (Appointment made)"),
-    #     "no_contact_answer_service": percentage_of_no_contact_records_with_call_result(records, "AnswerService"),
-    #     "no_contact_busy": percentage_of_no_contact_records_with_call_result(records, "Busy"),
-    #     "no_contact_disconnect": percentage_of_no_contact_records_with_call_result(records, "Disconnect"),
-    #     "no_contact_no_answer": percentage_of_no_contact_records_with_call_result(records, "NoAnswer"),
-    #     "no_contact_other": percentage_of_no_contact_records_with_call_result(records, "Others"),
-    #     "discounted_invalid_cases": percentage_of_invalid_records(records),
-    #     "invalid_fields": ",".join(provide_reasons_for_invalid_records(records)),
-    # }
-
 
 def get_call_history_records(
         interviewer_name: str,
@@ -112,7 +94,7 @@ def get_call_history_records(
         raise BertException(f"get_call_history_records failed: {err}", 400)
 
 
-def calculate_hours_worked_as_datetime(records: pd.DataFrame) -> datetime:
+def calculate_hours_worked_as_datetime(records: pd.DataFrame) -> str:
     """Return hours worked in datetime format.
 
     Args:
@@ -124,7 +106,7 @@ def calculate_hours_worked_as_datetime(records: pd.DataFrame) -> datetime:
     valid_records = get_valid_records(records)
     hours_worked_in_seconds = calculate_hours_worked_in_seconds(valid_records)
 
-    return datetime.timedelta(seconds=hours_worked_in_seconds)
+    return convert_timedelta_to_hhmmss_as_string(datetime.timedelta(seconds=hours_worked_in_seconds))
 
 
 def calculate_call_time_as_datetime(records: pd.DataFrame) -> datetime:
@@ -139,7 +121,7 @@ def calculate_call_time_as_datetime(records: pd.DataFrame) -> datetime:
     valid_records = get_valid_records(records)
     call_time_in_seconds = calculate_call_time_in_seconds(valid_records)
 
-    return datetime.timedelta(seconds=call_time_in_seconds)
+    return convert_timedelta_to_hhmmss_as_string(datetime.timedelta(seconds=call_time_in_seconds))
 
 
 def calculate_hours_on_call_percentage(records: pd.DataFrame, ) -> str:
@@ -360,3 +342,11 @@ def number_of_records_which_has_status(records: pd.DataFrame, status: str) -> in
         return len(records.loc[records["status"] == status])
     except Exception as err:
         raise BertException(f"number_of_records_which_has_status failed: {err}", 400)
+
+
+def convert_timedelta_to_hhmmss_as_string(td: datetime) -> str:
+    """Convert a timedelta object td to a string in HH:MM:SS format.
+    """
+    hours, remainder = divmod(td.total_seconds(), 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return f'{int(hours):02}:{int(minutes):02}:{int(seconds):02}'
