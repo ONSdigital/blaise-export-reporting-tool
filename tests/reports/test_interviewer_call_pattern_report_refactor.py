@@ -30,7 +30,7 @@ def test_get_call_pattern_report_returns_hours_worked_when_a_record_is_found(moc
         "reports.interviewer_call_pattern_report_refactor.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["hours_worked"] == "6:00:00"
+    assert result.hours_worked == "6:00:00"
 
 
 def test_get_call_pattern_report_returns_hours_worked_when_multiple_records_from_a_single_day_are_found(mocker):
@@ -50,7 +50,7 @@ def test_get_call_pattern_report_returns_hours_worked_when_multiple_records_from
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["hours_worked"] == "8:00:00"
+    assert result.hours_worked == "8:00:00"
 
 
 def test_get_call_pattern_report_returns_hours_worked_when_multiple_records_from_multiple_days_are_found(mocker):
@@ -78,7 +78,7 @@ def test_get_call_pattern_report_returns_hours_worked_when_multiple_records_from
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["hours_worked"] == "9:00:00"
+    assert result.hours_worked == "9:00:00"
 
 
 def test_get_call_pattern_report_ignores_record_when_no_start_call_time_from_a_single_day_is_found(mocker):
@@ -97,7 +97,7 @@ def test_get_call_pattern_report_ignores_record_when_no_start_call_time_from_a_s
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["hours_worked"] == "2:00:00"
+    assert result.hours_worked == "2:00:00"
 
 def test_get_call_pattern_report_ignores_record_when_no_end_call_time_from_a_single_day_is_found(mocker):
     datastore_records = [
@@ -115,7 +115,7 @@ def test_get_call_pattern_report_ignores_record_when_no_end_call_time_from_a_sin
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["hours_worked"] == "2:00:00"
+    assert result.hours_worked == "2:00:00"
 
 
 def test_get_call_pattern_report_ignores_record_when_no_start_call_time_from_multiple_days_are_found(mocker):
@@ -142,7 +142,7 @@ def test_get_call_pattern_report_ignores_record_when_no_start_call_time_from_mul
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["hours_worked"] == "4:00:00"
+    assert result.hours_worked == "4:00:00"
 
 
 def test_get_call_pattern_report_ignores_record_when_no_end_call_time_from_multiple_days_are_found(mocker):
@@ -169,7 +169,7 @@ def test_get_call_pattern_report_ignores_record_when_no_end_call_time_from_multi
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["hours_worked"] == "3:00:00"
+    assert result.hours_worked == "3:00:00"
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_where_no_start_call_time_is_found(mocker):
@@ -197,7 +197,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_wher
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["discounted_invalid_cases"] == "3/4, 75.00%"
+    assert result.discounted_invalid_cases == "3/4, 75.00%"
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_where_no_end_call_time_is_found(mocker):
@@ -225,7 +225,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_wher
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["discounted_invalid_cases"] == "3/4, 75.00%"
+    assert result.discounted_invalid_cases == "3/4, 75.00%"
 
 
 def test_get_call_pattern_report_returns_expected_message_when_no_start_time_found(mocker):
@@ -253,7 +253,7 @@ def test_get_call_pattern_report_returns_expected_message_when_no_start_time_fou
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["invalid_fields"] == "'call_start_time' column had missing data"
+    assert result.invalid_fields == "'call_start_time' column had missing data"
 
 
 def test_get_call_pattern_report_returns_no_message_when_no_invalid_records_are_found(mocker):
@@ -281,7 +281,7 @@ def test_get_call_pattern_report_returns_no_message_when_no_invalid_records_are_
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["invalid_fields"] == ""
+    assert result.invalid_fields == ""
 
 def test_get_call_pattern_report_returns_expected_message_when_no_end_time_found(mocker):
     datastore_records = [
@@ -308,7 +308,7 @@ def test_get_call_pattern_report_returns_expected_message_when_no_end_time_found
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["invalid_fields"] == "'call_end_time' column had missing data"
+    assert result.invalid_fields == "'call_end_time' column had missing data"
 
 
 def test_get_call_pattern_report_returns_expected_message_when_no_start_or_end_time_found(mocker):
@@ -336,7 +336,7 @@ def test_get_call_pattern_report_returns_expected_message_when_no_start_or_end_t
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    list_of_reasons = result["invalid_fields"].split(",")
+    list_of_reasons = result.invalid_fields.split(",")
 
     assert len(list_of_reasons) == 2
     assert "'call_start_time' column had missing data" in list_of_reasons
@@ -354,7 +354,7 @@ def test_get_call_pattern_report_returns_call_time_when_one_record_found(mocker)
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["call_time"] == "0:10:00"
+    assert result.call_time == "0:10:00"
 
 
 def test_get_call_pattern_report_returns_call_time_when_multiple_records_are_found(mocker):
@@ -371,7 +371,7 @@ def test_get_call_pattern_report_returns_call_time_when_multiple_records_are_fou
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["call_time"] == "0:15:00"
+    assert result.call_time == "0:15:00"
 
 
 def test_get_call_pattern_report_returns_hours_on_call_as_percentage_of_worked_time_when_one_record_is_found(mocker):
@@ -387,7 +387,7 @@ def test_get_call_pattern_report_returns_hours_on_call_as_percentage_of_worked_t
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["hours_on_call_percentage"] == "16.67%"
+    assert result.hours_on_calls_percentage == "16.67%"
 
 
 def test_get_call_pattern_report_returns_hours_on_call_as_perecntage_of_worked_time_when_multiple_records_are_found(
@@ -410,7 +410,7 @@ def test_get_call_pattern_report_returns_hours_on_call_as_perecntage_of_worked_t
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["hours_on_call_percentage"] == "8.33%"
+    assert result.hours_on_calls_percentage == "8.33%"
 
 
 def test_get_call_pattern_report_returns_average_calls_per_hour(mocker):
@@ -426,7 +426,7 @@ def test_get_call_pattern_report_returns_average_calls_per_hour(mocker):
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["average_calls_per_hour"] == 1.0
+    assert result.average_calls_per_hour == 1.0
 
 
 def test_get_call_pattern_report_returns_average_calls_per_hour_when_multiple_records_are_found(mocker):
@@ -447,7 +447,7 @@ def test_get_call_pattern_report_returns_average_calls_per_hour_when_multiple_re
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["average_calls_per_hour"] == 2.0
+    assert result.average_calls_per_hour == 2.0
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_refused_cases_when_case_refusals_are_found(
@@ -470,7 +470,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_refused_ca
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["refusals"] == "1/2, 50.00%"
+    assert result.refusals == "1/2, 50.00%"
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_cases_with_a_status_of_no_contact(mocker):
@@ -492,7 +492,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_cases_with_a_
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["no_contact"] == "1/2, 50.00%"
+    assert result.no_contacts == "1/2, 50.00%"
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_cases_with_a_status_of_completed(mocker):
@@ -514,7 +514,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_cases_with_a_
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["completed_successfully"] == "1/2, 50.00%"
+    assert result.completed_successfully == "1/2, 50.00%"
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_appointment(mocker):
@@ -536,7 +536,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["appointments"] == "1/2, 50.00%"
+    assert result.appointments_for_contacts == "1/2, 50.00%"
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_AnswerService(mocker):
     datastore_records = [
@@ -553,7 +553,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["no_contact_answer_service"] == "1/1, 100.00%"
+    assert result.no_contact_answer_service == "1/1, 100.00%"
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_AnswerService_when_multiple_records_are_found(mocker):
@@ -581,7 +581,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["no_contact_answer_service"] == "1/2, 50.00%"
+    assert result.no_contact_answer_service == "1/2, 50.00%"
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Busy(mocker):
@@ -599,7 +599,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["no_contact_busy"] == "1/1, 100.00%"
+    assert result.no_contact_busy == "1/1, 100.00%"
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Busy_when_multiple_records_are_found(mocker):
@@ -627,7 +627,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["no_contact_busy"] == "1/2, 50.00%"
+    assert result.no_contact_busy == "1/2, 50.00%"
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Disconnect(mocker):
@@ -645,7 +645,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["no_contact_disconnect"] == "1/1, 100.00%"
+    assert result.no_contact_disconnect == "1/1, 100.00%"
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Disconnect_when_multiple_records_are_found(mocker):
@@ -673,7 +673,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["no_contact_disconnect"] == "1/2, 50.00%"
+    assert result.no_contact_disconnect == "1/2, 50.00%"
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_NoAnswer(mocker):
     datastore_records = [
@@ -690,7 +690,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["no_contact_no_answer"] == "1/1, 100.00%"
+    assert result.no_contact_no_answer == "1/1, 100.00%"
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_NoAnswer_when_multiple_records_are_found(mocker):
@@ -718,7 +718,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["no_contact_no_answer"] == "1/2, 50.00%"
+    assert result.no_contact_no_answer == "1/2, 50.00%"
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Other(
@@ -737,7 +737,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["no_contact_other"] == "1/1, 100.00%"
+    assert result.no_contact_other == "1/1, 100.00%"
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Other_when_multiple_records_are_found(
@@ -766,7 +766,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["no_contact_other"] == "1/2, 50.00%"
+    assert result.no_contact_other == "1/2, 50.00%"
 
 
 def test_get_call_pattern_report_returns_expected_when_call_time_is_greater_than_hours_worked(mocker):
@@ -789,10 +789,10 @@ def test_get_call_pattern_report_returns_expected_when_call_time_is_greater_than
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["hours_worked"] == "1:00:00"
-    assert result["call_time"] == "1:00:00"
-    assert result["invalid_fields"] == "'status' column had timed out call status"
-    assert result["discounted_invalid_cases"] == "1/2, 50.00%"
+    assert result.hours_worked == "1:00:00"
+    assert result.call_time == "1:00:00"
+    assert result.invalid_fields == "'status' column had timed out call status"
+    assert result.discounted_invalid_cases == "1/2, 50.00%"
 
 
 def test_get_call_pattern_report_returns_expected_output_when_all_data_is_valid(mocker):
@@ -849,21 +849,21 @@ def test_get_call_pattern_report_returns_expected_output_when_all_data_is_valid(
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["hours_worked"] == "21:00:00"
-    assert result["call_time"] == "1:40:00"
-    assert result["hours_on_call_percentage"] == "7.94%"
-    assert result["average_calls_per_hour"] == 0.43
-    assert result["refusals"] == "0/9, 0.00%"
-    assert result["no_contact"] == "0/9, 0.00%"
-    assert result["completed_successfully"] == "9/9, 100.00%"
-    assert result["appointments"] == "0/9, 0.00%"
-    assert result["no_contact_answer_service"] == "0/0, 0.00%"
-    assert result["no_contact_busy"] == "0/0, 0.00%"
-    assert result["no_contact_disconnect"] == "0/0, 0.00%"
-    assert result["no_contact_no_answer"] == "0/0, 0.00%"
-    assert result["no_contact_other"] == "0/0, 0.00%"
-    assert result["discounted_invalid_cases"] == "0/9, 0.00%"
-    assert result["invalid_fields"] == ""
+    assert result.hours_worked == "21:00:00"
+    assert result.call_time == "1:40:00"
+    assert result.hours_on_calls_percentage == "7.94%"
+    assert result.average_calls_per_hour == 0.43
+    assert result.refusals == "0/9, 0.00%"
+    assert result.no_contacts == "0/9, 0.00%"
+    assert result.completed_successfully == "9/9, 100.00%"
+    assert result.appointments_for_contacts == "0/9, 0.00%"
+    assert result.no_contact_answer_service == "0/0, 0.00%"
+    assert result.no_contact_busy == "0/0, 0.00%"
+    assert result.no_contact_disconnect == "0/0, 0.00%"
+    assert result.no_contact_no_answer == "0/0, 0.00%"
+    assert result.no_contact_other == "0/0, 0.00%"
+    assert result.discounted_invalid_cases == "0/9, 0.00%"
+    assert result.invalid_fields == ""
 
 
 def test_get_valid_records_raises_error_when_no_valid_records_are_found():
@@ -946,22 +946,22 @@ def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_f
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["hours_worked"] == "18:00:00"
-    assert result["call_time"] == "1:00:00"
-    assert result["hours_on_call_percentage"] == "5.56%"
-    assert result["average_calls_per_hour"] == 0.33
-    assert result["refusals"] == "0/10, 0.00%"
-    assert result["no_contact"] == "0/10, 0.00%"
-    assert result["completed_successfully"] == "6/10, 60.00%"
-    assert result["appointments"] == "0/10, 0.00%"
-    assert result["no_contact_answer_service"] == "0/0, 0.00%"
-    assert result["no_contact_busy"] == "0/0, 0.00%"
-    assert result["no_contact_disconnect"] == "0/0, 0.00%"
-    assert result["no_contact_no_answer"] == "0/0, 0.00%"
-    assert result["no_contact_other"] == "0/0, 0.00%"
-    assert result["discounted_invalid_cases"] == "4/10, 40.00%"
+    assert result.hours_worked == "18:00:00"
+    assert result.call_time == "1:00:00"
+    assert result.hours_on_calls_percentage == "5.56%"
+    assert result.average_calls_per_hour == 0.33
+    assert result.refusals == "0/10, 0.00%"
+    assert result.no_contacts == "0/10, 0.00%"
+    assert result.completed_successfully == "6/10, 60.00%"
+    assert result.appointments_for_contacts == "0/10, 0.00%"
+    assert result.no_contact_answer_service == "0/0, 0.00%"
+    assert result.no_contact_busy == "0/0, 0.00%"
+    assert result.no_contact_disconnect == "0/0, 0.00%"
+    assert result.no_contact_no_answer == "0/0, 0.00%"
+    assert result.no_contact_other == "0/0, 0.00%"
+    assert result.discounted_invalid_cases == "4/10, 40.00%"
 
-    list_of_reasons = result["invalid_fields"].split(",")
+    list_of_reasons = result.invalid_fields.split(",")
 
     assert len(list_of_reasons) == 3
     assert "'call_start_time' column had missing data" in list_of_reasons
@@ -987,7 +987,7 @@ def test_get_call_pattern_report_returns_a_single_reason_message_when_no_call_en
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result["invalid_fields"] == "'call_end_time' column had missing data"
+    assert result.invalid_fields == "'call_end_time' column had missing data"
 
 
 def test_get_call_pattern_report_returns_multiple_reason_messages_when_no_call_end_time_is_found_and_status_is_timed_out(mocker):
@@ -1008,7 +1008,7 @@ def test_get_call_pattern_report_returns_multiple_reason_messages_when_no_call_e
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    list_of_reasons = result["invalid_fields"].split(",")
+    list_of_reasons = result.invalid_fields.split(",")
 
     assert len(list_of_reasons) == 2
     assert "'call_end_time' column had missing data" in list_of_reasons
@@ -1038,7 +1038,7 @@ def test_get_call_pattern_report_returns_unique_reasons_when_multiple_cases_with
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    list_of_reasons = result["invalid_fields"].split(",")
+    list_of_reasons = result.invalid_fields.split(",")
 
     assert len(list_of_reasons) == 2
     assert "'call_end_time' column had missing data" in list_of_reasons

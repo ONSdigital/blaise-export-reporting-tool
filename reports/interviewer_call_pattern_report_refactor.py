@@ -8,7 +8,7 @@ import pandas as pd
 from google.cloud import datastore
 
 from functions.date_functions import parse_date_string_to_datetime
-from models.interviewer_call_pattern_model import InterviewerCallPattern
+from models.interviewer_call_pattern_model import InterviewerCallPatternRefactored
 from models.error_capture import BertException
 
 columns_to_check_for_nulls = ["call_start_time", "call_end_time"]
@@ -19,7 +19,7 @@ def get_call_pattern_report_refactor(
         start_date_string: str,
         end_date_string: str,
         survey_tla: str,
-) -> InterviewerCallPattern:
+) -> InterviewerCallPatternRefactored:
     """Return interviewer call pattern report for a given interviewer, period of time, and optionally filter by survey.
 
     Args:
@@ -38,7 +38,7 @@ def get_call_pattern_report_refactor(
     if records.empty:
         return {}
 
-    return InterviewerCallPattern(
+    return InterviewerCallPatternRefactored(
         hours_worked=str(calculate_hours_worked_as_datetime(records)),
         call_time=str(calculate_call_time_as_datetime(records)),
         hours_on_calls_percentage=calculate_hours_on_call_percentage(records),
