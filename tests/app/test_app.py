@@ -72,8 +72,8 @@ def test_refactored_call_pattern_report(mock_get_call_pattern_records, client,
                              interviewer_call_pattern_report):
     mock_get_call_pattern_records.return_value = interviewer_call_pattern_report
     response = client.get("/api/reports/call-pattern-refactored/matpal?start-date=2021-01-01&end-date=2021-01-01&survey-tla=opn")
-    assert response.status_code == 200
     assert response.get_data(as_text=True) == interviewer_call_pattern_report.json()
+    assert response.status_code == 200
 
 
 @patch("app.app.get_call_pattern_report_refactor")
