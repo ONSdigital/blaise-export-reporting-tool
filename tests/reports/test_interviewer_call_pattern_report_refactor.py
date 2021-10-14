@@ -1,3 +1,4 @@
+import pandas as pd
 import pytest
 
 from tests.helpers.interviewer_call_pattern_helpers import interviewer_call_pattern_report_sample_case, datetime_helper
@@ -882,15 +883,23 @@ def test_get_call_pattern_report_returns_expected_output_when_all_data_is_valid(
     assert result.invalid_fields == ""
 
 
-def test_get_valid_records_raises_error_when_no_valid_records_are_found():
+def test_get_valid_records_returns_an_empty_dataframe_when_no_valid_records_are_found():
     arrange = pd.DataFrame([{
         "call_start_time": datetime_helper(day=7, hour=9),
-        "end_time": None,
+        "call_end_time": None,
     }])
+    result = get_valid_records(arrange)
+    assert result.empty
 
-    with pytest.raises(BertException) as excinfo:
-        get_valid_records(arrange)
-    assert "get_valid_records failed" in excinfo.value.message
+
+def test_get_valid_records_returns_an_empty_dataframe_when_a_record_is_found_with_a_timed_out_status():
+    arrange = pd.DataFrame([{
+        "call_start_time": datetime_helper(day=7, hour=9),
+        "call_end_time": datetime_helper(day=7, hour=10),
+        "status": "Timed out"
+    }])
+    result = get_valid_records(arrange)
+    assert result.empty
 
 
 def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_found(mocker):
@@ -983,6 +992,29 @@ def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_f
     assert "'call_start_time' column had missing data" in list_of_reasons
     assert "'call_end_time' column had missing data" in list_of_reasons
     assert "'status' column had timed out call status" in list_of_reasons
+
+
+def test_get_call_pattern_report_returns_expected_output_when_only_invalid_data_are_found(mocker):
+    datastore_records = [
+        interviewer_call_pattern_report_sample_case(
+            call_start_time=datetime_helper(day=9, hour=9),
+            call_end_time=None,
+            dial_secs=600,
+            status="Error"
+        ),
+    ]
+
+    mocker.patch(
+        "reports.interviewer_call_pattern_report_refactor.get_call_history_records",
+        return_value=pd.DataFrame(datastore_records))
+
+    result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    assert result.discounted_invalid_cases == "1/1, 100.00%"
+
+    list_of_reasons = result.invalid_fields.split(",")
+
+    assert len(list_of_reasons) == 1
+    assert "'call_end_time' column had missing data" in list_of_reasons
 
 
 def test_get_call_pattern_report_returns_a_single_reason_message_when_no_call_end_time_is_found_and_status_is_not_timed_out(mocker):
@@ -1147,3 +1179,5 @@ def test_number_of_records_which_has_status_raises_error_when_no_status_column_f
     with pytest.raises(BertException) as excinfo:
         number_of_records_which_has_status(arrange, "Completed")
     assert "number_of_records_which_has_status failed" in excinfo.value.message
+
+

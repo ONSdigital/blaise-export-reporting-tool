@@ -8,7 +8,7 @@ import pandas as pd
 from google.cloud import datastore
 
 from functions.date_functions import parse_date_string_to_datetime
-from models.interviewer_call_pattern_model import InterviewerCallPatternRefactored
+from models.interviewer_call_pattern_model import InterviewerCallPatternRefactored, InterviewerCallPatternWithNoValidData
 from models.error_capture import BertException
 
 columns_to_check_for_nulls = ["call_start_time", "call_end_time"]
@@ -37,6 +37,12 @@ def get_call_pattern_report_refactor(
 
     if records.empty:
         return {}
+
+    if no_valid_records(records):
+        return InterviewerCallPatternWithNoValidData(
+            discounted_invalid_cases=percentage_of_invalid_records(records),
+            invalid_fields=",".join(provide_reasons_for_invalid_records(records))
+        )
 
     return InterviewerCallPatternRefactored(
         hours_worked=str(calculate_hours_worked_as_datetime(records)),
@@ -255,8 +261,10 @@ def get_valid_records(records: pd.DataFrame) -> pd.DataFrame:
     """
     try:
         records = records.replace("", np.nan).fillna(value=np.nan)
-        valid_records = records.drop(records.loc[records['status'].str.contains('Timed out', case=False)].index)
-        valid_records = valid_records.dropna(subset=columns_to_check_for_nulls)
+        valid_records = records.dropna(subset=columns_to_check_for_nulls)
+        if valid_records.empty:
+            return pd.DataFrame()
+        valid_records = valid_records.drop(valid_records.loc[valid_records['status'].str.contains('Timed out', case=False)].index)
 
         return valid_records
 
@@ -350,3 +358,9 @@ def convert_timedelta_to_hhmmss_as_string(td: datetime) -> str:
     hours, remainder = divmod(td.total_seconds(), 3600)
     minutes, seconds = divmod(remainder, 60)
     return f'{int(hours):02}:{int(minutes):02}:{int(seconds):02}'
+
+
+def no_valid_records(records:pd.DataFrame) -> pd.DataFrame:
+    """."""
+    valid_records = get_valid_records(records)
+    return valid_records.empty
