@@ -879,7 +879,7 @@ def test_get_call_pattern_report_returns_expected_output_when_all_data_is_valid(
     assert result.no_contact_disconnect == "0/0, 0.00%"
     assert result.no_contact_no_answer == "0/0, 0.00%"
     assert result.no_contact_other == "0/0, 0.00%"
-    assert result.discounted_invalid_cases == "0/9, 0.00%"
+    assert result.discounted_invalid_cases == ""
     assert result.invalid_fields == ""
 
 
@@ -1181,3 +1181,57 @@ def test_number_of_records_which_has_status_raises_error_when_no_status_column_f
     assert "number_of_records_which_has_status failed" in excinfo.value.message
 
 
+def test_calculate_hours_on_call_percentage_returns_a_value_to_two_dp_when_value_is_divisible_by_ten(mocker):
+    datastore_records = [
+        interviewer_call_pattern_report_sample_case(
+            call_start_time=datetime_helper(day=7, hour=10),
+            call_end_time=datetime_helper(day=7, hour=11),
+            dial_secs=1800
+        ),
+    ]
+
+    mocker.patch(
+        "reports.interviewer_call_pattern_report_refactor.get_call_history_records",
+        return_value=pd.DataFrame(datastore_records))
+
+    result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    assert result.hours_on_calls_percentage == "50.00%"
+
+
+def test_percentages_equal_one_hundred(mocker):
+    datastore_records = [
+        interviewer_call_pattern_report_sample_case(
+            call_start_time=datetime_helper(day=7, hour=10),
+            call_end_time=datetime_helper(day=7, hour=11),
+            dial_secs=1800,
+            status = "Completed",
+        ),
+        interviewer_call_pattern_report_sample_case(
+            call_start_time=datetime_helper(day=7, hour=10),
+            call_end_time = datetime_helper(day=7, hour=11),
+            dial_secs = 1800,
+            status = "Finished (No contact)",
+    ),
+        interviewer_call_pattern_report_sample_case(
+            call_start_time=datetime_helper(day=7, hour=10),
+            call_end_time = datetime_helper(day=7, hour=11),
+            dial_secs = 1800,
+            status = "Finished (Non response)",
+    ),
+        interviewer_call_pattern_report_sample_case(
+            call_start_time=datetime_helper(day=7, hour=10),
+            call_end_time=datetime_helper(day=7, hour=11),
+            dial_secs=1800,
+            status="Finished (Appointment made)",
+    )]
+
+    mocker.patch(
+        "reports.interviewer_call_pattern_report_refactor.get_call_history_records",
+        return_value=pd.DataFrame(datastore_records))
+
+    result = get_call_pattern_report_refactor(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+
+    assert "25.00%" in result.completed_successfully
+    assert "25.00%" in result.appointments_for_contacts
+    assert "25.00%" in result.no_contacts
+    assert "25.00%" in result.refusals

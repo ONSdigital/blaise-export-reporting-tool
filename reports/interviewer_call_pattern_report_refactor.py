@@ -8,7 +8,10 @@ import pandas as pd
 from google.cloud import datastore
 
 from functions.date_functions import parse_date_string_to_datetime
-from models.interviewer_call_pattern_model import InterviewerCallPatternRefactored, InterviewerCallPatternWithNoValidData
+
+from models.interviewer_call_pattern_model import (
+    InterviewerCallPatternRefactored, InterviewerCallPatternWithNoValidData
+)
 from models.error_capture import BertException
 
 columns_to_check_for_nulls = ["call_start_time", "call_end_time"]
@@ -38,7 +41,7 @@ def get_call_pattern_report_refactor(
     if records.empty:
         return {}
 
-    if no_valid_records(records):
+    if no_valid_records_are_found(records):
         return InterviewerCallPatternWithNoValidData(
             discounted_invalid_cases=percentage_of_invalid_records(records),
             invalid_fields=",".join(provide_reasons_for_invalid_records(records))
@@ -145,7 +148,7 @@ def calculate_hours_on_call_percentage(records: pd.DataFrame, ) -> str:
     call_time_in_seconds = calculate_call_time_in_seconds(valid_records)
     hours_on_call_percentage = round(call_time_in_seconds / hours_worked_in_seconds * 100, 2)
 
-    return f"{hours_on_call_percentage}%"
+    return f"{hours_on_call_percentage:.2f}%"
 
 
 def calculate_average_calls_per_hour(records: pd.DataFrame) -> float:
@@ -177,7 +180,8 @@ def percentage_of_records_with_status(records: pd.DataFrame, status: str) -> str
     Returns:
         The number of records with the user-defined status in a fraction, percentage string format (i.e. 2/4, 50%).
     """
-    number_of_records_with_status = number_of_records_which_has_status(records, status)
+    valid_records = get_valid_records(records)
+    number_of_records_with_status = number_of_records_which_has_status(valid_records, status)
 
     return str(format_fraction_and_percentage_as_string(number_of_records_with_status, len(records)))
 
@@ -193,11 +197,12 @@ def percentage_of_no_contact_records_with_call_result(records: pd.DataFrame, cal
     Returns:
         The number of records with the user-defined call_result in a fraction, percentage string format (i.e. 2/4, 50%).
     """
-    number_of_records_with_call_result = len(records.loc[
-                                                 (records["status"] == "Finished (No contact)") &
-                                                 (records["call_result"] == call_result)])
+    valid_records = get_valid_records(records)
+    number_of_records_with_call_result = len(valid_records.loc[
+                                                 (valid_records["status"] == "Finished (No contact)") &
+                                                 (valid_records["call_result"] == call_result)])
 
-    number_of_records_with_no_contact = number_of_records_which_has_status(records, "Finished (No contact)")
+    number_of_records_with_no_contact = number_of_records_which_has_status(valid_records, "Finished (No contact)")
 
     return str(
         format_fraction_and_percentage_as_string(number_of_records_with_call_result, number_of_records_with_no_contact)
@@ -218,13 +223,16 @@ def percentage_of_invalid_records(records: pd.DataFrame) -> str:
     """
     valid_records = get_valid_records(records)
 
+    if len(valid_records) == len(records):
+        return ""
+
     total_number_of_records = len(records)
     total_number_of_invalid_records = total_number_of_records - len(valid_records)
 
     return str(format_fraction_and_percentage_as_string(total_number_of_invalid_records, total_number_of_records))
 
 
-def provide_reasons_for_invalid_records(records: pd.DataFrame) -> list:
+def provide_reasons_for_invalid_records(records: pd.DataFrame) -> list[str]:
     """Return a list of unique reasons for invalid records.
 
     Args:
@@ -264,7 +272,8 @@ def get_valid_records(records: pd.DataFrame) -> pd.DataFrame:
         valid_records = records.dropna(subset=columns_to_check_for_nulls)
         if valid_records.empty:
             return pd.DataFrame()
-        valid_records = valid_records.drop(valid_records.loc[valid_records['status'].str.contains('Timed out', case=False)].index)
+        valid_records = valid_records.drop(
+            valid_records.loc[valid_records['status'].str.contains('Timed out', case=False)].index)
 
         return valid_records
 
@@ -354,13 +363,26 @@ def number_of_records_which_has_status(records: pd.DataFrame, status: str) -> in
 
 def convert_timedelta_to_hhmmss_as_string(td: datetime) -> str:
     """Convert a timedelta object td to a string in HH:MM:SS format.
+
+    Args:
+        td: A datetime.
+
+    Returns:
+        The duration/time in hh:mm:ss format as a string.
     """
     hours, remainder = divmod(td.total_seconds(), 3600)
     minutes, seconds = divmod(remainder, 60)
     return f'{int(hours):02}:{int(minutes):02}:{int(seconds):02}'
 
 
-def no_valid_records(records:pd.DataFrame) -> pd.DataFrame:
-    """."""
+def no_valid_records_are_found(records:pd.DataFrame) -> bool:
+    """Return a boolean when no valid data are found.
+
+    Args:
+        records: An an individual's call history. Each row represents a call made to a respondent.
+
+    Returns:
+        True when no valid records are found.
+    """
     valid_records = get_valid_records(records)
     return valid_records.empty
