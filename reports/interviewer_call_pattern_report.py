@@ -1,229 +1,388 @@
+"""Produce an interviewer call pattern report given an interviewer, period of time, and optionally filter by survey.
+"""
+
 import datetime
 
 import numpy as np
 import pandas as pd
+from google.cloud import datastore
 
+from functions.date_functions import parse_date_string_to_datetime
+
+from models.interviewer_call_pattern_model import (
+    InterviewerCallPatternRefactored, InterviewerCallPatternWithNoValidData
+)
 from models.error_capture import BertException
-from models.interviewer_call_pattern_model import InterviewerCallPattern, InterviewerCallPatternWithNoValidData
-from reports.interviewer_call_history_report import get_call_history_records
 
-COLUMNS_TO_VALIDATE = ["call_start_time", "call_end_time", "number_of_interviews"]
+columns_to_check_for_nulls = ["call_start_time", "call_end_time"]
 
 
-def get_call_pattern_report(interviewer_name, start_date_string, end_date_string, survey_tla):
-    print(
-        f"Getting call pattern data for interviewer '{interviewer_name}' between '{start_date_string}' and '{end_date_string}'")
-    call_history_records = pd.DataFrame(get_call_history_records(
-        interviewer_name, start_date_string, end_date_string, survey_tla))
-    if call_history_records.empty:
+def get_call_pattern_report(
+        interviewer_name: str,
+        start_date_string: str,
+        end_date_string: str,
+        survey_tla: str,
+) -> object:
+    """Return interviewer call pattern report for a given interviewer, period of time, and optionally filter by survey.
+
+    Args:
+        interviewer_name: Name of interviewer to report on.
+        start_date_string: Report start date in YYYY-MM-DD format.
+        end_date_string: Report end date in YYYY-MM-DD format.
+        survey_tla: Survey to report on (e.g. OPN, LMS).
+
+    Returns:
+        dict: MI interviewer call pattern report.
+    """
+    records = get_call_history_records(interviewer_name, start_date_string, end_date_string, survey_tla)
+
+    print(f"Calculating call pattern data for interviewer '{interviewer_name}'")
+
+    if records.empty:
         return {}
 
-    original_number_of_records = len(call_history_records)
-    call_history_dataframe = create_dataframe(call_history_records)
-    valid_dataframe, discounted_records, discounted_fields = validate_dataframe(call_history_dataframe)
+    if no_valid_records_are_found(records):
+        return InterviewerCallPatternWithNoValidData(
+            discounted_invalid_cases=percentage_of_invalid_records(records),
+            invalid_fields=",".join(provide_reasons_for_invalid_records(records))
+        )
 
-    if valid_dataframe.empty:
-        report = InterviewerCallPatternWithNoValidData()
-        report.discounted_invalid_cases = discounted_records
-        report.invalid_fields = discounted_fields
-        return report
-
-    report = generate_report(valid_dataframe, original_number_of_records, discounted_records, discounted_fields)
-    return report
-
-
-def create_dataframe(call_history):
-    try:
-        result = pd.DataFrame(data=call_history)
-    except Exception as err:
-        raise BertException(f"create_dataframe failed: {err}", 400)
-    return result
-
-
-def validate_dataframe(data):
-    valid_data = data.copy()
-    discounted_records = ""
-    discounted_fields = ""
-
-    valid_data.columns = valid_data.columns.str.lower()
-    if invalid_data_found(valid_data):
-        valid_data, discounted_records, discounted_fields = get_invalid_data(data)
-
-    try:
-        valid_data = valid_data.astype({"number_of_interviews": "int32", "dial_secs": "float64"})
-    except Exception as err:
-        raise BertException(f"validate_dataframe failed: {err}", 400)
-    return valid_data, discounted_records, discounted_fields
-
-
-def invalid_data_found(data):
-    timed_out_data_found = data.loc[data['status'].str.contains('Timed out', case=False)].any().any()
-    missing_data_found = data.filter(COLUMNS_TO_VALIDATE).isna().any().any()
-
-    if timed_out_data_found or missing_data_found:
-        return True
-
-    return False
-
-
-def get_invalid_data(data):
-    valid_records = data.copy()
-    valid_records['number_of_interviews'].replace('', np.nan, inplace=True)
-
-    valid_records.drop(valid_records.loc[valid_records['status'].str.contains('Timed out', case=False)].index,
-                       inplace=True)
-    valid_records.dropna(subset=COLUMNS_TO_VALIDATE, inplace=True)
-
-    invalid_records = data[~data.index.isin(valid_records.index)]
-    valid_records.reset_index(drop=True, inplace=True)
-    invalid_records.reset_index(drop=True, inplace=True)
-
-    numerator = len(invalid_records.index)
-    denominator = len(data.index)
-    percentage = round(100 * numerator / denominator, 2)
-
-    discounted_records = f"{numerator}/{denominator}, {percentage}%"
-    discounted_fields = get_invalid_fields(invalid_records)
-
-    return valid_records, discounted_records, discounted_fields
-
-
-def generate_report(df, original_number_of_records, discounted_records=None, discounted_fields=None):
-    hours_worked = get_hours_worked(df)
-    total_call_seconds = get_call_time_in_seconds(df)
-
-    report = InterviewerCallPattern(
-        hours_worked=hours_worked,
-        call_time=convert_call_time_seconds_to_datetime_format(total_call_seconds),
-        hours_on_calls_percentage=get_percentage_of_hours_on_calls(hours_worked, total_call_seconds),
-        average_calls_per_hour=get_average_calls_per_hour(df, hours_worked),
-        respondents_interviewed=get_respondents_interviewed(df),
-        average_respondents_interviewed_per_hour=get_average_respondents_interviewed_per_hour(
-            df, hours_worked),
-        completed_successfully=results_for_calls_with_status('status', 'completed', df, original_number_of_records),
-        no_contacts=results_for_calls_with_status('status', 'no contact', df, original_number_of_records),
-        appointments_for_contacts=results_for_calls_with_status('status', 'appointment', df, original_number_of_records),
-        refusals=results_for_calls_with_status('status', 'non response', df, original_number_of_records),
-        no_contact_answer_service=no_contact_breakdown('answerservice', df),
-        no_contact_busy=no_contact_breakdown('busy', df),
-        no_contact_disconnect=no_contact_breakdown('disconnect', df),
-        no_contact_no_answer=no_contact_breakdown('noanswer', df),
-        no_contact_other=no_contact_breakdown('others', df),
+    return InterviewerCallPatternRefactored(
+        hours_worked=str(calculate_hours_worked_as_datetime(records)),
+        call_time=str(calculate_call_time_as_datetime(records)),
+        hours_on_calls_percentage=calculate_hours_on_call_percentage(records),
+        average_calls_per_hour=calculate_average_calls_per_hour(records),
+        refusals=percentage_of_records_with_status(records, "Finished (Non response)"),
+        no_contacts=percentage_of_records_with_status(records, "Finished (No contact)"),
+        completed_successfully=percentage_of_records_with_status(records, "Completed"),
+        appointments_for_contacts=percentage_of_records_with_status(records, "Finished (Appointment made)"),
+        no_contact_answer_service=percentage_of_no_contact_records_with_call_result(records, "AnswerService"),
+        no_contact_busy=percentage_of_no_contact_records_with_call_result(records, "Busy"),
+        no_contact_disconnect=percentage_of_no_contact_records_with_call_result(records, "Disconnect"),
+        no_contact_no_answer=percentage_of_no_contact_records_with_call_result(records, "NoAnswer"),
+        no_contact_other=percentage_of_no_contact_records_with_call_result(records, "Others"),
+        discounted_invalid_cases=percentage_of_invalid_records(records),
+        invalid_fields=",".join(provide_reasons_for_invalid_records(records))
     )
 
-    if discounted_records is not None:
-        report.discounted_invalid_cases = discounted_records
-        report.invalid_fields = discounted_fields
 
-    return report
-
-
-def get_hours_worked(call_history_dataframe):
+def get_call_history_records(
+        interviewer_name: str,
+        start_date_string: str,
+        end_date_string: str,
+        survey_tla: str,
+) -> pd.DataFrame:
+    """Query datastore and return a pandas dataframe.
+    Args:
+        interviewer_name: Name of interviewer to report on.
+        start_date_string: Report start date in YYYY-MM-DD format.
+        end_date_string: Report end date in YYYY-MM-DD format.
+        survey_tla: Survey to report on (i.e. OPN, LMS).
+    Returns:
+        A pd.DataFrame of an individual's call history. Each row represents a call made to a respondent.
+    Raises:
+        BertException: get_call_history_records failed
+    """
     try:
-        # group by date
-        daily_call_history_by_date = call_history_dataframe.groupby(
-            [call_history_dataframe['call_start_time'].dt.date]).agg({'call_start_time': min, 'call_end_time': max})
+        start_date = parse_date_string_to_datetime(start_date_string)
+        end_date = parse_date_string_to_datetime(end_date_string, True)
 
-        # subtract first call time from last call time
-        daily_call_history_by_date['hours_worked'] = daily_call_history_by_date['call_end_time'] - \
-                                                     daily_call_history_by_date['call_start_time']
+        client = datastore.Client()
+        query = client.query(kind="CallHistory")
+        query.add_filter("interviewer", "=", interviewer_name)
+        query.add_filter("call_start_time", ">=", start_date)
+        query.add_filter("call_start_time", "<=", end_date)
 
-        # sum total hours
-        total_hours = daily_call_history_by_date['hours_worked'].sum()
+        if survey_tla is not None:
+            query.add_filter("survey", "=", survey_tla)
+
+        query.order = ["call_start_time"]
+        return pd.DataFrame(list(query.fetch()))
+
     except Exception as err:
-        raise BertException(f"Could not calculate get_hours_worked(): {err}", 400)
-
-    # return sum total in fancy format
-    return str(datetime.timedelta(seconds=total_hours.total_seconds()))
+        raise BertException(f"get_call_history_records failed: {err}", 400)
 
 
-def get_call_time_in_seconds(call_history_dataframe):
+def calculate_hours_worked_as_datetime(records: pd.DataFrame) -> str:
+    """Return hours worked in datetime format.
+
+    Args:
+        records: An individual's call history. Each row represents a call made to a respondent.
+
+    Returns:
+        The time worked in a datetime (HH:MM:SS) format.
+    """
+    valid_records = get_valid_records(records)
+    hours_worked_in_seconds = calculate_hours_worked_in_seconds(valid_records)
+
+    return convert_timedelta_to_hhmmss_as_string(datetime.timedelta(seconds=hours_worked_in_seconds))
+
+
+def calculate_call_time_as_datetime(records: pd.DataFrame) -> datetime:
+    """Return call time in datetime format.
+
+    Args:
+        records: An individual's call history. Each row represents a call made to a respondent.
+
+    Returns:
+        The time spent on call in datetime (HH:MM:SS) format.
+    """
+    valid_records = get_valid_records(records)
+    call_time_in_seconds = calculate_call_time_in_seconds(valid_records)
+
+    return convert_timedelta_to_hhmmss_as_string(datetime.timedelta(seconds=call_time_in_seconds))
+
+
+def calculate_hours_on_call_percentage(records: pd.DataFrame, ) -> str:
+    """Calculate and return the percentage of time spent on call during a working shift.
+
+    Args:
+        records: An individual's call history. Each row represents a call made to a respondent.
+
+    Returns:
+        The percentage of time spent on call.
+    """
+    valid_records = get_valid_records(records)
+
+    hours_worked_in_seconds = calculate_hours_worked_in_seconds(valid_records)
+    call_time_in_seconds = calculate_call_time_in_seconds(valid_records)
+    hours_on_call_percentage = round(call_time_in_seconds / hours_worked_in_seconds * 100, 2)
+
+    return f"{hours_on_call_percentage:.2f}%"
+
+
+def calculate_average_calls_per_hour(records: pd.DataFrame) -> float:
+    """Calculate and return the average number of calls made per hour worked.
+
+    Args:
+        records: An individual's call history. Each row represents a call made to a respondent.
+
+    Returns:
+        The average number of calls made per hour.
+    """
+    valid_records = get_valid_records(records)
+
+    hours_worked_in_seconds = calculate_hours_worked_in_seconds(valid_records)
+    number_of_valid_records = len(valid_records)
+    hours_worked = hours_worked_in_seconds / 3600
+
+    return round(number_of_valid_records / float(hours_worked), 2)
+
+
+def percentage_of_records_with_status(records: pd.DataFrame, status: str) -> str:
+    """Calculate the number of records with a user-defined status and return the result in a fraction, percentage
+    format.
+
+    Args:
+        records: An individual's call history. Each row represents a call made to a respondent.
+        status: The user-defined status to be searched for (i.e. 'Completed').
+
+    Returns:
+        The number of records with the user-defined status in a fraction, percentage string format (i.e. 2/4, 50%).
+    """
+    valid_records = get_valid_records(records)
+    number_of_records_with_status = number_of_records_which_has_status(valid_records, status)
+
+    return str(format_fraction_and_percentage_as_string(number_of_records_with_status, len(records)))
+
+
+def percentage_of_no_contact_records_with_call_result(records: pd.DataFrame, call_result: str) -> str:
+    """Calculate the number of records with a status of 'no_contact' and a user-defined 'call_result' and return the
+    result in a fraction, percentage string format.
+
+    Args:
+        records: An individual's call history. Each row represents a call made to a respondent.
+        call_result: The user-defined call_result to be searched for (i.e. 'NoAnswer').
+
+    Returns:
+        The number of records with the user-defined call_result in a fraction, percentage string format (i.e. 2/4, 50%).
+    """
+    valid_records = get_valid_records(records)
+    number_of_records_with_call_result = len(valid_records.loc[
+                                                 (valid_records["status"] == "Finished (No contact)") &
+                                                 (valid_records["call_result"] == call_result)])
+
+    number_of_records_with_no_contact = number_of_records_which_has_status(valid_records, "Finished (No contact)")
+
+    return str(
+        format_fraction_and_percentage_as_string(number_of_records_with_call_result, number_of_records_with_no_contact)
+    )
+
+
+def percentage_of_invalid_records(records: pd.DataFrame) -> str:
+    """Calculate the number of invalid records and return the value in a fraction, percentage format.
+
+    Invalid records are records with empty data or Nan values in fields defined within the global variable
+    'columns_to_check_for_nulls'.
+
+    Args:
+        records: An individual's call history. Each row represents a call made to a respondent.
+
+    Returns:
+        The number of invalid records found in a fraction, percentage format (i.e. 2/4, 50%).
+    """
+    valid_records = get_valid_records(records)
+
+    if len(valid_records) == len(records):
+        return ""
+
+    total_number_of_records = len(records)
+    total_number_of_invalid_records = total_number_of_records - len(valid_records)
+
+    return str(format_fraction_and_percentage_as_string(total_number_of_invalid_records, total_number_of_records))
+
+
+def provide_reasons_for_invalid_records(records: pd.DataFrame) -> list[str]:
+    """Return a list of unique reasons for invalid records.
+
+    Args:
+        records: An individual's call history. Each row represents a call made to a respondent.
+
+    Returns:
+        The unique reasons for records being invalid.
+    """
+    reasons = []
+    if records.status.str.contains("Timed out", case=False).any():
+        reasons.append("'status' column had timed out call status")
+
+    for field in columns_to_check_for_nulls:
+        if records[field].isna().any():
+            reasons.append(f"'{field}' column had missing data")
+
+    return reasons
+
+
+def get_valid_records(records: pd.DataFrame) -> pd.DataFrame:
+    """Calculate the number of invalid records and return the value in a fraction, percentage format.
+
+    Valid records are records with no empty data or Nan values in fields defined within the global variable
+    'columns_to_check_for_nulls'.
+
+    Args:
+        records: An individual's call history. Each row represents a call made to a respondent.
+
+    Returns:
+        All valid records in an individual's call history.
+
+    Raises:
+        BertException: get_valid_records failed
+    """
     try:
-        result = round(call_history_dataframe['dial_secs'].sum())
+        records = records.replace("", np.nan).fillna(value=np.nan)
+        valid_records = records.dropna(subset=columns_to_check_for_nulls)
+        if valid_records.empty:
+            return pd.DataFrame()
+        valid_records = valid_records.drop(
+            valid_records.loc[valid_records['status'].str.contains('Timed out', case=False)].index)
+
+        return valid_records
+
     except Exception as err:
-        raise BertException(f"Could not calculate get_call_time_in_seconds(): {err}", 400)
-    return result
+        raise BertException(f"get_valid_records failed: {err}", 400)
 
 
-def convert_call_time_seconds_to_datetime_format(seconds):
+def calculate_hours_worked_in_seconds(records: pd.DataFrame) -> int:
+    """Return hours worked in seconds.
+
+    Hours worked is calculated as the time difference between the first and last call made during a single day.
+
+    Args:
+        records: An individual's call history. Each row represents a call made to a respondent.
+
+    Returns:
+        The number of hours worked in seconds.
+
+    Raises:
+        BertException: calculate_hours_worked_in_seconds failed:
+    """
     try:
-        result = str(datetime.timedelta(seconds=seconds))
+        daily_call_history_by_date = records.groupby(
+            [records['call_start_time'].dt.date]).agg({'call_start_time': min, 'call_end_time': max})
+        daily_call_history_by_date['hours_worked'] = (
+                daily_call_history_by_date['call_end_time'] - daily_call_history_by_date['call_start_time']
+        )
+
+        return daily_call_history_by_date['hours_worked'].sum().total_seconds()
     except Exception as err:
-        raise BertException(f"Could not convert_call_time_seconds_to_datetime_format(): {err}", 400)
-    return result
+        raise BertException(f"calculate_hours_worked_in_seconds failed: {err}", 400)
 
 
-def get_percentage_of_hours_on_calls(hours_worked, total_call_seconds):
+def calculate_call_time_in_seconds(records: pd.DataFrame) -> int:
+    """Return call time in seconds.
+
+    Args:
+        records: An individual's call history. Each row represents a call made to a respondent.
+
+    Returns:
+        The time on call in seconds.
+
+    Raises:
+        BertException: calculate_call_time_in_seconds failed
+    """
     try:
-        value = round(100 * float(total_call_seconds) / float(get_total_seconds_from_string(hours_worked)), 2)
-        result = f"{value}%"
+        return round(records['dial_secs'].sum())
     except Exception as err:
-        raise BertException(f"Could not calculate get_percentage_of_hours_on_calls(): {err}", 400)
-    return result
+        raise BertException(f"calculate_call_time_in_seconds failed: {err}", 400)
 
 
-def get_total_seconds_from_string(hours_worked):
+def format_fraction_and_percentage_as_string(numerator: int, denominator: int) -> str:
+    """Return a string in a fraction, percentage format.
+
+    Args:
+        numerator: The number of records of interest (i.e. valid records).
+        denominator: The total number of records made by an interviewer.
+
+    Returns:
+        The result in a fraction, percentage format (i.e. 2/4, 50%)
+    """
+    if denominator == 0:
+        return "0/0, 0.00%"
+    percentage = format(numerator / denominator * 100, '.2f')
+
+    return f"{numerator}/{denominator}, {percentage}%"
+
+
+def number_of_records_which_has_status(records: pd.DataFrame, status: str) -> int:
+    """Return number of records that have a user-defined status.
+
+    Args:
+        records: An an individual's call history. Each row represents a call made to a respondent.
+        status: A user-defined status (i.e. 'Completed').
+
+    Returns:
+        The number of records with user-defined status.
+
+    Raises:
+        BertException: number_of_records_which_has_status failed
+    """
     try:
-        h, m, s = hours_worked.split(':')
-        result = int(h) * 3600 + int(m) * 60 + int(s)
+        return len(records.loc[records["status"] == status])
     except Exception as err:
-        raise BertException(f"Could not calculate get_total_seconds_from_string(): {err}", 400)
-    return result
+        raise BertException(f"number_of_records_which_has_status failed: {err}", 400)
 
 
-def get_average_calls_per_hour(call_history_dataframe, string_hours_worked):
-    try:
-        integer_hours_worked = get_total_seconds_from_string(string_hours_worked) / 3600
-        total_calls = len(call_history_dataframe.index)
+def convert_timedelta_to_hhmmss_as_string(td: datetime) -> str:
+    """Convert a timedelta object td to a string in HH:MM:SS format.
 
-        result = round(total_calls / integer_hours_worked, 2)
-    except Exception as err:
-        raise BertException(f"Could not calculate get_average_calls_per_hour(): {err}", 400)
-    return result
+    Args:
+        td: A datetime.
 
-
-def get_respondents_interviewed(call_history_dataframe):
-    try:
-        result = round(call_history_dataframe['number_of_interviews'].sum())
-    except Exception as err:
-        raise BertException(f"Could not calculate get_respondents_interviewed(): {err}", 400)
-    return result
+    Returns:
+        The duration/time in hh:mm:ss format as a string.
+    """
+    hours, remainder = divmod(td.total_seconds(), 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return f'{int(hours):02}:{int(minutes):02}:{int(seconds):02}'
 
 
-def get_average_respondents_interviewed_per_hour(call_history_dataframe, string_hours_worked):
-    try:
-        integer_hours_worked = get_total_seconds_from_string(string_hours_worked) / 3600
-        respondents_interviewed = call_history_dataframe['number_of_interviews'].sum()
-        result = round(respondents_interviewed / integer_hours_worked, 2)
-    except Exception as err:
-        raise BertException(f"Could not calculate get_average_respondents_interviewed_per_hour(): {err}", 400)
-    return result
+def no_valid_records_are_found(records:pd.DataFrame) -> bool:
+    """Return a boolean when no valid data are found.
 
+    Args:
+        records: An an individual's call history. Each row represents a call made to a respondent.
 
-def get_invalid_fields(data):
-    invalid_fields = []
-
-    if data.loc[data['status'].str.contains('Timed out', case=False)].any().any():
-        invalid_fields.append("'status' column had timed out call status")
-
-    data = data.filter(COLUMNS_TO_VALIDATE)
-    for field in data.columns[data.isna().any()]:
-        invalid_fields.append(f"'{field}' column had missing data")
-    return ", ".join(invalid_fields)
-
-
-def results_for_calls_with_status(column_name, status, df, denominator):
-    try:
-        numerator = df[column_name].str.contains(status, case=False, na=False).sum()
-        percentage = 100 * numerator / denominator
-    except Exception as err:
-        raise BertException(f"Could not calculate the total for status containing '{status}': {err}", 400)
-    return f"{numerator}/{denominator}, {round(percentage, 2)}%"
-
-
-def no_contact_breakdown(status, df):
-    no_contact_df = df[df['status'].str.contains('no contact', case=False, na=False)]
-    if no_contact_df.empty:
-        return "n/a"
-    no_contact_df.reset_index()
-    return results_for_calls_with_status('call_result', status, no_contact_df, len(no_contact_df))
+    Returns:
+        True when no valid records are found.
+    """
+    valid_records = get_valid_records(records)
+    return valid_records.empty
