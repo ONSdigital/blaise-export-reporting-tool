@@ -7,7 +7,6 @@ from functions.request_handlers import date_handler, survey_tla_handler
 from reports.appointment_resource_planning_report import get_appointment_resource_planning_by_date
 from reports.interviewer_call_history_report import get_call_history_records
 from reports.interviewer_call_pattern_report import get_call_pattern_report
-
 app = Flask(__name__)
 
 
