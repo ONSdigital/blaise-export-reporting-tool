@@ -57,6 +57,7 @@ def delete_call_history():
     datastore_client.get_keys_for_year_old_call_history_records()
 
 
+# TODO: This function should not be in the datastore file, as it does not use datastore on RestAPI and DB
 def get_call_history(config):
     print("Getting call history data")
     installed_questionnaire_list = get_list_of_installed_questionnaires(config)
@@ -77,6 +78,7 @@ def get_call_history(config):
     return cati_call_history_and_questionnaire_data_merged
 
 
+# TODO: Neither should this
 def get_cati_call_history(config, questionnaire_list):
     results = get_cati_call_history_from_database(config)
     cati_call_history_list = []
