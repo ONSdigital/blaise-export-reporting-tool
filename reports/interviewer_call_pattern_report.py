@@ -10,7 +10,7 @@ from google.cloud import datastore
 from functions.date_functions import parse_date_string_to_datetime
 
 from models.interviewer_call_pattern_model import (
-    InterviewerCallPatternRefactored, InterviewerCallPatternWithNoValidData
+    InterviewerCallPattern, InterviewerCallPatternWithNoValidData
 )
 from models.error_capture import BertException
 
@@ -47,7 +47,7 @@ def get_call_pattern_report(
             invalid_fields=",".join(provide_reasons_for_invalid_records(records))
         )
 
-    return InterviewerCallPatternRefactored(
+    return InterviewerCallPattern(
         hours_worked=str(calculate_hours_worked_as_datetime(records)),
         call_time=str(calculate_call_time_as_datetime(records)),
         hours_on_calls_percentage=calculate_hours_on_call_percentage(records),

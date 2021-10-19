@@ -8,7 +8,7 @@ from google.api_core.datetime_helpers import DatetimeWithNanoseconds
 
 from app.app import app as flask_app
 from models.config_model import Config
-from models.interviewer_call_pattern_model import InterviewerCallPattern, InterviewerCallPatternRefactored
+from models.interviewer_call_pattern_model import InterviewerCallPattern
 
 
 @pytest.fixture
@@ -2166,8 +2166,6 @@ def interviewer_call_pattern_report():
         call_time="0:00:00",
         hours_on_calls_percentage="0%",
         average_calls_per_hour=3.14,
-        respondents_interviewed=5,
-        average_respondents_interviewed_per_hour=123,
         refusals="foobar",
         no_contacts="foobar",
         no_contact_answer_service="foobar",
