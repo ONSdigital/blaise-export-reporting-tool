@@ -38,17 +38,6 @@ def call_pattern(interviewer):
         return results.json()
 
 
-@app.route("/api/reports/call-pattern-refactored/<interviewer>")
-def call_pattern_refactored(interviewer):
-    start_date, end_date = date_handler(request)
-    survey_tla = survey_tla_handler(request)
-    refactor_results = get_call_pattern_report_refactor(interviewer, start_date, end_date, survey_tla)
-    if refactor_results == {}:
-        return {}
-    else:
-        return refactor_results.json()
-
-
 @app.route("/api/reports/appointment-resource-planning/<date>")
 def appointment_resource_planning(date):
     return jsonify(get_appointment_resource_planning_by_date(date))
