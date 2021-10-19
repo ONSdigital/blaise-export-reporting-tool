@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from app.app import app, load_config
 from data_sources.datastore_data import (
     get_call_history,
-    upload_call_history_to_datastore,
+    upload_call_history_to_datastore, delete_call_history,
 )
 from functions.csv_functions import write_csv
 from functions.google_storage_functions import init_google_storage
@@ -14,6 +14,11 @@ from functions.zip_functions import create_zip
 from models.config_model import Config
 from reports.mi_hub_call_history_report import get_mi_hub_call_history
 from reports.mi_hub_respondent_data_report import get_mi_hub_respondent_data
+
+
+def delete_old_call_history(_event, _context):
+    print("Running Cloud Function - delete_call_history")
+    delete_call_history()
 
 
 def upload_call_history(_event, _context):
@@ -45,8 +50,8 @@ def deliver_mi_hub_reports(_event, _context):
         zip_data_grouped_by_questionnaire[questionnaire] = files_for_questionnaire_zip
 
     for (
-        questionnaire,
-        respondent_data_report,
+            questionnaire,
+            respondent_data_report,
     ) in grouped_respondent_data_reports.items():
         respondent_data_csv = write_csv(respondent_data_report)
         files_for_questionnaire_zip = zip_data_grouped_by_questionnaire.get(

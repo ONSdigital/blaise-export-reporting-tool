@@ -1,12 +1,61 @@
 from dataclasses import asdict
 from datetime import datetime
-
+from dateutil.relativedelta import relativedelta
 from google.cloud import datastore
 
 from data_sources.cati_data import get_cati_call_history_from_database
 from data_sources.questionnaire_data import get_list_of_installed_questionnaires, get_questionnaire_data, \
     get_questionnaire_name_from_id
 from models.call_history_model import CallHistory
+
+
+def delete_call_history():
+    generate_year_old_test_data()
+    old_call_history_keys = get_keys_for_year_old_call_history_records()
+
+    if len(old_call_history_keys) == 0:
+        print("No call history records older than a year found")
+        return
+
+    delete_datastore_records(old_call_history_keys)
+    get_keys_for_year_old_call_history_records()
+
+
+def generate_year_old_test_data():
+    client = datastore.Client()
+    i = 1
+    while i < 601:
+        task = datastore.Entity(client.key("CallHistory"))
+        task.update(
+            {
+                "call_start_time": datetime(2022, 10, 20),
+                "number": i,
+            }
+        )
+        client.put(task)
+        i += 1
+
+
+def delete_datastore_records(datastore_record_keys):
+    batches = split_into_batches(datastore_record_keys, 500)
+    try:
+        client = datastore.Client()
+        for batch in batches:
+            print(f"Attempting to delete batch of {len(batch)} items (Total batches {len(batches)})")
+            client.delete_multi(batch)
+    except Exception as err:
+        print(f"Failed to delete records in datastore: {err}")
+
+
+def get_keys_for_year_old_call_history_records():
+    client = datastore.Client()
+    year_ahead = datetime.now() + relativedelta(years=1)
+    query = client.query(kind="CallHistory")
+    query.add_filter("call_start_time", ">=", year_ahead)
+    query.keys_only()
+    old_call_history_keys = list([entity.key for entity in query.fetch()])
+    print(f"Found {len(old_call_history_keys)} records with a call_start_time older than one year ({year_ahead})")
+    return old_call_history_keys
 
 
 def get_call_history(config):
@@ -135,10 +184,10 @@ def bulk_upload_call_history(new_call_history_entries):
         client.put_multi(batch)
 
 
-def split_into_batches(merged_call_history, length):
+def split_into_batches(list_to_split, length):
     return [
-        merged_call_history[i: i + length]
-        for i in range(0, len(merged_call_history), length)
+        list_to_split[i: i + length]
+        for i in range(0, len(list_to_split), length)
     ]
 
 
