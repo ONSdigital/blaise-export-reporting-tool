@@ -646,27 +646,6 @@ def call_history_with_all_invalid_records():
         {
             'appointment_info': None,
             'busy_dials': 0,
-            'call_end_time': DatetimeWithNanoseconds(2021, 8, 2, 14, 43, 32, tzinfo=datetime.timezone.utc),
-            'call_number': 1,
-            'call_result': 'NonRespons',
-            'call_start_time': DatetimeWithNanoseconds(2021, 8, 2, 14, 41, 45, tzinfo=datetime.timezone.utc),
-            'cohort': 'CC',
-            'dial_number': 1,
-            'dial_secs': 107,
-            'interviewer': 'el4president',
-            'number_of_interviews': np.nan,
-            'outcome_code': 460,
-            'questionnaire_id': 'remember-24-01-57f4c0f090be',
-            'questionnaire_name': 'LMS2107_CC1',
-            'serial_number': 24012022,
-            'status': 'Finished (Non response)',
-            'survey': 'LMS',
-            'update_info': None,
-            'wave': 1
-        },
-        {
-            'appointment_info': None,
-            'busy_dials': 0,
             'call_end_time': DatetimeWithNanoseconds(2021, 8, 2, 14, 44, 28, tzinfo=datetime.timezone.utc),
             'call_number': 1,
             'call_result': 'NonRespons',
@@ -675,7 +654,7 @@ def call_history_with_all_invalid_records():
             'dial_number': 1,
             'dial_secs': 29,
             'interviewer': 'el4president',
-            'number_of_interviews': np.nan,
+            'number_of_interviews': 1,
             'outcome_code': 460,
             'questionnaire_id': 'remember-24-01-57f4c0f090be',
             'questionnaire_name': 'LMS2107_CC1',
@@ -2187,8 +2166,6 @@ def interviewer_call_pattern_report():
         call_time="0:00:00",
         hours_on_calls_percentage="0%",
         average_calls_per_hour=3.14,
-        respondents_interviewed=5,
-        average_respondents_interviewed_per_hour=123,
         refusals="foobar",
         no_contacts="foobar",
         no_contact_answer_service="foobar",
@@ -2201,3 +2178,28 @@ def interviewer_call_pattern_report():
         discounted_invalid_cases="0",
         invalid_fields="n/a",
     )
+
+@pytest.fixture()
+def hours_worked_greater_than_24_hours():
+    results = [{
+        'appointment_info': None,
+        'busy_dials': 0,
+        'call_end_time': DatetimeWithNanoseconds(2021, 8, 8, 00, 50, 00, tzinfo=datetime.timezone.utc),
+        'call_number': 1,
+        'call_result': 'NoAnswer',
+        'call_start_time': DatetimeWithNanoseconds(2021, 8, 7, 00, 00, 00, tzinfo=datetime.timezone.utc),
+        'cohort': None,
+        'dial_number': 1,
+        'dial_secs': 89400,
+        'interviewer': 'el4president',
+        'number_of_interviews': "1",
+        'outcome_code': 310,
+        'questionnaire_id': 'remember-24-01-9dc791f0cb07',
+        'questionnaire_name': 'OPN2108R',
+        'serial_number': 24012022,
+        'status': 'Finished (No contact)',
+        'survey': 'OPN',
+        'update_info': None,
+        'wave': None
+    }]
+    return pd.DataFrame(results)
