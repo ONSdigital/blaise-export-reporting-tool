@@ -18,7 +18,8 @@ class CallHistoryClient:
         self.config = config
 
     def delete_historical_call_history(self):
-        self.__generate_year_old_test_data()
+        # Uncomment this to generate test data to confirm deletion is working
+        # self.__generate_year_old_test_data()
         old_call_history_keys = self.__get_keys_for_historical_call_history_records()
         if len(old_call_history_keys) == 0:
             print("No call history records older than a year found")
