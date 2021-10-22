@@ -57,18 +57,25 @@ class CatiAppointmentResourcePlanningTable(DataBaseBase):
                         PrimaryKeyValue,
                         AdditionalData,
                         DialResult,
-                        MAX(StartTime) 
+                        MAX(StartTime),
+                        DialNumber
                      FROM
                         DialHistory 
                      GROUP BY
                         InstrumentId,
                         PrimaryKeyValue,
                         AdditionalData,
-                        DialResult
+                        DialResult,
+                        DialNumber
                   )
                   AS dh 
                   ON dh.InstrumentId = dbci.InstrumentId 
-                  AND dh.PrimaryKeyValue = dbci.PrimaryKeyValue 
+                  AND dh.PrimaryKeyValue = dbci.PrimaryKeyValue
+                  AND dh.DialNumber = (
+                                SELECT MAX(DialNumber)
+                                FROM cati.DialHistory
+                                WHERE InstrumentId = dbci.InstrumentId
+                                AND PrimaryKeyValue = dbci.PrimaryKeyValue) 
             WHERE
                dbci.AppointmentType != "0" 
                AND dbci.AppointmentStartDate like "{date}%" 
