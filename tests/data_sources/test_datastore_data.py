@@ -4,8 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
-from data_sources.datastore_data import split_into_batches, get_cati_call_history, \
-    merge_cati_call_history_and_questionnaire_data
+from data_sources.call_history_data import CallHistoryClient
 from models.call_history_model import CallHistory
 from models.config_model import Config
 
@@ -60,7 +59,7 @@ from models.config_model import Config
     ],
 )
 def test_split_into_batches(list_to_split, number_to_split_by, expected):
-    split_list = split_into_batches(list_to_split, number_to_split_by)
+    split_list = CallHistoryClient.split_into_batches(list_to_split, number_to_split_by)
     assert len(split_list) == len(expected)
     i = 0
     while i < len(split_list):
@@ -79,7 +78,7 @@ def test_split_into_batches(list_to_split, number_to_split_by, expected):
         "NIFI_STAGING_BUCKET": "nifi_staging_bucket_mock"
     },
 )
-@patch("data_sources.datastore_data.get_cati_call_history_from_database")
+@patch("data_sources.call_history_data.get_cati_call_history_from_database")
 def test_get_cati_call_history(mock_get_cati_call_history_from_database):
     # Setup
     questionnaire_list = [
@@ -106,7 +105,8 @@ def test_get_cati_call_history(mock_get_cati_call_history_from_database):
     config = Config.from_env()
 
     # Execution
-    dial_history = get_cati_call_history(config, questionnaire_list)
+    call_history_client = CallHistoryClient(mock.MagicMock, config)
+    dial_history = call_history_client.get_cati_call_history(questionnaire_list)
 
     # Assertion
     assert len(dial_history) == 1
@@ -167,7 +167,8 @@ def test_merge_cati_call_history_and_questionnaire_data():
             "questionnaire_name": "LMS2101_AA1",
         }
     ]
-    merged_data = merge_cati_call_history_and_questionnaire_data(call_history, questionnaire_data)
+    call_history_client = CallHistoryClient(mock.MagicMock, mock.MagicMock)
+    merged_data = call_history_client.merge_cati_call_history_and_questionnaire_data(call_history, questionnaire_data)
     assert merged_data[0].outcome_code == 310
     assert merged_data[0].number_of_interviews == 2
     assert merged_data == [

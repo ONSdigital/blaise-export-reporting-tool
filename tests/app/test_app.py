@@ -10,9 +10,8 @@ def test_load_config():
     assert application_config is not None
 
 
-@patch("app.app.get_call_history_report_status")
-def test_call_history_report_status(mock_get_call_history_report_status, client):
-    mock_get_call_history_report_status.return_value = "blah"
+def test_call_history_report_status(client):
+    client.application.call_history_client.get_call_history_report_status.return_value = "blah"
     response = client.get("/api/reports/call-history-status")
     assert response.status_code == 200
     assert response.get_data() is not None

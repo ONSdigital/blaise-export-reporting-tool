@@ -2,11 +2,11 @@ import datetime
 import os
 
 from dotenv import load_dotenv
+from google.cloud import datastore
 
-from app.app import app, load_config
-from data_sources.datastore_data import (
-    get_call_history,
-    upload_call_history_to_datastore,
+from app.app import app, load_config, setup_app
+from data_sources.call_history_data import (
+    CallHistoryClient,
 )
 from functions.csv_functions import write_csv
 from functions.google_storage_functions import init_google_storage
@@ -16,12 +16,21 @@ from reports.mi_hub_call_history_report import get_mi_hub_call_history
 from reports.mi_hub_respondent_data_report import get_mi_hub_respondent_data
 
 
+def delete_old_call_history(_event, _context):
+    print("Running Cloud Function - delete_call_history")
+    datastore_client = datastore.Client()
+    call_history_client = CallHistoryClient(datastore_client)
+    print("Running Cloud Function - delete_old_call_history")
+    call_history_client.delete_historical_call_history()
+
+
 def upload_call_history(_event, _context):
     print("Running Cloud Function - upload_call_history")
     config = Config.from_env()
     config.log()
-    call_history = get_call_history(config)
-    upload_call_history_to_datastore(call_history)
+    datastore_client = datastore.Client()
+    call_history_client = CallHistoryClient(datastore_client, config)
+    call_history_client.call_history_extraction_process()
 
 
 def deliver_mi_hub_reports(_event, _context):
@@ -45,8 +54,8 @@ def deliver_mi_hub_reports(_event, _context):
         zip_data_grouped_by_questionnaire[questionnaire] = files_for_questionnaire_zip
 
     for (
-        questionnaire,
-        respondent_data_report,
+            questionnaire,
+            respondent_data_report,
     ) in grouped_respondent_data_reports.items():
         respondent_data_csv = write_csv(respondent_data_report)
         files_for_questionnaire_zip = zip_data_grouped_by_questionnaire.get(
@@ -74,4 +83,5 @@ load_config(app)
 
 if __name__ == "__main__":
     print("Running Flask application")
+    setup_app(app)
     app.run(host="0.0.0.0", port=5011)
