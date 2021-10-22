@@ -76,6 +76,13 @@ class CallHistoryClient:
                 record.outcome_code = matched_record.get("qhAdmin.HOut", "")
         return cati_call_history
 
+    @staticmethod
+    def split_into_batches(list_to_split, batch_length):
+        return [
+            list_to_split[i: i + batch_length]
+            for i in range(0, len(list_to_split), batch_length)
+        ]
+
     def __generate_year_old_test_data(self):
         i = 1
         while i < 601:
@@ -140,7 +147,7 @@ class CallHistoryClient:
 
     def __upload_call_history_to_datastore(self, call_history_data):
         print("Checking for new call history records to upload to datastore")
-        new_call_history_records = self.filter_out_existing_call_history_records(
+        new_call_history_records = self.__filter_out_existing_call_history_records(
             call_history_data
         )
         if len(new_call_history_records) == 0:
@@ -152,7 +159,7 @@ class CallHistoryClient:
             )
         self.__update_call_history_report_status()
 
-    def filter_out_existing_call_history_records(self, call_history_data):
+    def __filter_out_existing_call_history_records(self, call_history_data):
         current_call_history_in_datastore = self.__get_call_history_keys()
         return [
             call_history_record
@@ -192,13 +199,6 @@ class CallHistoryClient:
         )
         self.datastore_client.put(task)
         return
-
-    @staticmethod
-    def split_into_batches(list_to_split, batch_length):
-        return [
-            list_to_split[i: i + batch_length]
-            for i in range(0, len(list_to_split), batch_length)
-        ]
 
     @staticmethod
     def __check_if_call_history_record_already_exists(call_history_record, current_call_history_in_datastore):
