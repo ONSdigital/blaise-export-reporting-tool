@@ -82,7 +82,7 @@ class CallHistoryClient:
             task = datastore.Entity(self.datastore_client.key("CallHistory"))
             task.update(
                 {
-                    "call_start_time": datetime.now() + relativedelta(years=1, days=1),
+                    "call_start_time": datetime.now() - relativedelta(years=1, days=1),
                     "number": i,
                 }
             )
@@ -101,15 +101,15 @@ class CallHistoryClient:
             print(f"Failed to delete records in datastore: {err}")
 
     def __get_keys_for_historical_call_history_records(self):
-        year_ahead = datetime.now() + relativedelta(years=1)
+        a_year_ago = datetime.now() - relativedelta(years=1)
         query = self.datastore_client.query(
             kind="CallHistory",
-            filters=[("call_start_time", ">=", year_ahead)]
+            filters=[("call_start_time", "<=", a_year_ago)]
         )
         query.keys_only()
         old_call_history_keys = list([entity.key for entity in query.fetch()])
         print(
-            f"Found {len(old_call_history_keys)} records with a call_start_time older than one year ({year_ahead})"
+            f"Found {len(old_call_history_keys)} records with a call_start_time older than one year ({a_year_ago})"
         )
         return old_call_history_keys
 
