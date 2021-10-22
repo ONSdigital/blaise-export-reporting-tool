@@ -16,6 +16,11 @@ def load_config(application):
     application.configuration.log()
 
 
+def setup_app(application):
+    datastore_client = datastore.Client()
+    application.call_history_client = CallHistoryClient(datastore_client, application.configuration)
+
+
 @app.route("/api/reports/call-history-status")
 def call_history_report_status():
     return jsonify(current_app.call_history_client.get_call_history_report_status())
