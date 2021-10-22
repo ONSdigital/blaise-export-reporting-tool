@@ -29,7 +29,7 @@ def upload_call_history(_event, _context):
     config = Config.from_env()
     config.log()
     datastore_client = datastore.Client()
-    call_history_client = CallHistoryClient(datastore_client)
+    call_history_client = CallHistoryClient(datastore_client, config)
     call_history_client.call_history_extraction_process()
 
 
