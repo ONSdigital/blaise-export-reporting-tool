@@ -72,7 +72,7 @@ class CatiAppointmentResourcePlanningTable(DataBaseBase):
                   AS dh 
                   ON dh.InstrumentId = dbci.InstrumentId 
                   AND dh.PrimaryKeyValue = dbci.PrimaryKeyValue
-                  AND dh.DialNumber =
+                  AND dh.Id =
                                 (
                                 SELECT MAX(Id)
                                 FROM cati.DialHistory
