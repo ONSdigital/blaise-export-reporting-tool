@@ -1,5 +1,6 @@
 import datetime
 import pytest
+from unittest import mock
 
 import pandas as pd
 import numpy as np
@@ -21,6 +22,17 @@ def config():
         blaise_api_url="blah",
         nifi_staging_bucket="blah"
     )
+
+
+@pytest.fixture
+def app():
+    yield flask_app
+
+
+@pytest.fixture
+def client(app):
+    app.call_history_client = mock.MagicMock()
+    return app.test_client()
 
 
 @pytest.fixture
@@ -152,16 +164,6 @@ def end_date_string():
 @pytest.fixture
 def invalid_date():
     return "blah"
-
-
-@pytest.fixture
-def app():
-    yield flask_app
-
-
-@pytest.fixture
-def client(app):
-    return app.test_client()
 
 
 @pytest.fixture
@@ -2178,6 +2180,7 @@ def interviewer_call_pattern_report():
         discounted_invalid_cases="0",
         invalid_fields="n/a",
     )
+
 
 @pytest.fixture()
 def hours_worked_greater_than_24_hours():
