@@ -80,8 +80,8 @@ if os.path.isfile("./.env"):
     load_dotenv()
 
 load_config(app)
+setup_app(app)
 
 if __name__ == "__main__":
     print("Running Flask application")
-    setup_app(app)
     app.run(host="0.0.0.0", port=5011)
