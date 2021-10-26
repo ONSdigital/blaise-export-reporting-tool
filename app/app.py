@@ -1,13 +1,13 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, current_app
+from google.cloud import datastore
 
-from data_sources.datastore_data import get_call_history_report_status
+from data_sources.call_history_data import CallHistoryClient
 from models.config_model import Config
 from models.error_capture import BertException
 from functions.request_handlers import date_handler, survey_tla_handler
 from reports.appointment_resource_planning_report import get_appointment_resource_planning_by_date
 from reports.interviewer_call_history_report import get_call_history_records
 from reports.interviewer_call_pattern_report import get_call_pattern_report
-
 app = Flask(__name__)
 
 
@@ -16,9 +16,14 @@ def load_config(application):
     application.configuration.log()
 
 
+def setup_app(application):
+    datastore_client = datastore.Client()
+    application.call_history_client = CallHistoryClient(datastore_client, application.configuration)
+
+
 @app.route("/api/reports/call-history-status")
 def call_history_report_status():
-    return jsonify(get_call_history_report_status())
+    return jsonify(current_app.call_history_client.get_call_history_report_status())
 
 
 @app.route("/api/reports/call-history/<interviewer>")

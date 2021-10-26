@@ -20,7 +20,9 @@ def get_appointment_resource_planning_by_date(date):
             total=item.get("Total")
         )
         questionnaire_name = get_questionnaire_name_from_id(item.get("InstrumentId"), installed_questionnaire_list)
-        if questionnaire_name != "":
+        if questionnaire_name == "":
+            print(f"Appointment with unknown questionnaire_name for InstrumentId: {item.get('InstrumentId')}")
+        else:
             cati_appointment_resource_planning.questionnaire_name = questionnaire_name
         cati_appointment_resource_planning_list.append(cati_appointment_resource_planning)
     return cati_appointment_resource_planning_list

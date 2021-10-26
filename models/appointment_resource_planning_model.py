@@ -47,7 +47,9 @@ class CatiAppointmentResourcePlanningTable(DataBaseBase):
                   ELSE
                      "English" 
                END
-               AS AppointmentLanguage, dh.DialResult, COUNT(*) AS Total 
+               AS AppointmentLanguage,
+               dh.DialResult,
+               COUNT(*) AS Total 
             FROM
                {cls.table_name()} AS dbci 
                LEFT JOIN
@@ -57,18 +59,26 @@ class CatiAppointmentResourcePlanningTable(DataBaseBase):
                         PrimaryKeyValue,
                         AdditionalData,
                         DialResult,
-                        MAX(StartTime) 
+                        Id
                      FROM
                         DialHistory 
                      GROUP BY
                         InstrumentId,
                         PrimaryKeyValue,
                         AdditionalData,
-                        DialResult
+                        DialResult,
+                        Id
                   )
                   AS dh 
                   ON dh.InstrumentId = dbci.InstrumentId 
-                  AND dh.PrimaryKeyValue = dbci.PrimaryKeyValue 
+                  AND dh.PrimaryKeyValue = dbci.PrimaryKeyValue
+                  AND dh.Id =
+                                (
+                                SELECT MAX(Id)
+                                FROM cati.DialHistory
+                                WHERE InstrumentId = dbci.InstrumentId
+                                AND PrimaryKeyValue = dbci.PrimaryKeyValue
+                                ) 
             WHERE
                dbci.AppointmentType != "0" 
                AND dbci.AppointmentStartDate like "{date}%" 

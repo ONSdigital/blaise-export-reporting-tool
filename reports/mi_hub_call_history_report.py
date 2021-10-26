@@ -1,5 +1,7 @@
+from unittest import mock
+
 from data_sources.cati_data import get_cati_mi_hub_call_history_from_database
-from data_sources.datastore_data import merge_cati_call_history_and_questionnaire_data
+from data_sources.call_history_data import CallHistoryClient
 from data_sources.questionnaire_data import (
     get_list_of_installed_questionnaires,
     get_questionnaire_data,
@@ -26,8 +28,9 @@ def get_mi_hub_call_history(config):
             )
         )
     print(f"Found {len(questionnaire_data)} questionnaire records")
+    call_history_client = CallHistoryClient(mock.MagicMock, config)
     mi_hub_cati_call_history_and_questionnaire_data_merged = (
-        merge_cati_call_history_and_questionnaire_data(
+        call_history_client.merge_cati_call_history_and_questionnaire_data(
             mi_hub_cati_call_history, questionnaire_data
         )
     )
