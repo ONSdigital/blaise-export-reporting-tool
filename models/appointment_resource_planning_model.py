@@ -46,13 +46,13 @@ class CatiAppointmentResourcePlanningTable(DataBaseBase):
                    WHEN
                       dbci.GroupName = "TNS"
                       OR dbci.SelectFields LIKE '%<Field FieldName="QDataBag.IntGroup">TNS</Field>%'
-                      OR dh.AdditionalData LIKE '%<Field Name="QDataBag.IntGroup" Status="Response" Value="\'TNS\'"/>%'
+                      OR dh.AdditionalData LIKE '%<Field Name="QDataBag.IntGroup" Status="Response" Value="\\'TNS\\'"/>%'
                    THEN
                       "Other"
                    WHEN
                       dbci.GroupName = "WLS"
                       OR dbci.SelectFields LIKE '%<Field FieldName="QDataBag.IntGroup">WLS</Field>%'
-                      OR dh.AdditionalData LIKE '%<Field Name="QDataBag.IntGroup" Status="Response" Value="\'WLS\'"/>%'
+                      OR dh.AdditionalData LIKE '%<Field Name="QDataBag.IntGroup" Status="Response" Value="\\'WLS\\'"/>%'
                    THEN
                       "Welsh"
                    ELSE
