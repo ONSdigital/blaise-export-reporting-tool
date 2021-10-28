@@ -8,7 +8,6 @@ class AppointmentResourcePlanning:
     questionnaire_name: str = ""
     appointment_time: str = ""
     appointment_language: str = ""
-    dial_result: str = ""
     total: int = None
 
     @classmethod
