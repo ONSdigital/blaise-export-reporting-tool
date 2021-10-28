@@ -8,7 +8,6 @@ class AppointmentResourcePlanning:
     questionnaire_name: str = ""
     appointment_time: str = ""
     appointment_language: str = ""
-    dial_result: str = ""
     total: int = None
 
     @classmethod
@@ -27,69 +26,58 @@ class CatiAppointmentResourcePlanningTable(DataBaseBase):
 
     @classmethod
     def get_appointments_for_date(cls, config, date):
-        query = f"""        
-            SELECT
-               dbci.InstrumentId,
-               TIME_FORMAT(dbci.AppointmentStartTime, "%H:%i") AS AppointmentTime,
-               CASE
-                  WHEN
-                     dbci.GroupName = "TNS" 
-                     OR dbci.SelectFields LIKE '%<Field FieldName="QDataBag.IntGroup">TNS</Field>%' 
-                     OR dh.AdditionalData LIKE '%<Field Name="QDataBag.IntGroup" Status="Response" Value="\\'TNS\\'"/>%' 
-                  THEN
-                     "Other" 
-                  WHEN
-                     dbci.GroupName = "WLS" 
-                     OR dbci.SelectFields LIKE '%<Field FieldName="QDataBag.IntGroup">WLS</Field>%' 
-                     OR dh.AdditionalData LIKE '%<Field Name="QDataBag.IntGroup" Status="Response" Value="\\'WLS\\'"/>%' 
-                  THEN
-                     "Welsh" 
-                  ELSE
-                     "English" 
-               END
-               AS AppointmentLanguage,
-               dh.DialResult,
-               COUNT(*) AS Total 
+        query = f"""
+            with UniqueDialHistoryIdTable as
+                (SELECT
+                    max(Id) as id,
+                    InstrumentId,
+                    PrimaryKeyValue
+                FROM
+                    DialHistory 	
+                GROUP BY
+                    PrimaryKeyValue,
+                    InstrumentId)
+                
+            select
+                dbci.InstrumentId,
+                TIME_FORMAT(dbci.AppointmentStartTime, "%H:%i") AS AppointmentTime,
+                CASE
+                   WHEN
+                      dbci.GroupName = "TNS"
+                      OR dbci.SelectFields LIKE '%<Field FieldName="QDataBag.IntGroup">TNS</Field>%'
+                      OR dh.AdditionalData LIKE '%<Field Name="QDataBag.IntGroup" Status="Response" Value="\\'TNS\\'"/>%'
+                   THEN
+                      "Other"
+                   WHEN
+                      dbci.GroupName = "WLS"
+                      OR dbci.SelectFields LIKE '%<Field FieldName="QDataBag.IntGroup">WLS</Field>%'
+                      OR dh.AdditionalData LIKE '%<Field Name="QDataBag.IntGroup" Status="Response" Value="\\'WLS\\'"/>%'
+                   THEN
+                      "Welsh"
+                   ELSE
+                      "English"
+                END
+                AS AppointmentLanguage,
+                COUNT(*) AS Total    
             FROM
-               {cls.table_name()} AS dbci 
-               LEFT JOIN
-                  (
-                     SELECT
-                        InstrumentId,
-                        PrimaryKeyValue,
-                        AdditionalData,
-                        DialResult,
-                        Id
-                     FROM
-                        DialHistory 
-                     GROUP BY
-                        InstrumentId,
-                        PrimaryKeyValue,
-                        AdditionalData,
-                        DialResult,
-                        Id
-                  )
-                  AS dh 
-                  ON dh.InstrumentId = dbci.InstrumentId 
-                  AND dh.PrimaryKeyValue = dbci.PrimaryKeyValue
-                  AND dh.Id =
-                                (
-                                SELECT MAX(Id)
-                                FROM cati.DialHistory
-                                WHERE InstrumentId = dbci.InstrumentId
-                                AND PrimaryKeyValue = dbci.PrimaryKeyValue
-                                ) 
+                DaybatchCaseInfo AS dbci
+            LEFT JOIN DialHistory dh
+                ON dh.InstrumentId = dbci.InstrumentId
+                AND dh.PrimaryKeyValue = dbci.PrimaryKeyValue
+                AND dh.DialResult = "Appointment"    
+            INNER JOIN UniqueDialHistoryIdTable uid
+                on dh.id = uid.id
             WHERE
-               dbci.AppointmentType != "0" 
-               AND dbci.AppointmentStartDate like "{date}%" 
+               dbci.AppointmentType != "0"
+               AND dbci.AppointmentStartDate LIKE "{date}%"
             GROUP BY
                dbci.InstrumentId,
                AppointmentTime,
-               AppointmentLanguage,
-               dh.DialResult 
+               AppointmentLanguage
             ORDER BY
                AppointmentTime ASC,
-               AppointmentLanguage ASC
+               AppointmentLanguage ASC       
+     
         """
         return cls.query(config, query)
 
