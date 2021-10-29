@@ -16,7 +16,7 @@ def test_cati_appointment_resource_planning_table_fields():
             "AppointmentStartDate",
             "GroupName",
             "DialResult",
-            "AppointmentType",
+            "AppointmentType"
         ]
     )
 
