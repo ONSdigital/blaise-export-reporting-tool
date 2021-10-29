@@ -10,8 +10,15 @@ def get_appointment_resource_planning_language_summary_by_date(date):
     config.log()
     results = get_cati_appointment_resource_planning_from_database_for_language_summary(config, date)
 
+    if results == []:
+        return []
+
     return AppointmentResourcePlanningLanguageSummary(
         english=[value["Total"] for value in results if value["AppointmentLanguage"] == 'English'][0],
         welsh=[value["Total"] for value in results if value["AppointmentLanguage"] == 'Welsh'][0],
         other=[value["Total"] for value in results if value["AppointmentLanguage"] == 'Other'][0]
     )
+
+if __name__ == "__main__":
+    foo = get_appointment_resource_planning_language_summary_by_date("2021-11-02")
+    print(foo)
