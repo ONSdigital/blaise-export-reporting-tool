@@ -53,7 +53,7 @@ class CatiAppointmentResourcePlanningSummaryLanguageTable(DataBaseBase):
                     AS AppointmentLanguage,
                     COUNT(*) AS Total
                 from
-                    "{cls.table_name}%" AS dbci
+                    "cati.DaybatchCaseInfo" AS dbci
                 left join DialHistory dh
                     ON dh.PrimaryKeyValue = dbci.PrimaryKeyValue
                     AND dh.DialResult = "Appointment"
