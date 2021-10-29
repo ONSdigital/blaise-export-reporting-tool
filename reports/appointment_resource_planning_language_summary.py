@@ -9,12 +9,9 @@ def get_appointment_resource_planning_language_summary_by_date(date):
     config = Config.from_env()
     config.log()
     results = get_cati_appointment_resource_planning_from_database_for_language_summary(config, date)
-    cati_appointment_resource_planning_language_summary_list = []
-    for item in results:
-        cati_appointment_resource_planning = AppointmentResourcePlanningLanguageSummary(
-            english=item.get("English"),
-            welsh=item.get("Welsh"),
-            other=item.get("Other")
-        )
-        cati_appointment_resource_planning_language_summary_list.append(cati_appointment_resource_planning)
-    return cati_appointment_resource_planning_language_summary_list
+
+    return AppointmentResourcePlanningLanguageSummary(
+        english=[key["Total"] for key in results if key["AppointmentLanguage"] == 'English'][0],
+        welsh=[key["Total"] for key in results if key["AppointmentLanguage"] == 'Welsh'][0],
+        other=[key["Total"] for key in results if key["AppointmentLanguage"] == 'Other'][0]
+    )
