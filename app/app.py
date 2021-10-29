@@ -6,6 +6,7 @@ from models.config_model import Config
 from models.error_capture import BertException
 from functions.request_handlers import date_handler, survey_tla_handler
 from reports.appointment_resource_planning_report import get_appointment_resource_planning_by_date
+from reports.appointment_resource_planning_language_summary import get_appointment_resource_planning_language_summary_by_date
 from reports.interviewer_call_history_report import get_call_history_records
 from reports.interviewer_call_pattern_report import get_call_pattern_report
 app = Flask(__name__)
@@ -47,6 +48,11 @@ def call_pattern(interviewer):
 @app.route("/api/reports/appointment-resource-planning/<date>")
 def appointment_resource_planning(date):
     return jsonify(get_appointment_resource_planning_by_date(date))
+
+
+@app.route("/api/reports/appointment-resource-planning-summary/<date>")
+def appointment_resource_planning_language_summary(date):
+    return jsonify(get_appointment_resource_planning_language_summary_by_date(date))
 
 
 @app.route("/bert/<version>/health")
