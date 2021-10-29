@@ -18,7 +18,3 @@ def get_appointment_resource_planning_language_summary_by_date(date):
         welsh=[value["Total"] for value in results if value["AppointmentLanguage"] == 'Welsh'][0],
         other=[value["Total"] for value in results if value["AppointmentLanguage"] == 'Other'][0]
     )
-
-if __name__ == "__main__":
-    foo = get_appointment_resource_planning_language_summary_by_date("2021-11-02")
-    print(foo)
