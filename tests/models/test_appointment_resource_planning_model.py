@@ -6,7 +6,6 @@ def test_appointment_resource_planning():
         questionnaire_name="",
         appointment_time="",
         appointment_language="",
-        dial_result="",
         total=""
     )
     assert appointment_resource_planning is not None

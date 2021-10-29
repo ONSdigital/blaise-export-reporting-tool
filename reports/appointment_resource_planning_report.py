@@ -16,7 +16,6 @@ def get_appointment_resource_planning_by_date(date):
         cati_appointment_resource_planning = AppointmentResourcePlanning(
             appointment_time=item.get("AppointmentTime"),
             appointment_language=item.get("AppointmentLanguage"),
-            dial_result=item.get("DialResult"),
             total=item.get("Total")
         )
         questionnaire_name = get_questionnaire_name_from_id(item.get("InstrumentId"), installed_questionnaire_list)
