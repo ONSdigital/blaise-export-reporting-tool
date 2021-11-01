@@ -4,7 +4,7 @@ from models.database_base_model import DataBaseBase
 
 
 @dataclass
-class AppointmentResourcePlanningLanguageSummary:
+class AppointmentLanguageSummary:
     language: str = ""
     total: int = 0
 
@@ -14,7 +14,7 @@ class AppointmentResourcePlanningLanguageSummary:
 
 
 @dataclass
-class CatiAppointmentResourcePlanningSummaryLanguageTable(DataBaseBase):
+class CatiAppointmentLanguageSummaryTable(DataBaseBase):
     AppointmentStartDate: str
     GroupName: str
     DialResult: str

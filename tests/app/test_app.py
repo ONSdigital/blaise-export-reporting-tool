@@ -66,11 +66,11 @@ def test_appointment_resource_planning(mock_get_appointment_resource_planning_by
     assert response.get_data() is not None
 
 
-@patch("app.app.get_appointment_resource_planning_language_summary_by_date")
-def test_appointment_resource_planning_language_summary(
-        mock_get_appointment_resource_planning_language_summary_by_date,
+@patch("app.app.get_appointment_language_summary_by_date")
+def test_appointment_language_summary(
+        mock_get_appointment_language_summary_by_date,
         client):
-    mock_get_appointment_resource_planning_language_summary_by_date.return_value = None, []
+    mock_get_appointment_language_summary_by_date.return_value = None, []
     response = client.get("api/reports/appointment-resource-planning-summary/2021-12-31")
     assert response.status_code == 200
     assert response.get_data() is not None
