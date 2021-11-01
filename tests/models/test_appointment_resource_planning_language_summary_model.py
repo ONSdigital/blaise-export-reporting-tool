@@ -3,9 +3,8 @@ from models.appointment_resource_planning_language_summary_model import Appointm
 
 def test_appointment_resource_planning_language_summary():
     assert AppointmentResourcePlanningLanguageSummary(
-        english="",
-        welsh="",
-        other=""
+        language="",
+        total=0
     ) is not None
 
 
