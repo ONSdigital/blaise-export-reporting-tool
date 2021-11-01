@@ -1,14 +1,20 @@
-from data_sources.cati_data import get_cati_appointment_resource_planning_from_database_for_language_summary
-from models.appointment_resource_planning_language_summary_model import AppointmentResourcePlanningLanguageSummary
+from data_sources import cati_data
+from models.appointment_resource_planning_language_summary_model import (
+    AppointmentResourcePlanningLanguageSummary,
+)
 
 from models.config_model import Config
 
 
 def get_appointment_resource_planning_language_summary_by_date(date):
-    print(f"Getting data for the appointment resource planning language summary for {date}")
+    print(
+        f"Getting data for the appointment resource planning language summary for {date}"
+    )
     config = Config.from_env()
     config.log()
-    results = get_cati_appointment_resource_planning_from_database_for_language_summary(config, date)
+    results = cati_data.get_cati_appointment_resource_planning_from_database_for_language_summary(
+        config, date
+    )
 
     if results == []:
         return []
@@ -16,8 +22,7 @@ def get_appointment_resource_planning_language_summary_by_date(date):
     summary = []
     for item in results:
         value = AppointmentResourcePlanningLanguageSummary(
-            language=item.get("AppointmentLanguage"),
-            total=item.get("Total")
+            language=item.get("AppointmentLanguage"), total=item.get("Total")
         )
         summary.append(value)
     return summary
