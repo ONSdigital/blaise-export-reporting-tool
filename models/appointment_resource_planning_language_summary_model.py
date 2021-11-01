@@ -5,9 +5,8 @@ from models.database_base_model import DataBaseBase
 
 @dataclass
 class AppointmentResourcePlanningLanguageSummary:
-    english: str = ""
-    welsh: str = ""
-    other: str = ""
+    language: str = ""
+    total: int = 0
 
     @classmethod
     def fields(cls):

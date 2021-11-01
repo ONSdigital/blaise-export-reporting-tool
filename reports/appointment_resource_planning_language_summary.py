@@ -13,8 +13,11 @@ def get_appointment_resource_planning_language_summary_by_date(date):
     if results == []:
         return []
 
-    return AppointmentResourcePlanningLanguageSummary(
-        english=[value["Total"] for value in results if value["AppointmentLanguage"] == 'English'][0],
-        welsh=[value["Total"] for value in results if value["AppointmentLanguage"] == 'Welsh'][0],
-        other=[value["Total"] for value in results if value["AppointmentLanguage"] == 'Other'][0]
-    )
+    summary = []
+    for item in results:
+        value = AppointmentResourcePlanningLanguageSummary(
+            language=item.get("AppointmentLanguage"),
+            total=item.get("Total")
+        )
+        summary.append(value)
+    return summary
