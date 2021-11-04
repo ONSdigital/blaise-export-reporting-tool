@@ -116,6 +116,7 @@ def test_get_call_pattern_report_ignores_record_when_no_start_call_time_from_a_s
     result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
     assert result.hours_worked == "02:00:00"
 
+
 def test_get_call_pattern_report_ignores_record_when_no_end_call_time_from_a_single_day_is_found(mocker):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
@@ -299,6 +300,7 @@ def test_get_call_pattern_report_returns_no_message_when_no_invalid_records_are_
 
     result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
     assert result.invalid_fields == ""
+
 
 def test_get_call_pattern_report_returns_expected_message_when_no_end_time_found(mocker):
     datastore_records = [
@@ -691,6 +693,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
 
     result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
     assert result.no_contact_disconnect == "1/2, 50.00%"
+
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_NoAnswer(mocker):
     datastore_records = [
@@ -1114,6 +1117,7 @@ def test_calculate_call_time_in_seconds_raises_error_when_no_dial_secs_column():
         calculate_call_time_in_seconds(arrange)
     assert "calculate_call_time_in_seconds failed" in excinfo.value.message
 
+
 @pytest.mark.parametrize(
     "call_start_time, call_end_time, expected",
     [
@@ -1138,6 +1142,7 @@ def test_calculate_hours_worked_in_seconds_raises_error_when_no_call_end_time_co
     with pytest.raises(BertException) as excinfo:
         calculate_hours_worked_in_seconds(arrange)
     assert "calculate_hours_worked_in_seconds failed" in excinfo.value.message
+
 
 @pytest.mark.parametrize(
     "call_start_time, call_end_time, expected",
