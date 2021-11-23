@@ -116,6 +116,7 @@ def test_get_call_pattern_report_ignores_record_when_no_start_call_time_from_a_s
     result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
     assert result.hours_worked == "02:00:00"
 
+
 def test_get_call_pattern_report_ignores_record_when_no_end_call_time_from_a_single_day_is_found(mocker):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
@@ -299,6 +300,7 @@ def test_get_call_pattern_report_returns_no_message_when_no_invalid_records_are_
 
     result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
     assert result.invalid_fields == ""
+
 
 def test_get_call_pattern_report_returns_expected_message_when_no_end_time_found(mocker):
     datastore_records = [
@@ -555,6 +557,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
     result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
     assert result.appointments_for_contacts == "1/2, 50.00%"
 
+
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_AnswerService(mocker):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
@@ -691,6 +694,7 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
 
     result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
     assert result.no_contact_disconnect == "1/2, 50.00%"
+
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_NoAnswer(mocker):
     datastore_records = [
