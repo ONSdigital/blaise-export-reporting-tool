@@ -5,7 +5,6 @@ from tests.helpers.interviewer_call_pattern_helpers import interviewer_call_patt
 from reports.interviewer_call_pattern_report import *
 from models.error_capture import BertException
 
-
 interviewer = "James"
 start_date_as_string = "2021-09-22"
 end_date_as_string = "2021-09-22"
@@ -438,7 +437,7 @@ def test_get_call_pattern_report_returns_average_calls_per_hour(mocker):
             call_start_time=datetime_helper(day=7, hour=10),
             call_end_time=datetime_helper(day=7, hour=11),
             dial_secs=600
-        ),]
+        ), ]
 
     mocker.patch(
         "reports.interviewer_call_pattern_report.get_call_history_records",
@@ -622,7 +621,8 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
     assert result.no_contact_busy == "1/1, 100.00%"
 
 
-def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Busy_when_multiple_records_are_found(mocker):
+def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Busy_when_multiple_records_are_found(
+        mocker):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -714,7 +714,8 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
     assert result.no_contact_no_answer == "1/1, 100.00%"
 
 
-def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_NoAnswer_when_multiple_records_are_found(mocker):
+def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_NoAnswer_when_multiple_records_are_found(
+        mocker):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -968,7 +969,7 @@ def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_f
             dial_secs=600,
             status="Timed out during questionnaire"
         ),
-  ]
+    ]
 
     mocker.patch(
         "reports.interviewer_call_pattern_report.get_call_history_records",
@@ -1118,6 +1119,7 @@ def test_calculate_call_time_in_seconds_raises_error_when_no_dial_secs_column():
         calculate_call_time_in_seconds(arrange)
     assert "calculate_call_time_in_seconds failed" in excinfo.value.message
 
+
 @pytest.mark.parametrize(
     "call_start_time, call_end_time, expected",
     [
@@ -1143,10 +1145,11 @@ def test_calculate_hours_worked_in_seconds_raises_error_when_no_call_end_time_co
         calculate_hours_worked_in_seconds(arrange)
     assert "calculate_hours_worked_in_seconds failed" in excinfo.value.message
 
+
 @pytest.mark.parametrize(
     "call_start_time, call_end_time, expected",
     [
-        (datetime_helper(day=7, hour=9), datetime_helper(day=7, hour=10),  1.00),
+        (datetime_helper(day=7, hour=9), datetime_helper(day=7, hour=10), 1.00),
         (datetime_helper(day=7, hour=11), datetime_helper(day=7, hour=13), 0.50),
         (datetime_helper(day=7, hour=14), datetime_helper(day=7, hour=17), 0.33),
     ],
@@ -1208,26 +1211,26 @@ def test_percentages_equal_one_hundred(mocker):
             call_start_time=datetime_helper(day=7, hour=10),
             call_end_time=datetime_helper(day=7, hour=11),
             dial_secs=1800,
-            status = "Completed",
+            status="Completed",
         ),
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
-            call_end_time = datetime_helper(day=7, hour=11),
-            dial_secs = 1800,
-            status = "Finished (No contact)",
-    ),
+            call_end_time=datetime_helper(day=7, hour=11),
+            dial_secs=1800,
+            status="Finished (No contact)",
+        ),
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
-            call_end_time = datetime_helper(day=7, hour=11),
-            dial_secs = 1800,
-            status = "Finished (Non response)",
-    ),
+            call_end_time=datetime_helper(day=7, hour=11),
+            dial_secs=1800,
+            status="Finished (Non response)",
+        ),
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
             call_end_time=datetime_helper(day=7, hour=11),
             dial_secs=1800,
             status="Finished (Appointment made)",
-    )]
+        )]
 
     mocker.patch(
         "reports.interviewer_call_pattern_report.get_call_history_records",
