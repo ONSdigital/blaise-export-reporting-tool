@@ -1,11 +1,5 @@
-import datetime
 import pytest
 from unittest import mock
-
-import pandas as pd
-import numpy as np
-
-from google.api_core.datetime_helpers import DatetimeWithNanoseconds
 
 from app.app import app as flask_app
 from models.config_model import Config
