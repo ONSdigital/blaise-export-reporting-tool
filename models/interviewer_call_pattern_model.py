@@ -5,7 +5,7 @@ from dataclasses import asdict, dataclass
 
 @dataclass
 class InterviewerCallPattern:
-    total_valid_records: int
+    total_valid_cases: int
     hours_worked: str
     call_time: str
     hours_on_calls_percentage: float

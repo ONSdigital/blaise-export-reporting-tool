@@ -976,7 +976,7 @@ def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_f
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    assert result.total_valid_records == 6
+    assert result.total_valid_cases == 6
     assert result.hours_worked == "18:00:00"
     assert result.call_time == "01:00:00"
     assert result.hours_on_calls_percentage == 5.56
@@ -1124,7 +1124,7 @@ def test_get_call_pattern_report_returns_total_valid_records_found(mocker):
                  return_value=pd.DataFrame(datastore_records))
     result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
 
-    assert result.total_valid_records == 3
+    assert result.total_valid_cases == 3
 
 
 @pytest.mark.parametrize(
@@ -1270,10 +1270,10 @@ def test_percentages_equal_one_hundred(mocker):
     def calculate_percentage(numerator: int, denominator: int) -> float:
         return numerator/denominator * 100
 
-    completed_successfully_percentage = calculate_percentage(result.completed_successfully, result.total_valid_records)
-    appointments_for_contacts_percentage = calculate_percentage(result.appointments_for_contacts, result.total_valid_records)
-    no_contacts_percentage = calculate_percentage(result.no_contacts, result.total_valid_records)
-    refusals_percentage = calculate_percentage(result.refusals, result.total_valid_records)
+    completed_successfully_percentage = calculate_percentage(result.completed_successfully, result.total_valid_cases)
+    appointments_for_contacts_percentage = calculate_percentage(result.appointments_for_contacts, result.total_valid_cases)
+    no_contacts_percentage = calculate_percentage(result.no_contacts, result.total_valid_cases)
+    refusals_percentage = calculate_percentage(result.refusals, result.total_valid_cases)
 
     assert (completed_successfully_percentage + appointments_for_contacts_percentage +
             no_contacts_percentage + refusals_percentage) == 100

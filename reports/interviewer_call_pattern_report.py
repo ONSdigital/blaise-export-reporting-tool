@@ -30,7 +30,7 @@ def get_call_pattern_report(interviewer_name: str, start_date_string: str,
         )
 
     return InterviewerCallPattern(
-        total_valid_records=len(get_valid_records(records)),
+        total_valid_cases=len(get_valid_records(records)),
         hours_worked=str(calculate_hours_worked_as_datetime(records)),
         call_time=str(calculate_call_time_as_datetime(records)),
         hours_on_calls_percentage=calculate_hours_on_call_percentage(records),

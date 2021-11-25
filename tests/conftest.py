@@ -153,7 +153,7 @@ def invalid_date():
 @pytest.fixture
 def interviewer_call_pattern_report():
     return InterviewerCallPattern(
-        total_valid_records=10,
+        total_valid_cases=10,
         hours_worked="7:24:00",
         call_time="0:00:00",
         hours_on_calls_percentage=0,
