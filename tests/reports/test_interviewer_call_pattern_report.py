@@ -1099,18 +1099,19 @@ def test_get_call_pattern_report_returns_unique_reasons_when_multiple_cases_with
     assert "'status' column had timed out call status" in list_of_reasons
 
 
-def test_get_call_pattern_report_returns_total_records_found(mocker):
+def test_get_call_pattern_report_returns_total_records_and_total_valid_records(mocker):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(),
-        interviewer_call_pattern_report_sample_case(),
-        interviewer_call_pattern_report_sample_case(),
+        interviewer_call_pattern_report_sample_case(call_end_time=None,),
+        interviewer_call_pattern_report_sample_case(call_end_time=None,),
     ]
 
     mocker.patch("reports.interviewer_call_pattern_report.get_call_history_records",
                  return_value=pd.DataFrame(datastore_records))
     result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
 
-    assert result.total_valid_records == 3
+    assert result.total_records == 3
+    assert result.total_valid_records == 1
 
 
 @pytest.mark.parametrize(

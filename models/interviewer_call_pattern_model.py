@@ -5,6 +5,7 @@ from dataclasses import asdict, dataclass
 
 @dataclass
 class InterviewerCallPattern:
+    total_records: int
     total_valid_records: int
     hours_worked: str
     call_time: str
