@@ -28,8 +28,8 @@ class InterviewerCallPattern:
 
 @dataclass
 class InterviewerCallPatternWithNoValidData:
-    discounted_invalid_cases: int = math.nan
-    invalid_fields: str = "n/a"
+    discounted_invalid_cases: int
+    invalid_fields: str
 
     def json(self):
         return json.dumps(asdict(self))
