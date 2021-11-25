@@ -1110,20 +1110,6 @@ def test_get_call_pattern_report_returns_total_valid_records_found(mocker):
                  return_value=pd.DataFrame(datastore_records))
     result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
 
-    assert result.total_records == 3
-
-
-def test_get_call_pattern_report_returns_total_valid_records_found(mocker):
-    datastore_records = [
-        interviewer_call_pattern_report_sample_case(),
-        interviewer_call_pattern_report_sample_case(),
-        interviewer_call_pattern_report_sample_case(),
-    ]
-
-    mocker.patch("reports.interviewer_call_pattern_report.get_call_history_records",
-                 return_value=pd.DataFrame(datastore_records))
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-
     assert result.total_valid_cases == 3
 
 
