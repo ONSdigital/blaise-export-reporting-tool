@@ -30,7 +30,6 @@ class InterviewerCallPattern:
 class InterviewerCallPatternWithNoValidData:
     discounted_invalid_cases: int
     invalid_fields: str
-    total_valid_records: int = 0
 
     def json(self):
         return json.dumps(asdict(self))
