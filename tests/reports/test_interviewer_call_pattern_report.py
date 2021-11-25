@@ -354,7 +354,7 @@ def test_get_call_pattern_report_returns_expected_message_when_no_start_or_end_t
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    list_of_reasons = result.invalid_fields.split(",")
+    list_of_reasons = result.invalid_fields.split(", ")
 
     assert len(list_of_reasons) == 2
     assert "'call_start_time' column had missing data" in list_of_reasons
@@ -992,7 +992,7 @@ def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_f
     assert result.no_contact_other == 0
     assert result.discounted_invalid_cases == 4
 
-    list_of_reasons = result.invalid_fields.split(",")
+    list_of_reasons = result.invalid_fields.split(", ")
 
     assert len(list_of_reasons) == 3
     assert "'call_start_time' column had missing data" in list_of_reasons
@@ -1062,7 +1062,7 @@ def test_get_call_pattern_report_returns_multiple_reason_messages_when_no_call_e
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    list_of_reasons = result.invalid_fields.split(",")
+    list_of_reasons = result.invalid_fields.split(", ")
 
     assert len(list_of_reasons) == 2
     assert "'call_end_time' column had missing data" in list_of_reasons
@@ -1092,7 +1092,7 @@ def test_get_call_pattern_report_returns_unique_reasons_when_multiple_cases_with
         return_value=pd.DataFrame(datastore_records))
 
     result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
-    list_of_reasons = result.invalid_fields.split(",")
+    list_of_reasons = result.invalid_fields.split(", ")
 
     assert len(list_of_reasons) == 2
     assert "'call_end_time' column had missing data" in list_of_reasons

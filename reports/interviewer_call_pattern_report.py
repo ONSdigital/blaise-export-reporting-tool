@@ -26,7 +26,7 @@ def get_call_pattern_report(interviewer_name: str, start_date_string: str,
     if no_valid_records_are_found(records):
         return InterviewerCallPatternWithNoValidData(
             discounted_invalid_cases=percentage_of_invalid_records(records),
-            invalid_fields=",".join(provide_reasons_for_invalid_records(records))
+            invalid_fields=", ".join(provide_reasons_for_invalid_records(records))
         )
 
     return InterviewerCallPattern(
@@ -45,7 +45,7 @@ def get_call_pattern_report(interviewer_name: str, start_date_string: str,
         no_contact_no_answer=total_no_contact_records_with_call_result(records, "NoAnswer"),
         no_contact_other=total_no_contact_records_with_call_result(records, "Others"),
         discounted_invalid_cases=percentage_of_invalid_records(records),
-        invalid_fields=",".join(provide_reasons_for_invalid_records(records))
+        invalid_fields=", ".join(provide_reasons_for_invalid_records(records))
     )
 
 
