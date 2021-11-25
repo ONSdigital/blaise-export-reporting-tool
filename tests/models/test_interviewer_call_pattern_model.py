@@ -3,7 +3,6 @@ from models.interviewer_call_pattern_model import InterviewerCallPattern, Interv
 
 def test_interviewer_call_pattern_mandatory_fields():
     interviewer_call_pattern = InterviewerCallPattern(
-        total_records=10,
         total_valid_records=0,
         hours_worked="",
         call_time="",
@@ -19,7 +18,6 @@ def test_interviewer_call_pattern_mandatory_fields():
 
 def test_interviewer_call_pattern_all_fields():
     interviewer_call_pattern = InterviewerCallPattern(
-        total_records=10,
         total_valid_records=0,
         hours_worked="",
         call_time="",
