@@ -54,6 +54,7 @@ class CallHistoryClient:
                 call_result=item.get("DialResult"),
                 update_info=item.get("UpdateInfo"),
                 appointment_info=item.get("AppointmentInfo"),
+                outcome_code=item.get("outcome_code"),
             )
             questionnaire_name = get_questionnaire_name_from_id(
                 cati_call_history.questionnaire_id, questionnaire_list
