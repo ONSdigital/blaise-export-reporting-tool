@@ -67,7 +67,7 @@ def test_cati_call_history_table_fields():
             "AppointmentInfo",
             "AdditionalData",
             "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dial_secs",
-            "CASE WHEN AdditionalData LIKE '%<Field Name=\"QHAdmin.HOut\" Status=\"Response\" Value=\"110\"%' THEN 110 END AS outcome_code"]
+            "CASE WHEN AdditionalData LIKE '%<Field Name=\"QHAdmin.HOut\" Status=\"Response\" Value=\"120\"%' THEN 120 END AS outcome_code"]
     )
 
 

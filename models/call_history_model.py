@@ -52,7 +52,7 @@ class CatiCallHistoryTable(DataBaseBase):
 
     @classmethod
     def webnudge(cls):
-        return """CASE WHEN AdditionalData LIKE '%<Field Name="QHAdmin.HOut" Status="Response" Value="110"%' THEN 110 END AS outcome_code"""
+        return """CASE WHEN AdditionalData LIKE '%<Field Name="QHAdmin.HOut" Status="Response" Value="120"%' THEN 120 END AS outcome_code"""
 
     @classmethod
     def dial_secs(cls):
