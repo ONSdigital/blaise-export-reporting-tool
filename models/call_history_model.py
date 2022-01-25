@@ -24,7 +24,7 @@ class CallHistory:
     wave: int = None
     cohort: str = None
     number_of_interviews: int = None
-    outcome_code: str = None
+    outcome_code: int = None
 
     def generate_questionnaire_details(self, questionnaire_name):
         self.questionnaire_name = questionnaire_name
@@ -48,6 +48,15 @@ class CatiCallHistoryTable(DataBaseBase):
     DialResult: str
     UpdateInfo: str
     AppointmentInfo: str
+    AdditionalData: str
+
+    @staticmethod
+    def webnudge_hout_as_outcome_code():
+        return """CASE WHEN ExtractValue(`AdditionalData`, 'boolean(/Fields/Field[@Name="QHAdmin.HOut"][@Value="120"])') THEN 120 END AS OutcomeCode"""
+
+    @staticmethod
+    def dial_secs():
+        return "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as DialSecs"
 
     @classmethod
     def table_name(cls):
@@ -55,4 +64,4 @@ class CatiCallHistoryTable(DataBaseBase):
 
     @classmethod
     def extra_fields(cls):
-        return ["ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dial_secs"]
+        return [cls.dial_secs(), cls.webnudge_hout_as_outcome_code()]

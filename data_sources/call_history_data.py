@@ -48,12 +48,13 @@ class CallHistoryClient:
                 busy_dials=item.get("BusyDials"),
                 call_start_time=item.get("StartTime"),
                 call_end_time=item.get("EndTime"),
-                dial_secs=item.get("dial_secs"),
+                dial_secs=item.get("DialSecs"),
                 status=item.get("Status"),
                 interviewer=item.get("Interviewer"),
                 call_result=item.get("DialResult"),
                 update_info=item.get("UpdateInfo"),
                 appointment_info=item.get("AppointmentInfo"),
+                outcome_code=item.get("OutcomeCode"),
             )
             questionnaire_name = get_questionnaire_name_from_id(
                 cati_call_history.questionnaire_id, questionnaire_list
