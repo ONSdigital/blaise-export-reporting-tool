@@ -23,9 +23,6 @@ class DataBaseBase:
         db = cls.connect_to_database(config)
         cursor = db.cursor(dictionary=True)
         cursor.execute(f"""SELECT {cls.fields()} FROM {cls.table_name()}""")
-        # TODO: No!
-        le_query = f"""SELECT {cls.fields()} FROM {cls.table_name()}"""
-        print(f"EL!!!!! {le_query}")
         results = cursor.fetchall()
         cursor.close()
         db.close()
