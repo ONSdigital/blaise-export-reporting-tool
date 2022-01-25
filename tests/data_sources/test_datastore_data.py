@@ -94,7 +94,7 @@ def test_get_cati_call_history(mock_get_cati_call_history_from_database):
             "BusyDials": 0,
             "StartTime": "2021/05/19 14:59:01",
             "EndTime": "2021/05/19 14:59:17",
-            "dial_secs": 16,
+            "DialSecs": 16,
             "Status": "Finished (Non response)",
             "Interviewer": "matpal",
             "DialResult": "NonRespons",
