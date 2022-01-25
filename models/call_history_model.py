@@ -52,7 +52,7 @@ class CatiCallHistoryTable(DataBaseBase):
 
     @staticmethod
     def webnudge_hout_as_outcome_code():
-        return """CASE WHEN AdditionalData LIKE '%<Field Name="QHAdmin.HOut" Status="Response" Value="120"%' THEN 120 END AS OutcomeCode"""
+        return """CASE WHEN ExtractValue(`xml`, 'boolean(/Fields/Field[@Name="QHAdmin.HOut"][@Value="120"])') THEN 120 END AS OutcomeCode"""
 
     @staticmethod
     def dial_secs():
