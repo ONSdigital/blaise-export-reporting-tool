@@ -1,3 +1,5 @@
+import pandas as pd
+
 from google.cloud import datastore
 
 from functions.date_functions import parse_date_string_to_datetime
@@ -22,6 +24,7 @@ def get_call_history_records(interviewer_name, start_date_string, end_date_strin
         query.add_filter("survey", "=", survey_tla)
 
     query.order = ["call_start_time"]
-    results = list(query.fetch())
+    results = pd.DataFrame(list(query.fetch()))
     print(f"get_call_history_records_by_interviewer_and_date_range - {len(results)} records found")
+    results.loc[(results.outcome_code == "120"), "call_result"] = "WebNudge"
     return results
