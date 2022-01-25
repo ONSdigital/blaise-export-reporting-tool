@@ -24,7 +24,11 @@ def get_call_history_records(interviewer_name, start_date_string, end_date_strin
         query.add_filter("survey", "=", survey_tla)
 
     query.order = ["call_start_time"]
-    results = pd.DataFrame(list(query.fetch()))
+    results = list(query.fetch())
+
+    for record in results:
+        if record['outcome_code'] == "120":
+            record["call_result"] = "WebNudge"
+
     print(f"get_call_history_records_by_interviewer_and_date_range - {len(results)} records found")
-    results.loc[(results.outcome_code == "120"), "call_result"] = "WebNudge"
-    return results.values.tolist()
+    return results
