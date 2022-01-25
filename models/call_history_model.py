@@ -64,7 +64,4 @@ class CatiCallHistoryTable(DataBaseBase):
 
     @classmethod
     def extra_fields(cls):
-        return [cls.dial_secs(), cls.webnudge()]
-
-
-
+        return [cls.dial_secs(), cls.webnudge_hout_as_outcome_code()]
