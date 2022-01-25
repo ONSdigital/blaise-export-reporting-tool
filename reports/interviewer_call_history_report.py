@@ -27,4 +27,4 @@ def get_call_history_records(interviewer_name, start_date_string, end_date_strin
     results = pd.DataFrame(list(query.fetch()))
     print(f"get_call_history_records_by_interviewer_and_date_range - {len(results)} records found")
     results.loc[(results.outcome_code == "120"), "call_result"] = "WebNudge"
-    return results
+    return results.values.tolist()
