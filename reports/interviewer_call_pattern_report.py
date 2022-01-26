@@ -39,6 +39,7 @@ def get_call_pattern_report(interviewer_name: str, start_date_string: str,
         no_contacts=total_records_with_status(records, "Finished (No contact)"),
         completed_successfully=total_records_with_status(records, "Completed"),
         appointments_for_contacts=total_records_with_status(records, "Finished (Appointment made)"),
+        webnudge=webnudge(records),
         no_contact_answer_service=total_no_contact_records_with_call_result(records, "AnswerService"),
         no_contact_busy=total_no_contact_records_with_call_result(records, "Busy"),
         no_contact_disconnect=total_no_contact_records_with_call_result(records, "Disconnect"),
@@ -67,7 +68,9 @@ def get_call_history_records(
             query.add_filter("survey", "=", survey_tla)
 
         query.order = ["call_start_time"]
-        return pd.DataFrame(list(query.fetch()))
+        results = pd.DataFrame(list(query.fetch()))
+        results.loc[(results.outcome_code == "120"), "call_result"] = "WebNudge"
+        return results
 
     except Exception as err:
         raise BertException(f"get_call_history_records failed: {err}", 400)
@@ -107,6 +110,12 @@ def calculate_average_calls_per_hour(records: pd.DataFrame) -> float:
 
 
 def total_records_with_status(records: pd.DataFrame, status: str) -> int:
+    if status == "Completed":
+        records.drop(records[records.call_result == "WebNudge"].index, inplace=True)
+
+    if len(records) == 0:
+        return 0
+
     return number_of_records_which_has_status(get_valid_records(records), status)
 
 
@@ -180,6 +189,13 @@ def number_of_records_which_has_status(records: pd.DataFrame, status: str) -> in
         return len(records.loc[records["status"] == status])
     except Exception as err:
         raise BertException(f"number_of_records_which_has_status failed: {err}", 400)
+
+
+def webnudge(records: pd.DataFrame) -> int:
+    try:
+        return len(records.loc[records["call_result"] == "WebNudge"])
+    except Exception as err:
+        raise BertException(f"webnudge() failed: {err}", 400)
 
 
 def convert_timedelta_to_hhmmss_as_string(td: datetime) -> str:

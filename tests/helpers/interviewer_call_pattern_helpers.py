@@ -12,6 +12,7 @@ def interviewer_call_pattern_report_sample_case(
         dial_secs=8,
         status="Completed",
         call_result="Questionnaire",
+        outcome_code=110
 ):
 
     return {
@@ -24,4 +25,5 @@ def interviewer_call_pattern_report_sample_case(
         "survey_tla": "OPN",
         "start_date_as_string": "2021-09-22",
         "end_date_as_string": "2021-09-22",
+        "outcome_code": outcome_code,
     }
