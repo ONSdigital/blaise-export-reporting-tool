@@ -1,7 +1,10 @@
 import pandas as pd
 import pytest
 
-from tests.helpers.interviewer_call_pattern_helpers import interviewer_call_pattern_report_sample_case, datetime_helper
+from unittest.mock import patch
+from tests.helpers.interviewer_call_history_helpers import entity_builder
+from tests.helpers.interviewer_call_pattern_helpers import (interviewer_call_pattern_report_sample_case,
+                                                            datetime_helper, get_list_of_percentages)
 from reports.interviewer_call_pattern_report import *
 from models.error_capture import BertException
 
@@ -1326,78 +1329,15 @@ def test_calculate_hours_on_call_percentage_returns_a_value_to_two_dp_when_value
     assert result.hours_on_calls_percentage == 50.0
 
 
-def test_percentages_equal_one_hundred(mocker, interviewer_name, start_date_as_string, end_date_as_string, survey_tla):
-    datastore_records = [
-        interviewer_call_pattern_report_sample_case(
-            call_start_time=datetime_helper(day=7, hour=10),
-            call_end_time=datetime_helper(day=7, hour=11),
-            dial_secs=1800,
-            status="Completed",
-            call_result="Questionnaire",
-            outcome_code=120,
-        ),
-        interviewer_call_pattern_report_sample_case(
-            call_start_time=datetime_helper(day=7, hour=10),
-            call_end_time=datetime_helper(day=7, hour=11),
-            dial_secs=1800,
-            status="Completed",
-            call_result="Questionnaire",
-        ),
-        interviewer_call_pattern_report_sample_case(
-            call_start_time=datetime_helper(day=7, hour=10),
-            call_end_time=datetime_helper(day=7, hour=11),
-            dial_secs=1800,
-            status="Finished (No contact)",
-            call_result="Disconnect",
-        ),
-        interviewer_call_pattern_report_sample_case(
-            call_start_time=datetime_helper(day=7, hour=10),
-            call_end_time=datetime_helper(day=7, hour=11),
-            dial_secs=1800,
-            status="Finished (Non response)",
-            call_result="NonRespons",
-        ),
-        interviewer_call_pattern_report_sample_case(
-            call_start_time=datetime_helper(day=7, hour=10),
-            call_end_time=datetime_helper(day=7, hour=11),
-            dial_secs=1800,
-            status="Finished (Appointment made)",
-            call_result="Appointment",
-        )]
-
+def test_percentages_equal_one_hundred(mocker, interviewer_name, start_date_as_string, end_date_as_string, survey_tla,
+                                       call_history_records_status_sample):
     mocker.patch(
         "reports.interviewer_call_pattern_report.get_call_history_records",
-        return_value=pd.DataFrame(datastore_records))
+        return_value=pd.DataFrame(call_history_records_status_sample))
 
-    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
+    report = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
 
-    def calculate_percentage(numerator: int, denominator: int) -> float:
-        return numerator / denominator * 100
-
-    completed_successfully_percentage = calculate_percentage(result.completed_successfully, result.total_valid_cases)
-    appointments_for_contacts_percentage = calculate_percentage(result.appointments_for_contacts,
-                                                                result.total_valid_cases)
-    no_contacts_percentage = calculate_percentage(result.no_contacts, result.total_valid_cases)
-    refusals_percentage = calculate_percentage(result.refusals, result.total_valid_cases)
-    webnudge_percentage = calculate_percentage(result.webnudge, result.total_valid_cases)
-
-    assert (completed_successfully_percentage + appointments_for_contacts_percentage +
-            no_contacts_percentage + refusals_percentage + webnudge_percentage) == 100
-
-
-def test_webnudge():
-    arrange = pd.DataFrame([
-        interviewer_call_pattern_report_sample_case(call_result="WebNudge"),
-    ])
-    assert webnudge(arrange) == 1
-
-
-def test_webnudge_raises_bert_exception():
-    with pytest.raises(BertException) as err:
-        webnudge(pd.DataFrame())
-
-    assert err.value.message == "webnudge() failed: 'call_result'"
-    assert err.value.code == 400
+    percentages_for_every_status = get_list_of_percentages(report)
 
     assert len(percentages_for_every_status) == 5
     for status_percentage in percentages_for_every_status:
