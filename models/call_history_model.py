@@ -48,7 +48,6 @@ class CatiCallHistoryTable(DataBaseBase):
     DialResult: str
     UpdateInfo: str
     AppointmentInfo: str
-    AdditionalData: str
 
     @staticmethod
     def webnudge_hout_as_outcome_code():
