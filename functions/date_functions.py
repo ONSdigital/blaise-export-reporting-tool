@@ -1,8 +1,6 @@
 import re
 from datetime import datetime
 
-from models.error_capture import BertException
-
 
 def validate_date(date_text):
     try:
