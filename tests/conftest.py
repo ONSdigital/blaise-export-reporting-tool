@@ -5,6 +5,7 @@ from app.app import app as flask_app
 
 from models.config_model import Config
 from models.interviewer_call_pattern_model import InterviewerCallPattern
+from tests.helpers.interviewer_call_pattern_helpers import interviewer_call_pattern_report_sample_case, datetime_helper
 
 
 @pytest.fixture
@@ -162,8 +163,53 @@ def survey_tla():
 
 
 @pytest.fixture
+def webnudge_outcome_code():
+    return "120"
+
+
+@pytest.fixture
+def arbitrary_outcome_code():
+    return "999"
+
+
+@pytest.fixture
 def invalid_date():
     return "blah"
+
+
+@pytest.fixture
+def call_history_records_status_sample():
+    return [
+        interviewer_call_pattern_report_sample_case(
+            call_start_time=datetime_helper(day=7, hour=10),
+            call_end_time=datetime_helper(day=7, hour=11),
+            dial_secs=1800,
+            status="WebNudge",
+        ),
+        interviewer_call_pattern_report_sample_case(
+            call_start_time=datetime_helper(day=7, hour=10),
+            call_end_time=datetime_helper(day=7, hour=11),
+            dial_secs=1800,
+            status="Completed",
+        ),
+        interviewer_call_pattern_report_sample_case(
+            call_start_time=datetime_helper(day=7, hour=10),
+            call_end_time=datetime_helper(day=7, hour=11),
+            dial_secs=1800,
+            status="Finished (No contact)",
+        ),
+        interviewer_call_pattern_report_sample_case(
+            call_start_time=datetime_helper(day=7, hour=10),
+            call_end_time=datetime_helper(day=7, hour=11),
+            dial_secs=1800,
+            status="Finished (Non response)",
+        ),
+        interviewer_call_pattern_report_sample_case(
+            call_start_time=datetime_helper(day=7, hour=10),
+            call_end_time=datetime_helper(day=7, hour=11),
+            dial_secs=1800,
+            status="Finished (Appointment made)",
+        )]
 
 
 @pytest.fixture

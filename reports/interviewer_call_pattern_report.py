@@ -34,11 +34,11 @@ def get_call_pattern_report(interviewer_name: str, start_date_string: str,
         call_time=str(calculate_call_time_as_datetime(records)),
         hours_on_calls_percentage=calculate_hours_on_call_percentage(records),
         average_calls_per_hour=calculate_average_calls_per_hour(records),
-        refusals=total_records_with_status(records, "Finished (Non response)"),
-        no_contacts=total_records_with_status(records, "Finished (No contact)"),
-        completed_successfully=total_records_with_status(records, "Completed"),
-        appointments_for_contacts=total_records_with_status(records, "Finished (Appointment made)"),
-        webnudge=webnudge(records),
+        refusals=number_of_records_which_has_status(records, "Finished (Non response)"),
+        no_contacts=number_of_records_which_has_status(records, "Finished (No contact)"),
+        completed_successfully=number_of_records_which_has_status(records, "Completed"),
+        appointments_for_contacts=number_of_records_which_has_status(records, "Finished (Appointment made)"),
+        webnudge=number_of_records_which_has_status(records, "WebNudge"),
         no_contact_answer_service=total_no_contact_records_with_call_result(records, "AnswerService"),
         no_contact_busy=total_no_contact_records_with_call_result(records, "Busy"),
         no_contact_disconnect=total_no_contact_records_with_call_result(records, "Disconnect"),
@@ -80,16 +80,6 @@ def calculate_average_calls_per_hour(records: pd.DataFrame) -> float:
     hours_worked = hours_worked_in_seconds / 3600
 
     return round(number_of_valid_records / float(hours_worked), 2)
-
-
-def total_records_with_status(records: pd.DataFrame, status: str) -> int:
-    if status == "Completed":
-        records.drop(records[records.call_result == "WebNudge"].index, inplace=True)
-
-    if len(records) == 0:
-        return 0
-
-    return number_of_records_which_has_status(get_valid_records(records), status)
 
 
 def total_no_contact_records_with_call_result(records: pd.DataFrame, call_result: str) -> int:
@@ -162,13 +152,6 @@ def number_of_records_which_has_status(records: pd.DataFrame, status: str) -> in
         return len(records.loc[records["status"] == status])
     except Exception as err:
         raise BertException(f"number_of_records_which_has_status failed: {err}", 400)
-
-
-def webnudge(records: pd.DataFrame) -> int:
-    try:
-        return len(records.loc[records["call_result"] == "WebNudge"])
-    except Exception as err:
-        raise BertException(f"webnudge() failed: {err}", 400)
 
 
 def convert_timedelta_to_hhmmss_as_string(td: datetime) -> str:

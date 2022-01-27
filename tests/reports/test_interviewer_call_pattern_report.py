@@ -1399,16 +1399,7 @@ def test_webnudge_raises_bert_exception():
     assert err.value.message == "webnudge() failed: 'call_result'"
     assert err.value.code == 400
 
-
-@pytest.mark.parametrize(
-    "status, call_result, expected",
-    [
-        ("Completed", "Questionnaire", 1),
-        ("Completed", "WebNudge", 0),
-    ],
-)
-def test_total_records_with_complted_status_should_drop_completed_if_webnudges(status, call_result, expected):
-    arrange = pd.DataFrame([
-        interviewer_call_pattern_report_sample_case(status=status, call_result=call_result),
-    ])
-    assert total_records_with_status(arrange, "Completed") == expected
+    assert len(percentages_for_every_status) == 5
+    for status_percentage in percentages_for_every_status:
+        assert status_percentage == 20.0
+    assert sum(percentages_for_every_status) == 100.00

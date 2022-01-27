@@ -18,13 +18,11 @@ def test_get_call_history_records_with_invalid_dates(interviewer_name, invalid_d
 
 @patch("reports.interviewer_call_history_report.get_datastore_records")
 def test_get_call_history_records_with_one_datastore_entity(mock_get_datastore_records, interviewer_name,
-                                                            start_date_as_string, end_date_as_string):
-    original_call_result = "Questionnaire"
-    new_call_result = "WebNudge"
-
+                                                            start_date_as_string, end_date_as_string,
+                                                            arbitrary_outcome_code):
     mock_datastore_entity = [
         entity_builder(
-            1, interviewer_name, start_date_as_string, end_date_as_string, "", original_call_result
+            1, interviewer_name, start_date_as_string, end_date_as_string, arbitrary_outcome_code, "Completed"
         )
     ]
 
@@ -38,81 +36,81 @@ def test_get_call_history_records_with_one_datastore_entity(mock_get_datastore_r
 @patch("reports.interviewer_call_history_report.get_datastore_records")
 def test_get_call_history_records_with_one_datastore_entity_returns_webnudge(mock_get_datastore_records,
                                                                              interviewer_name, start_date_as_string,
-                                                                             end_date_as_string):
-    original_call_result = "Questionnaire"
-    new_call_result = "WebNudge"
+                                                                             end_date_as_string, webnudge_outcome_code):
+    original_status = "Completed"
+    new_status = "WebNudge"
 
     mock_datastore_entity = [
         entity_builder(
-            1, interviewer_name, start_date_as_string, end_date_as_string, "120", original_call_result
+            1, interviewer_name, start_date_as_string, end_date_as_string, webnudge_outcome_code, original_status
         )
     ]
 
     mock_get_datastore_records.return_value = mock_datastore_entity
     assert len(mock_datastore_entity) == 1
-    assert mock_datastore_entity[0]["call_result"] == original_call_result
+    assert mock_datastore_entity[0]["status"] == original_status
 
     results = get_call_history_records(interviewer_name, start_date_as_string, end_date_as_string)
 
     assert len(results) == 1
-    assert results[0]["call_result"] == new_call_result
+    assert results[0]["status"] == new_status
 
 
 @patch("reports.interviewer_call_history_report.get_datastore_records")
-def test_get_call_history_records_with_multiple_entities_returns_one_webnudge(mock_get_datastore_records,
-                                                                              interviewer_name, start_date_as_string,
-                                                                              end_date_as_string):
-    original_call_result = "Questionnaire"
-    new_call_result = "WebNudge"
+def test_get_call_history_records_with_multiple_entities_returns_one_webnudge(
+        mock_get_datastore_records, interviewer_name, start_date_as_string,
+        end_date_as_string, webnudge_outcome_code, arbitrary_outcome_code):
+    original_status = "Completed"
+    new_status = "WebNudge"
 
     mock_datastore_entities = [
         entity_builder(
-            2, interviewer_name, start_date_as_string, end_date_as_string, "120", original_call_result
+            2, interviewer_name, start_date_as_string, end_date_as_string, webnudge_outcome_code, original_status
         ),
         entity_builder(
-            3, interviewer_name, start_date_as_string, end_date_as_string, "", original_call_result
+            3, interviewer_name, start_date_as_string, end_date_as_string, arbitrary_outcome_code, original_status
         ),
         entity_builder(
-            4, interviewer_name, start_date_as_string, end_date_as_string, "", original_call_result
+            4, interviewer_name, start_date_as_string, end_date_as_string, arbitrary_outcome_code, original_status
         )
     ]
 
     mock_get_datastore_records.return_value = mock_datastore_entities
     assert len(mock_datastore_entities) == 3
-    assert mock_datastore_entities[0]["call_result"] == original_call_result
-    assert mock_datastore_entities[1]["call_result"] == original_call_result
-    assert mock_datastore_entities[2]["call_result"] == original_call_result
+    assert mock_datastore_entities[0]["status"] == original_status
+    assert mock_datastore_entities[1]["status"] == original_status
+    assert mock_datastore_entities[2]["status"] == original_status
 
     results = get_call_history_records(interviewer_name, start_date_as_string, end_date_as_string)
 
     assert len(results) == 3
-    assert results[0]["call_result"] == new_call_result
-    assert results[1]["call_result"] == original_call_result
-    assert results[2]["call_result"] == original_call_result
+    assert results[0]["status"] == new_status
+    assert results[1]["status"] == original_status
+    assert results[2]["status"] == original_status
 
 
 @patch("reports.interviewer_call_history_report.get_datastore_records")
 def test_get_call_history_records_with_multiple_entities_returns_all_webnudges(
-        mock_get_datastore_records, interviewer_name, start_date_as_string, end_date_as_string):
-    original_call_result = "Questionnaire"
-    new_call_result = "WebNudge"
+        mock_get_datastore_records, interviewer_name, start_date_as_string, end_date_as_string, webnudge_outcome_code):
+    original_status = "Questionnaire"
+    new_status = "WebNudge"
 
     mock_datastore_entities = [
         entity_builder(
-            1, interviewer_name, start_date_as_string, end_date_as_string, "120", original_call_result
+            1, interviewer_name, start_date_as_string, end_date_as_string, webnudge_outcome_code, original_status
         ),
         entity_builder(
-            2, interviewer_name, start_date_as_string, end_date_as_string, "120", original_call_result
+            2, interviewer_name, start_date_as_string, end_date_as_string, webnudge_outcome_code, original_status
         )
     ]
 
     mock_get_datastore_records.return_value = mock_datastore_entities
     assert len(mock_datastore_entities) == 2
-    assert mock_datastore_entities[0]["call_result"] == original_call_result
-    assert mock_datastore_entities[1]["call_result"] == original_call_result
+    assert mock_datastore_entities[0]["status"] == original_status
+    assert mock_datastore_entities[1]["status"] == original_status
 
     results = get_call_history_records(interviewer_name, start_date_as_string, end_date_as_string)
 
     assert len(results) == 2
-    assert results[0]["call_result"] == new_call_result
-    assert results[1]["call_result"] == new_call_result
+    assert results[0]["status"] == new_status
+    assert results[1]["status"] == new_status
