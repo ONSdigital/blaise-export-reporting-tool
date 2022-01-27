@@ -147,6 +147,21 @@ def interviewer_name():
 
 
 @pytest.fixture
+def start_date_as_string():
+    return "2021-09-22"
+
+
+@pytest.fixture
+def end_date_as_string():
+    return "2021-09-22"
+
+
+@pytest.fixture
+def survey_tla():
+    return "OPN"
+
+
+@pytest.fixture
 def invalid_date():
     return "blah"
 
