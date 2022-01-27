@@ -2,9 +2,8 @@ import datetime
 
 import numpy as np
 import pandas as pd
-from google.cloud import datastore
 
-from functions.date_functions import parse_date_string_to_datetime
+from reports.interviewer_call_history_report import get_call_history_records
 
 from models.interviewer_call_pattern_model import (
     InterviewerCallPattern, InterviewerCallPatternWithNoValidData
@@ -48,32 +47,6 @@ def get_call_pattern_report(interviewer_name: str, start_date_string: str,
         discounted_invalid_cases=percentage_of_invalid_records(records),
         invalid_fields=", ".join(provide_reasons_for_invalid_records(records))
     )
-
-
-def get_call_history_records(
-        interviewer_name: str, start_date_string: str,
-        end_date_string: str, survey_tla: str,
-) -> pd.DataFrame:
-    try:
-        start_date = parse_date_string_to_datetime(start_date_string)
-        end_date = parse_date_string_to_datetime(end_date_string, True)
-
-        client = datastore.Client()
-        query = client.query(kind="CallHistory")
-        query.add_filter("interviewer", "=", interviewer_name)
-        query.add_filter("call_start_time", ">=", start_date)
-        query.add_filter("call_start_time", "<=", end_date)
-
-        if survey_tla is not None:
-            query.add_filter("survey", "=", survey_tla)
-
-        query.order = ["call_start_time"]
-        results = pd.DataFrame(list(query.fetch()))
-        results.loc[(results.outcome_code == "120"), "call_result"] = "WebNudge"
-        return results
-
-    except Exception as err:
-        raise BertException(f"get_call_history_records failed: {err}", 400)
 
 
 def calculate_hours_worked_as_datetime(records: pd.DataFrame) -> str:
