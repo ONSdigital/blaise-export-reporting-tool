@@ -2,6 +2,7 @@ import pytest
 from unittest import mock
 
 from app.app import app as flask_app
+
 from models.config_model import Config
 from models.interviewer_call_pattern_model import InterviewerCallPattern
 
