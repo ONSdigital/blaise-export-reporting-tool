@@ -133,7 +133,7 @@ def test_get_cati_call_history(mock_get_cati_call_history_from_database):
             number_of_interviews=None,
             outcome_code=None,
         )
-    ]\
+    ]
 
 
 def test_merge_cati_call_history_and_questionnaire_data():
