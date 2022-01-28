@@ -229,6 +229,6 @@ def interviewer_call_pattern_report():
         no_contact_other=7,
         completed_successfully=8,
         appointments_for_contacts=9,
-        webnudge=10,
+        web_nudge=10,
         invalid_fields="n/a",
     )

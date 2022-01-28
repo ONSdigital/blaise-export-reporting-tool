@@ -40,6 +40,6 @@ def get_list_of_percentages(report):
                                         report.total_valid_cases)
     no_contacts = calculate_percentage(report.no_contacts, report.total_valid_cases)
     refusals = calculate_percentage(report.refusals, report.total_valid_cases)
-    webnudge = calculate_percentage(report.webnudge, report.total_valid_cases)
+    webnudge = calculate_percentage(report.web_nudge, report.total_valid_cases)
 
     return [successful, appointments, no_contacts, refusals, webnudge]
