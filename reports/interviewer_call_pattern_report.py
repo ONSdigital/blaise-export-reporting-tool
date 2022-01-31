@@ -2,9 +2,8 @@ import datetime
 
 import numpy as np
 import pandas as pd
-from google.cloud import datastore
 
-from functions.date_functions import parse_date_string_to_datetime
+from reports.interviewer_call_history_report import get_call_history_records
 
 from models.interviewer_call_pattern_model import (
     InterviewerCallPattern, InterviewerCallPatternWithNoValidData
@@ -16,7 +15,8 @@ columns_to_check_for_nulls = ["call_start_time", "call_end_time"]
 
 def get_call_pattern_report(interviewer_name: str, start_date_string: str,
                             end_date_string: str, survey_tla: str) -> object:
-    records = get_call_history_records(interviewer_name, start_date_string, end_date_string, survey_tla)
+    result = get_call_history_records(interviewer_name, start_date_string, end_date_string, survey_tla)
+    records = pd.DataFrame(result)
 
     print(f"Calculating call pattern data for interviewer '{interviewer_name}'")
 
@@ -35,10 +35,11 @@ def get_call_pattern_report(interviewer_name: str, start_date_string: str,
         call_time=str(calculate_call_time_as_datetime(records)),
         hours_on_calls_percentage=calculate_hours_on_call_percentage(records),
         average_calls_per_hour=calculate_average_calls_per_hour(records),
-        refusals=total_records_with_status(records, "Finished (Non response)"),
-        no_contacts=total_records_with_status(records, "Finished (No contact)"),
-        completed_successfully=total_records_with_status(records, "Completed"),
-        appointments_for_contacts=total_records_with_status(records, "Finished (Appointment made)"),
+        refusals=number_of_records_which_has_status(records, "Finished (Non response)"),
+        no_contacts=number_of_records_which_has_status(records, "Finished (No contact)"),
+        completed_successfully=number_of_records_which_has_status(records, "Completed"),
+        appointments_for_contacts=number_of_records_which_has_status(records, "Finished (Appointment made)"),
+        web_nudge=number_of_records_which_has_status(records, "WebNudge"),
         no_contact_answer_service=total_no_contact_records_with_call_result(records, "AnswerService"),
         no_contact_busy=total_no_contact_records_with_call_result(records, "Busy"),
         no_contact_disconnect=total_no_contact_records_with_call_result(records, "Disconnect"),
@@ -47,30 +48,6 @@ def get_call_pattern_report(interviewer_name: str, start_date_string: str,
         discounted_invalid_cases=percentage_of_invalid_records(records),
         invalid_fields=", ".join(provide_reasons_for_invalid_records(records))
     )
-
-
-def get_call_history_records(
-        interviewer_name: str, start_date_string: str,
-        end_date_string: str, survey_tla: str,
-) -> pd.DataFrame:
-    try:
-        start_date = parse_date_string_to_datetime(start_date_string)
-        end_date = parse_date_string_to_datetime(end_date_string, True)
-
-        client = datastore.Client()
-        query = client.query(kind="CallHistory")
-        query.add_filter("interviewer", "=", interviewer_name)
-        query.add_filter("call_start_time", ">=", start_date)
-        query.add_filter("call_start_time", "<=", end_date)
-
-        if survey_tla is not None:
-            query.add_filter("survey", "=", survey_tla)
-
-        query.order = ["call_start_time"]
-        return pd.DataFrame(list(query.fetch()))
-
-    except Exception as err:
-        raise BertException(f"get_call_history_records failed: {err}", 400)
 
 
 def calculate_hours_worked_as_datetime(records: pd.DataFrame) -> str:
@@ -104,10 +81,6 @@ def calculate_average_calls_per_hour(records: pd.DataFrame) -> float:
     hours_worked = hours_worked_in_seconds / 3600
 
     return round(number_of_valid_records / float(hours_worked), 2)
-
-
-def total_records_with_status(records: pd.DataFrame, status: str) -> int:
-    return number_of_records_which_has_status(get_valid_records(records), status)
 
 
 def total_no_contact_records_with_call_result(records: pd.DataFrame, call_result: str) -> int:

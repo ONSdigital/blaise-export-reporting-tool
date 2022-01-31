@@ -46,5 +46,6 @@ def identify_webnudge_cases(records):
     for record in records:
         if record["outcome_code"] == "120":
             record["call_result"] = "WebNudge"
+            record["status"] = "WebNudge"
 
     return records
