@@ -12,6 +12,7 @@ def test_interviewer_call_pattern_mandatory_fields():
         no_contacts=0,
         completed_successfully=0,
         appointments_for_contacts=0,
+        web_nudge=0,
     )
     assert interviewer_call_pattern is not None
 
@@ -32,6 +33,7 @@ def test_interviewer_call_pattern_all_fields():
         no_contact_other=0,
         completed_successfully=0,
         appointments_for_contacts=0,
+        web_nudge=0,
         discounted_invalid_cases=0,
         invalid_fields="",
     )

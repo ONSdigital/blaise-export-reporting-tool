@@ -1,26 +1,28 @@
 import pandas as pd
 import pytest
 
-from tests.helpers.interviewer_call_pattern_helpers import interviewer_call_pattern_report_sample_case, datetime_helper
+from unittest.mock import patch
+from tests.helpers.interviewer_call_history_helpers import entity_builder
+from tests.helpers.interviewer_call_pattern_helpers import (interviewer_call_pattern_report_sample_case,
+                                                            datetime_helper, get_list_of_percentages)
 from reports.interviewer_call_pattern_report import *
 from models.error_capture import BertException
 
-interviewer = "James"
-start_date_as_string = "2021-09-22"
-end_date_as_string = "2021-09-22"
-survey_tla = "OPN"
 
-
-def test_get_call_pattern_report_returns_an_empty_dict_if_no_records_were_found(mocker):
+def test_get_call_pattern_report_returns_an_empty_dict_if_no_records_were_found(mocker, interviewer_name,
+                                                                                start_date_as_string,
+                                                                                end_date_as_string, survey_tla):
     mocker.patch(
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(),
     )
 
-    assert get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla) == {}
+    assert get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla) == {}
 
 
-def test_get_call_pattern_report_returns_hours_worked_when_a_record_is_found(mocker):
+def test_get_call_pattern_report_returns_hours_worked_when_a_record_is_found(mocker, interviewer_name,
+                                                                             start_date_as_string, end_date_as_string,
+                                                                             survey_tla):
     datastore_records = [interviewer_call_pattern_report_sample_case(
         call_start_time=datetime_helper(day=7, hour=9),
         call_end_time=datetime_helper(day=7, hour=15)
@@ -29,11 +31,15 @@ def test_get_call_pattern_report_returns_hours_worked_when_a_record_is_found(moc
     mocker.patch(
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.hours_worked == "06:00:00"
 
 
-def test_get_call_pattern_report_returns_hours_worked_when_multiple_records_from_a_single_day_are_found(mocker):
+def test_get_call_pattern_report_returns_hours_worked_when_multiple_records_from_a_single_day_are_found(mocker,
+                                                                                                        interviewer_name,
+                                                                                                        start_date_as_string,
+                                                                                                        end_date_as_string,
+                                                                                                        survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=9),
@@ -49,11 +55,14 @@ def test_get_call_pattern_report_returns_hours_worked_when_multiple_records_from
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.hours_worked == "08:00:00"
 
 
-def test_get_call_pattern_report_returns_hours_worked_when_call_time_greater_than_24_hours(mocker):
+def test_get_call_pattern_report_returns_hours_worked_when_call_time_greater_than_24_hours(mocker, interviewer_name,
+                                                                                           start_date_as_string,
+                                                                                           end_date_as_string,
+                                                                                           survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=0),
@@ -65,11 +74,15 @@ def test_get_call_pattern_report_returns_hours_worked_when_call_time_greater_tha
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.hours_worked == "25:00:00"
 
 
-def test_get_call_pattern_report_returns_hours_worked_when_multiple_records_from_multiple_days_are_found(mocker):
+def test_get_call_pattern_report_returns_hours_worked_when_multiple_records_from_multiple_days_are_found(mocker,
+                                                                                                         interviewer_name,
+                                                                                                         start_date_as_string,
+                                                                                                         end_date_as_string,
+                                                                                                         survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=8),
@@ -93,11 +106,15 @@ def test_get_call_pattern_report_returns_hours_worked_when_multiple_records_from
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.hours_worked == "09:00:00"
 
 
-def test_get_call_pattern_report_ignores_record_when_no_start_call_time_from_a_single_day_is_found(mocker):
+def test_get_call_pattern_report_ignores_record_when_no_start_call_time_from_a_single_day_is_found(mocker,
+                                                                                                   interviewer_name,
+                                                                                                   start_date_as_string,
+                                                                                                   end_date_as_string,
+                                                                                                   survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -112,11 +129,15 @@ def test_get_call_pattern_report_ignores_record_when_no_start_call_time_from_a_s
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.hours_worked == "02:00:00"
 
 
-def test_get_call_pattern_report_ignores_record_when_no_end_call_time_from_a_single_day_is_found(mocker):
+def test_get_call_pattern_report_ignores_record_when_no_end_call_time_from_a_single_day_is_found(mocker,
+                                                                                                 interviewer_name,
+                                                                                                 start_date_as_string,
+                                                                                                 end_date_as_string,
+                                                                                                 survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -131,11 +152,15 @@ def test_get_call_pattern_report_ignores_record_when_no_end_call_time_from_a_sin
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.hours_worked == "02:00:00"
 
 
-def test_get_call_pattern_report_ignores_record_when_no_start_call_time_from_multiple_days_are_found(mocker):
+def test_get_call_pattern_report_ignores_record_when_no_start_call_time_from_multiple_days_are_found(mocker,
+                                                                                                     interviewer_name,
+                                                                                                     start_date_as_string,
+                                                                                                     end_date_as_string,
+                                                                                                     survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=9),
@@ -158,11 +183,15 @@ def test_get_call_pattern_report_ignores_record_when_no_start_call_time_from_mul
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.hours_worked == "04:00:00"
 
 
-def test_get_call_pattern_report_ignores_record_when_no_end_call_time_from_multiple_days_are_found(mocker):
+def test_get_call_pattern_report_ignores_record_when_no_end_call_time_from_multiple_days_are_found(mocker,
+                                                                                                   interviewer_name,
+                                                                                                   start_date_as_string,
+                                                                                                   end_date_as_string,
+                                                                                                   survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -185,11 +214,15 @@ def test_get_call_pattern_report_ignores_record_when_no_end_call_time_from_multi
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.hours_worked == "03:00:00"
 
 
-def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_where_no_start_call_time_is_found(mocker):
+def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_where_no_start_call_time_is_found(mocker,
+                                                                                                              interviewer_name,
+                                                                                                              start_date_as_string,
+                                                                                                              end_date_as_string,
+                                                                                                              survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -213,11 +246,15 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_wher
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.discounted_invalid_cases == 3
 
 
-def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_where_no_end_call_time_is_found(mocker):
+def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_where_no_end_call_time_is_found(mocker,
+                                                                                                            interviewer_name,
+                                                                                                            start_date_as_string,
+                                                                                                            end_date_as_string,
+                                                                                                            survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -241,11 +278,13 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_wher
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.discounted_invalid_cases == 3
 
 
-def test_get_call_pattern_report_returns_expected_message_when_no_start_time_found(mocker):
+def test_get_call_pattern_report_returns_expected_message_when_no_start_time_found(mocker, interviewer_name,
+                                                                                   start_date_as_string,
+                                                                                   end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -269,11 +308,13 @@ def test_get_call_pattern_report_returns_expected_message_when_no_start_time_fou
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.invalid_fields == "'call_start_time' column had missing data"
 
 
-def test_get_call_pattern_report_returns_no_message_when_no_invalid_records_are_found(mocker):
+def test_get_call_pattern_report_returns_no_message_when_no_invalid_records_are_found(mocker, interviewer_name,
+                                                                                      start_date_as_string,
+                                                                                      end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -297,11 +338,13 @@ def test_get_call_pattern_report_returns_no_message_when_no_invalid_records_are_
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.invalid_fields == ""
 
 
-def test_get_call_pattern_report_returns_expected_message_when_no_end_time_found(mocker):
+def test_get_call_pattern_report_returns_expected_message_when_no_end_time_found(mocker, interviewer_name,
+                                                                                 start_date_as_string,
+                                                                                 end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -325,11 +368,14 @@ def test_get_call_pattern_report_returns_expected_message_when_no_end_time_found
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.invalid_fields == "'call_end_time' column had missing data"
 
 
-def test_get_call_pattern_report_returns_expected_message_when_no_start_or_end_time_found(mocker):
+def test_get_call_pattern_report_returns_expected_message_when_no_start_or_end_time_found(mocker, interviewer_name,
+                                                                                          start_date_as_string,
+                                                                                          end_date_as_string,
+                                                                                          survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -353,7 +399,7 @@ def test_get_call_pattern_report_returns_expected_message_when_no_start_or_end_t
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     list_of_reasons = result.invalid_fields.split(", ")
 
     assert len(list_of_reasons) == 2
@@ -361,7 +407,8 @@ def test_get_call_pattern_report_returns_expected_message_when_no_start_or_end_t
     assert "'call_end_time' column had missing data" in list_of_reasons
 
 
-def test_get_call_pattern_report_returns_call_time_when_one_record_found(mocker):
+def test_get_call_pattern_report_returns_call_time_when_one_record_found(mocker, interviewer_name, start_date_as_string,
+                                                                         end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             dial_secs=600
@@ -371,11 +418,13 @@ def test_get_call_pattern_report_returns_call_time_when_one_record_found(mocker)
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.call_time == "00:10:00"
 
 
-def test_get_call_pattern_report_returns_call_time_when_multiple_records_are_found(mocker):
+def test_get_call_pattern_report_returns_call_time_when_multiple_records_are_found(mocker, interviewer_name,
+                                                                                   start_date_as_string,
+                                                                                   end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             dial_secs=600
@@ -388,11 +437,15 @@ def test_get_call_pattern_report_returns_call_time_when_multiple_records_are_fou
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.call_time == "00:15:00"
 
 
-def test_get_call_pattern_report_returns_hours_on_call_as_percentage_of_worked_time_when_one_record_is_found(mocker):
+def test_get_call_pattern_report_returns_hours_on_call_as_percentage_of_worked_time_when_one_record_is_found(mocker,
+                                                                                                             interviewer_name,
+                                                                                                             start_date_as_string,
+                                                                                                             end_date_as_string,
+                                                                                                             survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -404,12 +457,12 @@ def test_get_call_pattern_report_returns_hours_on_call_as_percentage_of_worked_t
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.hours_on_calls_percentage == 16.67
 
 
 def test_get_call_pattern_report_returns_hours_on_call_as_perecntage_of_worked_time_when_multiple_records_are_found(
-        mocker):
+        mocker, interviewer_name, start_date_as_string, end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -427,11 +480,12 @@ def test_get_call_pattern_report_returns_hours_on_call_as_perecntage_of_worked_t
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.hours_on_calls_percentage == 8.33
 
 
-def test_get_call_pattern_report_returns_average_calls_per_hour(mocker):
+def test_get_call_pattern_report_returns_average_calls_per_hour(mocker, interviewer_name, start_date_as_string,
+                                                                end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -443,11 +497,15 @@ def test_get_call_pattern_report_returns_average_calls_per_hour(mocker):
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.average_calls_per_hour == 1.0
 
 
-def test_get_call_pattern_report_returns_average_calls_per_hour_when_multiple_records_are_found(mocker):
+def test_get_call_pattern_report_returns_average_calls_per_hour_when_multiple_records_are_found(mocker,
+                                                                                                interviewer_name,
+                                                                                                start_date_as_string,
+                                                                                                end_date_as_string,
+                                                                                                survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -464,12 +522,12 @@ def test_get_call_pattern_report_returns_average_calls_per_hour_when_multiple_re
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.average_calls_per_hour == 2.0
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_refused_cases_when_case_refusals_are_found(
-        mocker):
+        mocker, interviewer_name, start_date_as_string, end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -487,11 +545,15 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_refused_ca
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.refusals == 1
 
 
-def test_get_call_pattern_report_returns_the_number_and_percentage_cases_with_a_status_of_no_contact(mocker):
+def test_get_call_pattern_report_returns_the_number_and_percentage_cases_with_a_status_of_no_contact(mocker,
+                                                                                                     interviewer_name,
+                                                                                                     start_date_as_string,
+                                                                                                     end_date_as_string,
+                                                                                                     survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -509,11 +571,15 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_cases_with_a_
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.no_contacts == 1
 
 
-def test_get_call_pattern_report_returns_the_number_and_percentage_cases_with_a_status_of_completed(mocker):
+def test_get_call_pattern_report_returns_the_number_and_percentage_cases_with_a_status_of_completed(mocker,
+                                                                                                    interviewer_name,
+                                                                                                    start_date_as_string,
+                                                                                                    end_date_as_string,
+                                                                                                    survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -531,11 +597,15 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_cases_with_a_
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.completed_successfully == 1
 
 
-def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_appointment(mocker):
+def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_appointment(mocker,
+                                                                                                         interviewer_name,
+                                                                                                         start_date_as_string,
+                                                                                                         end_date_as_string,
+                                                                                                         survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -553,11 +623,15 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.appointments_for_contacts == 1
 
 
-def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_AnswerService(mocker):
+def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_AnswerService(mocker,
+                                                                                                           interviewer_name,
+                                                                                                           start_date_as_string,
+                                                                                                           end_date_as_string,
+                                                                                                           survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -571,11 +645,12 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.no_contact_answer_service == 1
 
 
-def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_AnswerService_when_multiple_records_are_found(mocker):
+def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_AnswerService_when_multiple_records_are_found(
+        mocker, interviewer_name, start_date_as_string, end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -599,11 +674,15 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.no_contact_answer_service == 1
 
 
-def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Busy(mocker):
+def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Busy(mocker,
+                                                                                                  interviewer_name,
+                                                                                                  start_date_as_string,
+                                                                                                  end_date_as_string,
+                                                                                                  survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -617,12 +696,12 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.no_contact_busy == 1
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Busy_when_multiple_records_are_found(
-        mocker):
+        mocker, interviewer_name, start_date_as_string, end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -646,11 +725,15 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.no_contact_busy == 1
 
 
-def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Disconnect(mocker):
+def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Disconnect(mocker,
+                                                                                                        interviewer_name,
+                                                                                                        start_date_as_string,
+                                                                                                        end_date_as_string,
+                                                                                                        survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -664,11 +747,12 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.no_contact_disconnect == 1
 
 
-def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Disconnect_when_multiple_records_are_found(mocker):
+def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Disconnect_when_multiple_records_are_found(
+        mocker, interviewer_name, start_date_as_string, end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -692,12 +776,15 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.no_contact_disconnect == 1
 
 
-
-def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_NoAnswer(mocker):
+def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_NoAnswer(mocker,
+                                                                                                      interviewer_name,
+                                                                                                      start_date_as_string,
+                                                                                                      end_date_as_string,
+                                                                                                      survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -711,12 +798,12 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.no_contact_no_answer == 1
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_NoAnswer_when_multiple_records_are_found(
-        mocker):
+        mocker, interviewer_name, start_date_as_string, end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -740,12 +827,12 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.no_contact_no_answer == 1
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Other(
-        mocker):
+        mocker, interviewer_name, start_date_as_string, end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -759,12 +846,12 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.no_contact_other == 1
 
 
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Other_when_multiple_records_are_found(
-        mocker):
+        mocker, interviewer_name, start_date_as_string, end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -788,11 +875,14 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.no_contact_other == 1
 
 
-def test_get_call_pattern_report_returns_expected_when_call_time_is_greater_than_hours_worked(mocker):
+def test_get_call_pattern_report_returns_expected_when_call_time_is_greater_than_hours_worked(mocker, interviewer_name,
+                                                                                              start_date_as_string,
+                                                                                              end_date_as_string,
+                                                                                              survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -811,14 +901,16 @@ def test_get_call_pattern_report_returns_expected_when_call_time_is_greater_than
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.hours_worked == "01:00:00"
     assert result.call_time == "01:00:00"
     assert result.invalid_fields == "'status' column had timed out call status"
     assert result.discounted_invalid_cases == 1
 
 
-def test_get_call_pattern_report_returns_expected_output_when_all_data_is_valid(mocker):
+def test_get_call_pattern_report_returns_expected_output_when_all_data_is_valid(mocker, interviewer_name,
+                                                                                start_date_as_string,
+                                                                                end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -871,7 +963,7 @@ def test_get_call_pattern_report_returns_expected_output_when_all_data_is_valid(
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.hours_worked == "21:00:00"
     assert result.call_time == "01:40:00"
     assert result.hours_on_calls_percentage == 7.94
@@ -908,7 +1000,9 @@ def test_get_valid_records_returns_an_empty_dataframe_when_a_record_is_found_wit
     assert result.empty
 
 
-def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_found(mocker):
+def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_found(mocker, interviewer_name,
+                                                                                     start_date_as_string,
+                                                                                     end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=8, hour=11),
@@ -976,7 +1070,7 @@ def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_f
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.total_valid_cases == 6
     assert result.hours_worked == "18:00:00"
     assert result.call_time == "01:00:00"
@@ -1001,7 +1095,10 @@ def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_f
     assert "'status' column had timed out call status" in list_of_reasons
 
 
-def test_get_call_pattern_report_returns_expected_output_when_only_invalid_data_are_found(mocker):
+def test_get_call_pattern_report_returns_expected_output_when_only_invalid_data_are_found(mocker, interviewer_name,
+                                                                                          start_date_as_string,
+                                                                                          end_date_as_string,
+                                                                                          survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=9, hour=9),
@@ -1015,7 +1112,7 @@ def test_get_call_pattern_report_returns_expected_output_when_only_invalid_data_
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.discounted_invalid_cases == 1
 
     list_of_reasons = result.invalid_fields.split(",")
@@ -1024,7 +1121,8 @@ def test_get_call_pattern_report_returns_expected_output_when_only_invalid_data_
     assert "'call_end_time' column had missing data" in list_of_reasons
 
 
-def test_get_call_pattern_report_returns_a_single_reason_message_when_no_call_end_time_is_found_and_status_is_not_timed_out(mocker):
+def test_get_call_pattern_report_returns_a_single_reason_message_when_no_call_end_time_is_found_and_status_is_not_timed_out(
+        mocker, interviewer_name, start_date_as_string, end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -1041,11 +1139,12 @@ def test_get_call_pattern_report_returns_a_single_reason_message_when_no_call_en
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.invalid_fields == "'call_end_time' column had missing data"
 
 
-def test_get_call_pattern_report_returns_multiple_reason_messages_when_no_call_end_time_is_found_and_status_is_timed_out(mocker):
+def test_get_call_pattern_report_returns_multiple_reason_messages_when_no_call_end_time_is_found_and_status_is_timed_out(
+        mocker, interviewer_name, start_date_as_string, end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -1062,7 +1161,7 @@ def test_get_call_pattern_report_returns_multiple_reason_messages_when_no_call_e
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     list_of_reasons = result.invalid_fields.split(", ")
 
     assert len(list_of_reasons) == 2
@@ -1070,7 +1169,11 @@ def test_get_call_pattern_report_returns_multiple_reason_messages_when_no_call_e
     assert "'status' column had timed out call status" in list_of_reasons
 
 
-def test_get_call_pattern_report_returns_unique_reasons_when_multiple_cases_with_similar_conditions_are_found(mocker):
+def test_get_call_pattern_report_returns_unique_reasons_when_multiple_cases_with_similar_conditions_are_found(mocker,
+                                                                                                              interviewer_name,
+                                                                                                              start_date_as_string,
+                                                                                                              end_date_as_string,
+                                                                                                              survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -1092,7 +1195,7 @@ def test_get_call_pattern_report_returns_unique_reasons_when_multiple_cases_with
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     list_of_reasons = result.invalid_fields.split(", ")
 
     assert len(list_of_reasons) == 2
@@ -1100,7 +1203,8 @@ def test_get_call_pattern_report_returns_unique_reasons_when_multiple_cases_with
     assert "'status' column had timed out call status" in list_of_reasons
 
 
-def test_get_call_pattern_report_returns_total_valid_records_found(mocker):
+def test_get_call_pattern_report_returns_total_valid_records_found(mocker, interviewer_name, start_date_as_string,
+                                                                   end_date_as_string, survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(),
         interviewer_call_pattern_report_sample_case(),
@@ -1109,7 +1213,7 @@ def test_get_call_pattern_report_returns_total_valid_records_found(mocker):
 
     mocker.patch("reports.interviewer_call_pattern_report.get_call_history_records",
                  return_value=pd.DataFrame(datastore_records))
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
 
     assert result.total_valid_cases == 3
 
@@ -1204,7 +1308,11 @@ def test_number_of_records_which_has_status_raises_error_when_no_status_column_f
     assert "number_of_records_which_has_status failed" in excinfo.value.message
 
 
-def test_calculate_hours_on_call_percentage_returns_a_value_to_two_dp_when_value_is_divisible_by_ten(mocker):
+def test_calculate_hours_on_call_percentage_returns_a_value_to_two_dp_when_value_is_divisible_by_ten(mocker,
+                                                                                                     interviewer_name,
+                                                                                                     start_date_as_string,
+                                                                                                     end_date_as_string,
+                                                                                                     survey_tla):
     datastore_records = [
         interviewer_call_pattern_report_sample_case(
             call_start_time=datetime_helper(day=7, hour=10),
@@ -1217,50 +1325,21 @@ def test_calculate_hours_on_call_percentage_returns_a_value_to_two_dp_when_value
         "reports.interviewer_call_pattern_report.get_call_history_records",
         return_value=pd.DataFrame(datastore_records))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    result = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
     assert result.hours_on_calls_percentage == 50.0
 
 
-def test_percentages_equal_one_hundred(mocker):
-    datastore_records = [
-        interviewer_call_pattern_report_sample_case(
-            call_start_time=datetime_helper(day=7, hour=10),
-            call_end_time=datetime_helper(day=7, hour=11),
-            dial_secs=1800,
-            status="Completed",
-        ),
-        interviewer_call_pattern_report_sample_case(
-            call_start_time=datetime_helper(day=7, hour=10),
-            call_end_time=datetime_helper(day=7, hour=11),
-            dial_secs=1800,
-            status="Finished (No contact)",
-        ),
-        interviewer_call_pattern_report_sample_case(
-            call_start_time=datetime_helper(day=7, hour=10),
-            call_end_time=datetime_helper(day=7, hour=11),
-            dial_secs=1800,
-            status="Finished (Non response)",
-        ),
-        interviewer_call_pattern_report_sample_case(
-            call_start_time=datetime_helper(day=7, hour=10),
-            call_end_time=datetime_helper(day=7, hour=11),
-            dial_secs=1800,
-            status="Finished (Appointment made)",
-        )]
-
+def test_percentages_equal_one_hundred(mocker, interviewer_name, start_date_as_string, end_date_as_string, survey_tla,
+                                       call_history_records_status_sample):
     mocker.patch(
         "reports.interviewer_call_pattern_report.get_call_history_records",
-        return_value=pd.DataFrame(datastore_records))
+        return_value=pd.DataFrame(call_history_records_status_sample))
 
-    result = get_call_pattern_report(interviewer, start_date_as_string, end_date_as_string, survey_tla)
+    report = get_call_pattern_report(interviewer_name, start_date_as_string, end_date_as_string, survey_tla)
 
-    def calculate_percentage(numerator: int, denominator: int) -> float:
-        return numerator/denominator * 100
+    percentages_for_every_status = get_list_of_percentages(report)
 
-    completed_successfully_percentage = calculate_percentage(result.completed_successfully, result.total_valid_cases)
-    appointments_for_contacts_percentage = calculate_percentage(result.appointments_for_contacts, result.total_valid_cases)
-    no_contacts_percentage = calculate_percentage(result.no_contacts, result.total_valid_cases)
-    refusals_percentage = calculate_percentage(result.refusals, result.total_valid_cases)
-
-    assert (completed_successfully_percentage + appointments_for_contacts_percentage +
-            no_contacts_percentage + refusals_percentage) == 100
+    assert len(percentages_for_every_status) == 5
+    for status_percentage in percentages_for_every_status:
+        assert status_percentage == 20.0
+    assert sum(percentages_for_every_status) == 100.00
