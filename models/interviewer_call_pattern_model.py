@@ -14,6 +14,7 @@ class InterviewerCallPattern:
     no_contacts: int
     completed_successfully: int
     appointments_for_contacts: int
+    web_nudge: int
     no_contact_answer_service: int = math.nan
     no_contact_busy: int = math.nan
     no_contact_disconnect: int = math.nan
