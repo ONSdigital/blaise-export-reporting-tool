@@ -16,6 +16,7 @@ def get_mi_hub_call_history(config):
     mi_hub_cati_call_history = get_cati_mi_hub_call_history(
         config, installed_questionnaire_list
     )
+    """
     questionnaire_fields_to_get = [
         "QID.Serial_Number",
         "QHAdmin.HOut",
@@ -34,9 +35,8 @@ def get_mi_hub_call_history(config):
             mi_hub_cati_call_history, questionnaire_data
         )
     )
-    return group_by_questionnaire(
-        mi_hub_cati_call_history_and_questionnaire_data_merged
-    )
+    """
+    return group_by_questionnaire(mi_hub_cati_call_history)
 
 
 def get_cati_mi_hub_call_history(config, questionnaire_list):
@@ -56,6 +56,7 @@ def get_cati_mi_hub_call_history(config, questionnaire_list):
             dial_result=item.get("DialResult"),
             dial_line_number=item.get("DialedNumber"),
             seconds_interview=item.get("dial_secs"),
+            outcome_code=item.get("OutcomeCode"),
         )
         cati_mi_hub_call_history.generate_dial_date_and_time_fields(
             item.get("StartTime"), item.get("EndTime")

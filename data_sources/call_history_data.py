@@ -74,7 +74,7 @@ class CallHistoryClient:
                 record.number_of_interviews = matched_record.get(
                     "qHousehold.QHHold.HHSize", ""
                 )
-                record.outcome_code = matched_record.get("qhAdmin.HOut", "")
+                #record.outcome_code = matched_record.get("qhAdmin.HOut", "")
         return cati_call_history
 
     @staticmethod
@@ -127,7 +127,7 @@ class CallHistoryClient:
         cati_call_history = self.get_cati_call_history(installed_questionnaire_list)
         questionnaire_fields_to_get = [
             "QID.Serial_Number",
-            "QHAdmin.HOut",
+            #"QHAdmin.HOut",
             "QHousehold.QHHold.HHSize",
         ]
         questionnaire_data = []
