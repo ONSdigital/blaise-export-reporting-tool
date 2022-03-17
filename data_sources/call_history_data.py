@@ -65,7 +65,9 @@ class CallHistoryClient:
         print(f"Found {len(results)} call history records in the CATI database")
         return cati_call_history_list
 
-    def merge_cati_call_history_and_questionnaire_data(self, cati_call_history, questionnaire_data):
+    def merge_cati_call_history_and_questionnaire_data(
+        self, cati_call_history, questionnaire_data
+    ):
         for record in cati_call_history:
             matched_record = self.__match_cati_call_history_and_questionnaire_data(
                 record.serial_number, record.questionnaire_name, questionnaire_data
@@ -74,13 +76,12 @@ class CallHistoryClient:
                 record.number_of_interviews = matched_record.get(
                     "qHousehold.QHHold.HHSize", ""
                 )
-                record.outcome_code = matched_record.get("qhAdmin.HOut", "")
         return cati_call_history
 
     @staticmethod
     def split_into_batches(list_to_split, batch_length):
         return [
-            list_to_split[i: i + batch_length]
+            list_to_split[i : i + batch_length]
             for i in range(0, len(list_to_split), batch_length)
         ]
 
@@ -111,8 +112,7 @@ class CallHistoryClient:
     def __get_keys_for_historical_call_history_records(self):
         a_year_ago = datetime.now() - relativedelta(years=1)
         query = self.datastore_client.query(
-            kind="CallHistory",
-            filters=[("call_start_time", "<=", a_year_ago)]
+            kind="CallHistory", filters=[("call_start_time", "<=", a_year_ago)]
         )
         query.keys_only()
         old_call_history_keys = list([entity.key for entity in query.fetch()])
@@ -127,7 +127,7 @@ class CallHistoryClient:
         cati_call_history = self.get_cati_call_history(installed_questionnaire_list)
         questionnaire_fields_to_get = [
             "QID.Serial_Number",
-            "QHAdmin.HOut",
+            # "QHAdmin.HOut",
             "QHousehold.QHHold.HHSize",
         ]
         questionnaire_data = []
@@ -165,7 +165,10 @@ class CallHistoryClient:
         return [
             call_history_record
             for call_history_record in call_history_data
-            if self.__check_if_call_history_record_already_exists(call_history_record, current_call_history_in_datastore) is False
+            if self.__check_if_call_history_record_already_exists(
+                call_history_record, current_call_history_in_datastore
+            )
+            is False
         ]
 
     def __get_call_history_keys(self):
@@ -202,25 +205,26 @@ class CallHistoryClient:
         return
 
     @staticmethod
-    def __check_if_call_history_record_already_exists(call_history_record, current_call_history_in_datastore):
-        existing_record = [
-            record
-            for record in current_call_history_in_datastore
-            if f"{call_history_record.serial_number}-{call_history_record.call_start_time}" == record
-        ]
-        if len(existing_record) > 0:
-            return True
-        else:
-            return False
+    def __check_if_call_history_record_already_exists(
+        call_history_record, current_call_history_in_datastore
+    ):
+        for record in current_call_history_in_datastore:
+            if (
+                f"{call_history_record.serial_number}-{call_history_record.call_start_time}"
+                == record
+            ):
+                return True
+
+        return False
 
     @staticmethod
-    def __match_cati_call_history_and_questionnaire_data(serial_number, questionnaire_name, questionnaire_data):
-        matched_record = [
-            record
-            for record in questionnaire_data
-            if record.get("qiD.Serial_Number") == serial_number and record["questionnaire_name"] == questionnaire_name
-        ]
-        if len(matched_record) > 0:
-            return matched_record[0]
-        else:
-            return None
+    def __match_cati_call_history_and_questionnaire_data(
+        serial_number, questionnaire_name, questionnaire_data
+    ):
+        for record in questionnaire_data:
+            if (
+                record.get("qiD.Serial_Number") == serial_number
+                and record["questionnaire_name"] == questionnaire_name
+            ):
+                return record
+        return None
