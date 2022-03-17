@@ -41,6 +41,7 @@ def deliver_mi_hub_reports(_event, _context):
     if google_storage.bucket is None:
         return "Connection to storage bucket failed", 500
     grouped_call_history_reports = get_mi_hub_call_history(config)
+    print(grouped_call_history_reports)
     grouped_respondent_data_reports = get_mi_hub_respondent_data(config)
 
     zip_data_grouped_by_questionnaire = {}

@@ -47,10 +47,14 @@ class CatiMiHubCallHistoryTable(DataBaseBase):
     AppointmentInfo: str
     EndTime: datetime
 
+    @staticmethod
+    def get_outcome_code():
+        return """ExtractValue(`AdditionalData`, '/Fields/Field[@Name="QHAdmin.HOut"]/@Value') AS OutcomeCode"""
+
     @classmethod
     def table_name(cls):
         return "cati.DialHistory"
 
     @classmethod
     def extra_fields(cls):
-        return ["ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dial_secs"]
+        return ["ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dial_secs", cls.get_outcome_code()]

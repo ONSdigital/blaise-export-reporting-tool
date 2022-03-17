@@ -50,8 +50,8 @@ class CatiCallHistoryTable(DataBaseBase):
     AppointmentInfo: str
 
     @staticmethod
-    def webnudge_hout_as_outcome_code():
-        return """CASE WHEN ExtractValue(`AdditionalData`, 'boolean(/Fields/Field[@Name="QHAdmin.HOut"][@Value="120"])') THEN 120 END AS OutcomeCode"""
+    def get_outcome_code():
+        return """ExtractValue(`AdditionalData`, '/Fields/Field[@Name="QHAdmin.HOut"]/@Value') AS OutcomeCode"""
 
     @staticmethod
     def dial_secs():
@@ -63,4 +63,4 @@ class CatiCallHistoryTable(DataBaseBase):
 
     @classmethod
     def extra_fields(cls):
-        return [cls.dial_secs(), cls.webnudge_hout_as_outcome_code()]
+        return [cls.dial_secs(), cls.get_outcome_code()]
