@@ -162,7 +162,6 @@ def test_merge_cati_call_history_and_questionnaire_data():
     ]
     questionnaire_data = [
         {
-            #"qhAdmin.HOut": 310,
             "qHousehold.QHHold.HHSize": 2,
             "qiD.Serial_Number": "1001031",
             "questionnaire_name": "LMS2101_AA1",

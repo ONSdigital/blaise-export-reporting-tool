@@ -16,26 +16,6 @@ def get_mi_hub_call_history(config):
     mi_hub_cati_call_history = get_cati_mi_hub_call_history(
         config, installed_questionnaire_list
     )
-    """
-    questionnaire_fields_to_get = [
-        "QID.Serial_Number",
-        "QHAdmin.HOut",
-    ]
-    questionnaire_data = []
-    for questionnaire in installed_questionnaire_list:
-        questionnaire_data.extend(
-            get_questionnaire_data(
-                questionnaire.get("name"), config, questionnaire_fields_to_get
-            )
-        )
-    print(f"Found {len(questionnaire_data)} questionnaire records")
-    call_history_client = CallHistoryClient(mock.MagicMock, config)
-    mi_hub_cati_call_history_and_questionnaire_data_merged = (
-        call_history_client.merge_cati_call_history_and_questionnaire_data(
-            mi_hub_cati_call_history, questionnaire_data
-        )
-    )
-    """
     return group_by_questionnaire(mi_hub_cati_call_history)
 
 

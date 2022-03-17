@@ -74,7 +74,6 @@ class CallHistoryClient:
                 record.number_of_interviews = matched_record.get(
                     "qHousehold.QHHold.HHSize", ""
                 )
-                #record.outcome_code = matched_record.get("qhAdmin.HOut", "")
         return cati_call_history
 
     @staticmethod
