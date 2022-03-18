@@ -3,17 +3,19 @@ import requests
 
 def get_list_of_installed_questionnaires(config):
     print("Getting list of installed questionnaires")
-    response = requests.get(f"http://{config.blaise_api_url}/api/v1/serverparks/gusty/instruments")
+    response = requests.get(
+        f"http://{config.blaise_api_url}/api/v1/serverparks/gusty/instruments"
+    )
     questionnaire_list = response.json()
     print(f"Found {len(questionnaire_list)} questionnaires installed")
     return questionnaire_list
 
 
 def get_questionnaire_name_from_id(questionnaire_id, questionnaire_list):
-    return next(
-        (item for item in questionnaire_list if item.get("id") == questionnaire_id),
-        {"name": ""},
-    ).get("name")
+    for questionnaire in questionnaire_list:
+        if questionnaire.get("id") == questionnaire_id:
+            return questionnaire.get("name", "")
+    return ""
 
 
 def get_questionnaire_data(questionnaire_name, config, fields):

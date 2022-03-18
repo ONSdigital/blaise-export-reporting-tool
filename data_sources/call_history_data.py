@@ -2,6 +2,7 @@ from dataclasses import asdict
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from google.cloud import datastore
+import asyncio
 
 from data_sources.cati_data import get_cati_call_history_from_database
 from data_sources.questionnaire_data import (
@@ -115,7 +116,7 @@ class CallHistoryClient:
 
     def __upload_call_history_to_datastore(self, call_history_data):
         print("Checking for new call history records to upload to datastore")
-        new_call_history_records = self.__filter_out_existing_call_history_records(
+        new_call_history_records = self.filter_out_existing_call_history_records(
             call_history_data
         )
         if len(new_call_history_records) == 0:
@@ -127,19 +128,19 @@ class CallHistoryClient:
             )
         self.__update_call_history_report_status()
 
-    def __filter_out_existing_call_history_records(self, call_history_data):
-        current_call_history_in_datastore = self.__get_call_history_keys()
+    def filter_out_existing_call_history_records(self, call_history_data):
+        current_call_history_in_datastore = self.get_call_history_keys()
 
-        return [
-            call_history_record
-            for call_history_record in call_history_data
-            if self.__check_if_call_history_record_already_exists(
-                call_history_record, current_call_history_in_datastore
+        return list(
+            filter(
+                lambda call_history_record: not self.__check_if_call_history_record_already_exists(
+                    call_history_record, current_call_history_in_datastore
+                ),
+                call_history_data,
             )
-            is False
-        ]
+        )
 
-    def __get_call_history_keys(self):
+    def get_call_history_keys(self):
         query = self.datastore_client.query(kind="CallHistory")
         query.keys_only()
         current_call_history = {entity.key.id_or_name: None for entity in query.fetch()}
@@ -158,8 +159,14 @@ class CallHistoryClient:
             task1.update(asdict(call_history_record))
             datastore_tasks.append(task1)
         datastore_batches = self.split_into_batches(datastore_tasks, 500)
+
+        loop = asyncio.get_running_loop()
+        async_processes = []
         for batch in datastore_batches:
-            client.put_multi(batch)
+            process = loop.run_in_executor(client.put_multi(batch))
+            async_processes.push(process)
+        loop.run_until_complete(asyncio.gather(*async_processes))
+        loop.close()
 
     def __update_call_history_report_status(self):
         complete_key = self.datastore_client.key("Status", "call_history")
