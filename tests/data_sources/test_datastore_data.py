@@ -13,46 +13,46 @@ from models.config_model import Config
     "list_to_split, number_to_split_by, expected",
     [
         (
-                [
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                ],
-                2,
-                [2, 2, 2, 2, 2],
+            [
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+            ],
+            2,
+            [2, 2, 2, 2, 2],
         ),
         (
-                [
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                ],
-                5,
-                [5, 5, 5, 5],
+            [
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+            ],
+            5,
+            [5, 5, 5, 5],
         ),
         (["item", "item", "item"], 2, [2, 1]),
         (["item", "item", "item"], 5, [3]),
@@ -75,7 +75,7 @@ def test_split_into_batches(list_to_split, number_to_split_by, expected):
         "MYSQL_PASSWORD": "mysql_password_mock",
         "MYSQL_DATABASE": "mysql_database_mock",
         "BLAISE_API_URL": "blaise_api_url_mock",
-        "NIFI_STAGING_BUCKET": "nifi_staging_bucket_mock"
+        "NIFI_STAGING_BUCKET": "nifi_staging_bucket_mock",
     },
 )
 @patch("data_sources.call_history_data.get_cati_call_history_from_database")
@@ -132,65 +132,5 @@ def test_get_cati_call_history(mock_get_cati_call_history_from_database):
             cohort=None,
             number_of_interviews=None,
             outcome_code=None,
-        )
-    ]
-
-
-def test_merge_cati_call_history_and_questionnaire_data():
-    call_history = [
-        CallHistory(
-            questionnaire_id="05cf69af-3a4e-47df-819a-928350fdda5a",
-            serial_number="1001031",
-            call_number=1,
-            dial_number=1,
-            busy_dials=0,
-            call_start_time="2021-05-12 13:17:56.8191819",
-            call_end_time="2021-05-12 13:18:06.1431819",
-            dial_secs=9,
-            status="Finished (No contact)",
-            interviewer="Edwin",
-            call_result="Busy",
-            update_info=None,
-            appointment_info=None,
-            questionnaire_name="LMS2101_AA1",
-            wave=1,
-            cohort="AA",
-            number_of_interviews=None,
-            outcome_code=310,
-            survey="LMS",
-        )
-    ]
-    questionnaire_data = [
-        {
-            "qHousehold.QHHold.HHSize": 2,
-            "qiD.Serial_Number": "1001031",
-            "questionnaire_name": "LMS2101_AA1",
-        }
-    ]
-    call_history_client = CallHistoryClient(mock.MagicMock, mock.MagicMock)
-    merged_data = call_history_client.merge_cati_call_history_and_questionnaire_data(call_history, questionnaire_data)
-    assert merged_data[0].outcome_code == 310
-    assert merged_data[0].number_of_interviews == 2
-    assert merged_data == [
-        CallHistory(
-            questionnaire_id="05cf69af-3a4e-47df-819a-928350fdda5a",
-            serial_number="1001031",
-            call_number=1,
-            dial_number=1,
-            busy_dials=0,
-            call_start_time="2021-05-12 13:17:56.8191819",
-            call_end_time="2021-05-12 13:18:06.1431819",
-            dial_secs=9,
-            status="Finished (No contact)",
-            interviewer="Edwin",
-            call_result="Busy",
-            update_info=None,
-            appointment_info=None,
-            questionnaire_name="LMS2101_AA1",
-            survey="LMS",
-            wave=1,
-            cohort="AA",
-            number_of_interviews=2,
-            outcome_code=310,
         )
     ]
