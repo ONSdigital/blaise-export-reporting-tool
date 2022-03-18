@@ -13,46 +13,46 @@ from models.config_model import Config
     "list_to_split, number_to_split_by, expected",
     [
         (
-                [
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                ],
-                2,
-                [2, 2, 2, 2, 2],
+            [
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+            ],
+            2,
+            [2, 2, 2, 2, 2],
         ),
         (
-                [
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                    "item",
-                ],
-                5,
-                [5, 5, 5, 5],
+            [
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+                "item",
+            ],
+            5,
+            [5, 5, 5, 5],
         ),
         (["item", "item", "item"], 2, [2, 1]),
         (["item", "item", "item"], 5, [3]),
@@ -75,7 +75,7 @@ def test_split_into_batches(list_to_split, number_to_split_by, expected):
         "MYSQL_PASSWORD": "mysql_password_mock",
         "MYSQL_DATABASE": "mysql_database_mock",
         "BLAISE_API_URL": "blaise_api_url_mock",
-        "NIFI_STAGING_BUCKET": "nifi_staging_bucket_mock"
+        "NIFI_STAGING_BUCKET": "nifi_staging_bucket_mock",
     },
 )
 @patch("data_sources.call_history_data.get_cati_call_history_from_database")
@@ -136,61 +136,55 @@ def test_get_cati_call_history(mock_get_cati_call_history_from_database):
     ]
 
 
-def test_merge_cati_call_history_and_questionnaire_data():
-    call_history = [
+@mock.patch.dict(
+    os.environ,
+    {
+        "MYSQL_HOST": "mysql_host_mock",
+        "MYSQL_USER": "mysql_user_mock",
+        "MYSQL_PASSWORD": "mysql_password_mock",
+        "MYSQL_DATABASE": "mysql_database_mock",
+        "BLAISE_API_URL": "blaise_api_url_mock",
+        "NIFI_STAGING_BUCKET": "nifi_staging_bucket_mock",
+    },
+)
+@patch.object(CallHistoryClient, "get_call_history_keys")
+def test_filter_out_existing_call_history_records(
+    mock_call_history_keys,
+):
+    mock_call_history_keys.return_value = {"1001011-2021/05/19 14:59:01": None}
+
+    call_history_data = [
         CallHistory(
             questionnaire_id="05cf69af-3a4e-47df-819a-928350fdda5a",
-            serial_number="1001031",
+            serial_number="1001011",
             call_number=1,
             dial_number=1,
             busy_dials=0,
-            call_start_time="2021-05-12 13:17:56.8191819",
-            call_end_time="2021-05-12 13:18:06.1431819",
-            dial_secs=9,
-            status="Finished (No contact)",
-            interviewer="Edwin",
-            call_result="Busy",
+            call_start_time="2021/05/19 14:59:01",
+            call_end_time="2021/05/19 14:59:17",
+            dial_secs=16,
+            status="Finished (Non response)",
+            interviewer="matpal",
+            call_result="NonRespons",
             update_info=None,
             appointment_info=None,
-            questionnaire_name="LMS2101_AA1",
-            wave=1,
-            cohort="AA",
+            questionnaire_name="OPN2101A",
+            survey="OPN",
+            wave=None,
+            cohort=None,
             number_of_interviews=None,
-            outcome_code=310,
-            survey="LMS",
+            outcome_code=None,
         )
     ]
-    questionnaire_data = [
-        {
-            "qHousehold.QHHold.HHSize": 2,
-            "qiD.Serial_Number": "1001031",
-            "questionnaire_name": "LMS2101_AA1",
-        }
-    ]
-    call_history_client = CallHistoryClient(mock.MagicMock, mock.MagicMock)
-    merged_data = call_history_client.merge_cati_call_history_and_questionnaire_data(call_history, questionnaire_data)
-    assert merged_data[0].outcome_code == 310
-    assert merged_data[0].number_of_interviews == 2
-    assert merged_data == [
-        CallHistory(
-            questionnaire_id="05cf69af-3a4e-47df-819a-928350fdda5a",
-            serial_number="1001031",
-            call_number=1,
-            dial_number=1,
-            busy_dials=0,
-            call_start_time="2021-05-12 13:17:56.8191819",
-            call_end_time="2021-05-12 13:18:06.1431819",
-            dial_secs=9,
-            status="Finished (No contact)",
-            interviewer="Edwin",
-            call_result="Busy",
-            update_info=None,
-            appointment_info=None,
-            questionnaire_name="LMS2101_AA1",
-            survey="LMS",
-            wave=1,
-            cohort="AA",
-            number_of_interviews=2,
-            outcome_code=310,
+    config = Config.from_env()
+
+    # Execution
+    call_history_client = CallHistoryClient(mock.MagicMock, config)
+    assert (
+        len(
+            call_history_client.filter_out_existing_call_history_records(
+                call_history_data
+            )
         )
-    ]
+        == 0
+    )

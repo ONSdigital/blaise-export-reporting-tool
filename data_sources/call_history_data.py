@@ -2,11 +2,11 @@ from dataclasses import asdict
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from google.cloud import datastore
+import asyncio
 
 from data_sources.cati_data import get_cati_call_history_from_database
 from data_sources.questionnaire_data import (
     get_list_of_installed_questionnaires,
-    get_questionnaire_data,
     get_questionnaire_name_from_id,
 )
 from models.call_history_model import CallHistory
@@ -65,19 +65,6 @@ class CallHistoryClient:
         print(f"Found {len(results)} call history records in the CATI database")
         return cati_call_history_list
 
-    def merge_cati_call_history_and_questionnaire_data(
-        self, cati_call_history, questionnaire_data
-    ):
-        for record in cati_call_history:
-            matched_record = self.__match_cati_call_history_and_questionnaire_data(
-                record.serial_number, record.questionnaire_name, questionnaire_data
-            )
-            if matched_record is not None:
-                record.number_of_interviews = matched_record.get(
-                    "qHousehold.QHHold.HHSize", ""
-                )
-        return cati_call_history
-
     @staticmethod
     def split_into_batches(list_to_split, batch_length):
         return [
@@ -125,30 +112,11 @@ class CallHistoryClient:
         print("Getting call history data")
         installed_questionnaire_list = get_list_of_installed_questionnaires(self.config)
         cati_call_history = self.get_cati_call_history(installed_questionnaire_list)
-        questionnaire_fields_to_get = [
-            "QID.Serial_Number",
-            # "QHAdmin.HOut",
-            "QHousehold.QHHold.HHSize",
-        ]
-        questionnaire_data = []
-        for questionnaire in installed_questionnaire_list:
-            questionnaire_data.extend(
-                get_questionnaire_data(
-                    questionnaire.get("name"), self.config, questionnaire_fields_to_get
-                )
-            )
-        print(f"Found {len(questionnaire_data)} questionnaire records")
-        cati_call_history_and_questionnaire_data_merged = (
-            self.merge_cati_call_history_and_questionnaire_data(
-                cati_call_history, questionnaire_data
-            )
-        )
-        print("Merged cati call history and questionnaire data")
-        return cati_call_history_and_questionnaire_data_merged
+        return cati_call_history
 
     def __upload_call_history_to_datastore(self, call_history_data):
         print("Checking for new call history records to upload to datastore")
-        new_call_history_records = self.__filter_out_existing_call_history_records(
+        new_call_history_records = self.filter_out_existing_call_history_records(
             call_history_data
         )
         if len(new_call_history_records) == 0:
@@ -160,21 +128,22 @@ class CallHistoryClient:
             )
         self.__update_call_history_report_status()
 
-    def __filter_out_existing_call_history_records(self, call_history_data):
-        current_call_history_in_datastore = self.__get_call_history_keys()
-        return [
-            call_history_record
-            for call_history_record in call_history_data
-            if self.__check_if_call_history_record_already_exists(
-                call_history_record, current_call_history_in_datastore
-            )
-            is False
-        ]
+    def filter_out_existing_call_history_records(self, call_history_data):
+        current_call_history_in_datastore = self.get_call_history_keys()
 
-    def __get_call_history_keys(self):
+        return list(
+            filter(
+                lambda call_history_record: not self.__check_if_call_history_record_already_exists(
+                    call_history_record, current_call_history_in_datastore
+                ),
+                call_history_data,
+            )
+        )
+
+    def get_call_history_keys(self):
         query = self.datastore_client.query(kind="CallHistory")
         query.keys_only()
-        current_call_history = list([entity.key.id_or_name for entity in query.fetch()])
+        current_call_history = {entity.key.id_or_name: None for entity in query.fetch()}
         return current_call_history
 
     def __bulk_upload_call_history(self, new_call_history_entries):
@@ -190,8 +159,14 @@ class CallHistoryClient:
             task1.update(asdict(call_history_record))
             datastore_tasks.append(task1)
         datastore_batches = self.split_into_batches(datastore_tasks, 500)
+
+        loop = asyncio.get_running_loop()
+        async_processes = []
         for batch in datastore_batches:
-            client.put_multi(batch)
+            process = loop.run_in_executor(client.put_multi(batch))
+            async_processes.push(process)
+        loop.run_until_complete(asyncio.gather(*async_processes))
+        loop.close()
 
     def __update_call_history_report_status(self):
         complete_key = self.datastore_client.key("Status", "call_history")
@@ -208,23 +183,7 @@ class CallHistoryClient:
     def __check_if_call_history_record_already_exists(
         call_history_record, current_call_history_in_datastore
     ):
-        for record in current_call_history_in_datastore:
-            if (
-                f"{call_history_record.serial_number}-{call_history_record.call_start_time}"
-                == record
-            ):
-                return True
-
-        return False
-
-    @staticmethod
-    def __match_cati_call_history_and_questionnaire_data(
-        serial_number, questionnaire_name, questionnaire_data
-    ):
-        for record in questionnaire_data:
-            if (
-                record.get("qiD.Serial_Number") == serial_number
-                and record["questionnaire_name"] == questionnaire_name
-            ):
-                return record
-        return None
+        return (
+            f"{call_history_record.serial_number}-{call_history_record.call_start_time}"
+            in current_call_history_in_datastore
+        )
