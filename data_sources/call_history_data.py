@@ -160,7 +160,7 @@ class CallHistoryClient:
             datastore_tasks.append(task1)
         datastore_batches = self.split_into_batches(datastore_tasks, 500)
 
-        loop = asyncio.get_event_loop()
+        loop = asyncio.new_event_loop()
         async_processes = []
         for batch in datastore_batches:
             process = loop.run_in_executor(client.put_multi(batch))
