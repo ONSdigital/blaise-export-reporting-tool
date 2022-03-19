@@ -34,10 +34,7 @@ def get_mi_hub_respondent_data(config):
 def get_mi_hub_respondent_data_for_questionnaire(
     blaise_fields_to_get, config, questionnaire_name
 ):
-    records = []
-    records.extend(
-        get_questionnaire_data(questionnaire_name, config, blaise_fields_to_get)
-    )
+    records = get_questionnaire_data(questionnaire_name, config, blaise_fields_to_get)
     mi_hub_respondent_data = []
     for record in records:
         mi_hub_respondent_data_record = MiHubRespondentData(

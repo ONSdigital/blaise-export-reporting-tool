@@ -1,10 +1,8 @@
 from unittest import mock
 
 from data_sources.cati_data import get_cati_mi_hub_call_history_from_database
-from data_sources.call_history_data import CallHistoryClient
 from data_sources.questionnaire_data import (
     get_list_of_installed_questionnaires,
-    get_questionnaire_data,
     get_questionnaire_name_from_id,
 )
 from models.mi_hub_call_history_model import MiHubCallHistory
@@ -63,6 +61,7 @@ def check_if_questionnaire_id_is_in_questionnaire_list(
 def group_by_questionnaire(data):
     result = {}
     for record in data:
-        result[record.questionnaire_name] = result.get(record.questionnaire_name, [])
+        if record.questionnaire_name not in result:
+            result[record.questionnaire_name] = []
         result[record.questionnaire_name].append(record)
     return result
