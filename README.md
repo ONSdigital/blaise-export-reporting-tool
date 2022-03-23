@@ -155,10 +155,16 @@ Run the "upload_call_history" Cloud Function:
 python -c "from main import upload_call_history; upload_call_history(None, None)"
 ```
 
-Run the "deliver_mi_hub_reports" Cloud Function:
+Run the "deliver_mi_hub_reports_trigger" Cloud Function:
 
 ```shell
 python -c "from main import deliver_mi_hub_reports_trigger; deliver_mi_hub_reports_trigger(None, None)"
+```
+
+Run the "deliver_mi_hub_reports_processor" Cloud Function:
+
+```shell
+python -c "import flask; from main import deliver_mi_hub_reports_processor; deliver_mi_hub_reports_processor(flask.Request.from_values(json={'name': 'DST2111Z', 'id': '0499d2c2-f955-4374-b020-2d556d897c22'}))"
 ```
 
 Run Tests
