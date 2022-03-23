@@ -51,6 +51,7 @@ def deliver_mi_hub_reports_trigger(_event, _context):
 
     task_client = tasks_v2.CloudTasksClient()
     for questionnaire in installed_questionnaire_list:
+        print(json.dumps(questionnaire).encode())
         print(f"Sending request to deliver_mi_hub_reports_processor for {questionnaire.get('name')} {questionnaire.get('id')}")        
         request = tasks_v2.CreateTaskRequest(
             parent=config.deliver_mi_hub_reports_task_queue_id,
