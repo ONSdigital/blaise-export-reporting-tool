@@ -1,19 +1,20 @@
 import datetime
 import os
+import json
 
 from dotenv import load_dotenv
 from google.cloud import datastore
+from google.cloud import tasks_v2
 
 from app.app import app, load_config, setup_app
-from data_sources.call_history_data import (
-    CallHistoryClient,
-)
+from data_sources.call_history_data import (CallHistoryClient)
 from functions.csv_functions import write_csv
 from functions.google_storage_functions import init_google_storage
 from functions.zip_functions import create_zip
 from models.config_model import Config
 from reports.mi_hub_call_history_report import get_mi_hub_call_history
 from reports.mi_hub_respondent_data_report import get_mi_hub_respondent_data
+from data_sources.questionnaire_data import get_list_of_installed_questionnaires
 
 
 def delete_old_call_history(_event, _context):
@@ -33,6 +34,55 @@ def upload_call_history(_event, _context):
     call_history_client.call_history_extraction_process()
 
 
+    # Loop through installed questionnnnaires
+    # For each questionnnnaire
+    # Get mi hub call history
+    # Get mi hub respondent data
+    # Create zip
+    # Upload to bucket
+
+
+def deliver_mi_hub_reports_trigger(_event, _context):
+    print("Running Cloud Function - deliver_mi_hub_reports_trigger")
+    config = Config.from_env()
+    config.log()
+
+    project = "ons-blaise-v2-dev-rr3"  # tf !?
+    region = "europe-west2"  # tf !?
+
+    installed_questionnaire_list = get_list_of_installed_questionnaires(config)
+
+    for questionnaire in installed_questionnaire_list:
+        print(f"Sending request to deliver_mi_hub_reports for {questionnaire.get('name')} {questionnaire.get('id')}")
+        task_client = tasks_v2.CloudTasksClient()
+        request = tasks_v2.CreateTaskRequest(
+            parent=f"projects/{project}/locations/{region}/queues/bert-deliver-mi-hub-reports",
+            task=tasks_v2.Task(
+                name=f"projects/{project}/locations/{region}/queues/bert-deliver-mi-hub-reports/tasks/{questionnaire.get('name')}",
+                http_request=tasks_v2.HttpRequest(
+                    http_method="POST",
+                    url=f"https://{region}-{project}.cloudfunctions.net/deliver_mi_hub_reports",
+                    body=json.dumps(questionnaire.get('name'), questionnaire.get('id')).encode(),
+                    headers={
+                        "Content-Type": "application/json",
+                        },
+                ),
+                dispatch_deadline=10000,  # !?
+            ),
+        )
+        task_client.create_task(request)
+
+
+def deliver_mi_hub_reports(_event, _context, questionnaire_name, questionnaire_id):
+    print("Running Cloud Function - deliver_mi_hub_reports")
+    config = Config.from_env()
+    config.log()
+
+    mi_hub_call_history = get_mi_hub_call_history(config, questionnaire_name, questionnaire_id)
+    print(mi_hub_call_history)
+
+
+"""
 def deliver_mi_hub_reports(_event, _context):
     print("Running Cloud Function - deliver_mi_hub_reports")
     config = Config.from_env()
@@ -74,6 +124,7 @@ def deliver_mi_hub_reports(_event, _context):
 
         mi_filename = f"mi_{questionnaire}_{datetime_string}"
         google_storage.upload_zip(f"{mi_filename}.zip", zipped)
+"""
 
 
 if os.path.isfile("./.env"):

@@ -73,19 +73,6 @@ Clone the project locally:
 git clone https://github.com/ONSdigital/blaise-export-reporting-tool.git
 ```
 
-Setup a virtual environment:
-
-macOS:
-```shell
-python3 -m venv venv  
-source venv/bin/activate
-```
-Windows:
-```shell
-python -m venv venv  
-venv\Scripts\activate
-```
-
 Install poetry:
 ```shell
 pip install poetry
@@ -171,7 +158,7 @@ python -c "from main import upload_call_history; upload_call_history(None, None)
 Run the "deliver_mi_hub_reports" Cloud Function:
 
 ```shell
-python -c "from main import deliver_mi_hub_reports; deliver_mi_hub_reports(None, None)"
+python -c "from main import deliver_mi_hub_reports_trigger; deliver_mi_hub_reports_trigger(None, None)"
 ```
 
 Run Tests
