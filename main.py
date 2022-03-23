@@ -47,36 +47,40 @@ def deliver_mi_hub_reports_trigger(_event, _context):
     config = Config.from_env()
     config.log()
 
-    project = "ons-blaise-v2-dev-rr3"  # tf !?
-    region = "europe-west2"  # tf !?
-
     installed_questionnaire_list = get_list_of_installed_questionnaires(config)
 
+    task_client = tasks_v2.CloudTasksClient()
     for questionnaire in installed_questionnaire_list:
-        print(f"Sending request to deliver_mi_hub_reports for {questionnaire.get('name')} {questionnaire.get('id')}")
-        task_client = tasks_v2.CloudTasksClient()
+        print(f"Sending request to deliver_mi_hub_reports_processor for {questionnaire.get('name')} {questionnaire.get('id')}")        
         request = tasks_v2.CreateTaskRequest(
-            parent=f"projects/{project}/locations/{region}/queues/bert-deliver-mi-hub-reports",
+            parent=config.deliver_mi_hub_reports_task_queue_id,
             task=tasks_v2.Task(
-                name=f"projects/{project}/locations/{region}/queues/bert-deliver-mi-hub-reports/tasks/{questionnaire.get('name')}",
+                name=f"{config.deliver_mi_hub_reports_task_queue_id}/tasks/{questionnaire.get('name')}",
                 http_request=tasks_v2.HttpRequest(
                     http_method="POST",
-                    url=f"https://{region}-{project}.cloudfunctions.net/deliver_mi_hub_reports",
-                    body=json.dumps(questionnaire.get('name'), questionnaire.get('id')).encode(),
+                    url=f"https://{config.region}-{config.gcloud_project}.cloudfunctions.net/deliver_mi_hub_reports_processor",
+                    body=json.dumps(questionnaire).encode(),
                     headers={
                         "Content-Type": "application/json",
                         },
                 ),
-                dispatch_deadline=10000,  # !?
             ),
         )
         task_client.create_task(request)
 
 
-def deliver_mi_hub_reports(_event, _context, questionnaire_name, questionnaire_id):
-    print("Running Cloud Function - deliver_mi_hub_reports")
+def deliver_mi_hub_reports_processor(request):
+    print("Running Cloud Function - deliver_mi_hub_reports_processor")
     config = Config.from_env()
     config.log()
+
+    request_json = request.get_json()
+
+    if request_json is None:
+        raise Exception("Function was not triggered by a valid request")
+
+    questionnaire_name = request_json["name"]
+    questionnaire_id = request_json["id"]
 
     mi_hub_call_history = get_mi_hub_call_history(config, questionnaire_name, questionnaire_id)
     print(mi_hub_call_history)

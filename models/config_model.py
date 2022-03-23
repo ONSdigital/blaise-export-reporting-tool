@@ -11,6 +11,9 @@ class Config:
     mysql_database: str
     blaise_api_url: str
     nifi_staging_bucket: str
+    deliver_mi_hub_reports_task_queue_id: str
+    gcloud_project: str
+    region: str
 
     @classmethod
     def from_env(cls):
@@ -20,7 +23,10 @@ class Config:
             mysql_password=os.getenv("MYSQL_PASSWORD"),
             mysql_database=os.getenv("MYSQL_DATABASE"),
             blaise_api_url=os.getenv("BLAISE_API_URL"),
-            nifi_staging_bucket=os.getenv("NIFI_STAGING_BUCKET")
+            nifi_staging_bucket=os.getenv("NIFI_STAGING_BUCKET"),
+            deliver_mi_hub_reports_task_queue_id=os.getenv("DELIVER_MI_HUB_REPORTS_TASK_QUEUE_ID"),
+            gcloud_project=os.getenv("GCLOUD_PROJECT"),
+            region=os.getenv("REGION")
         )
 
     def log(self):
@@ -33,3 +39,6 @@ class Config:
         print(f"Configuration - mysql_database: {self.mysql_database}")
         print(f"Configuration - blaise_api_url: {self.blaise_api_url}")
         print(f"Configuration - nifi_staging_bucket: {self.nifi_staging_bucket}")
+        print(f"Configuration - deliver_mi_hub_reports_task_queue_id: {self.deliver_mi_hub_reports_task_queue_id}")
+        print(f"Configuration - gcloud_project: {self.gcloud_project}")
+        print(f"Configuration - region: {self.region}")
