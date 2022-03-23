@@ -18,10 +18,9 @@ from data_sources.questionnaire_data import get_list_of_installed_questionnaires
 
 
 def delete_old_call_history(_event, _context):
-    print("Running Cloud Function - delete_call_history")
+    print("Running Cloud Function - delete_old_call_history")
     datastore_client = datastore.Client()
     call_history_client = CallHistoryClient(datastore_client)
-    print("Running Cloud Function - delete_old_call_history")
     call_history_client.delete_historical_call_history()
 
 
@@ -51,7 +50,6 @@ def deliver_mi_hub_reports_trigger(_event, _context):
 
     task_client = tasks_v2.CloudTasksClient()
     for questionnaire in installed_questionnaire_list:
-        print(json.dumps(questionnaire).encode())
         print(f"Sending request to deliver_mi_hub_reports_processor for {questionnaire.get('name')} {questionnaire.get('id')}")        
         request = tasks_v2.CreateTaskRequest(
             parent=config.deliver_mi_hub_reports_task_queue_id,
@@ -59,7 +57,7 @@ def deliver_mi_hub_reports_trigger(_event, _context):
                 name=f"{config.deliver_mi_hub_reports_task_queue_id}/tasks/{questionnaire.get('name')}",
                 http_request=tasks_v2.HttpRequest(
                     http_method="POST",
-                    url=f"https://{config.region}-{config.gcloud_project}.cloudfunctions.net/deliver_mi_hub_reports_processor",
+                    url=f"https://{config.region}-{config.gcloud_project}.cloudfunctions.net/bert-deliver-mi-hub-reports-processor",
                     body=json.dumps(questionnaire).encode(),
                     headers={
                         "Content-Type": "application/json",
