@@ -55,7 +55,7 @@ def deliver_mi_hub_reports_trigger(_event, _context):
         request = tasks_v2.CreateTaskRequest(
             parent=config.deliver_mi_hub_reports_task_queue_id,
             task=tasks_v2.Task(
-                name=f"{config.deliver_mi_hub_reports_task_queue_id}/tasks/{questionnaire.get('name')-uuid.uuid4()}",
+                name=f"{config.deliver_mi_hub_reports_task_queue_id}/tasks/{questionnaire.get('name')}-{uuid.uuid4()}",
                 http_request=tasks_v2.HttpRequest(
                     http_method="POST",
                     url=f"https://{config.region}-{config.gcloud_project}.cloudfunctions.net/bert-deliver-mi-hub-reports-processor",
