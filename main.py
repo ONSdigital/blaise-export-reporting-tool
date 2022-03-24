@@ -62,7 +62,10 @@ def deliver_mi_hub_reports_trigger(_event, _context):
                     body=json.dumps(questionnaire).encode(),
                     headers={
                         "Content-Type": "application/json",
-                        },
+                    },
+                    oidc_token={
+                        "service_account_email": config.cloud_function_sa,
+                    },
                 ),
             ),
         )

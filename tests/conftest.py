@@ -19,7 +19,8 @@ def config():
         nifi_staging_bucket="blah",
         deliver_mi_hub_reports_task_queue_id="blah",
         gcloud_project="blah",
-        region="blah"
+        region="blah",
+        cloud_function_sa="cloud_function_sa_mock"
     )
 
 

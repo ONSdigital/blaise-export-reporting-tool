@@ -14,6 +14,7 @@ class Config:
     deliver_mi_hub_reports_task_queue_id: str
     gcloud_project: str
     region: str
+    cloud_function_sa: str
 
     @classmethod
     def from_env(cls):
@@ -26,7 +27,8 @@ class Config:
             nifi_staging_bucket=os.getenv("NIFI_STAGING_BUCKET"),
             deliver_mi_hub_reports_task_queue_id=os.getenv("DELIVER_MI_HUB_REPORTS_TASK_QUEUE_ID"),
             gcloud_project=os.getenv("GCLOUD_PROJECT"),
-            region=os.getenv("REGION")
+            region=os.getenv("REGION"),
+            cloud_function_sa=os.getenv("CLOUD_FUNCTION_SA")            
         )
 
     def log(self):
@@ -42,3 +44,4 @@ class Config:
         print(f"Configuration - deliver_mi_hub_reports_task_queue_id: {self.deliver_mi_hub_reports_task_queue_id}")
         print(f"Configuration - gcloud_project: {self.gcloud_project}")
         print(f"Configuration - region: {self.region}")
+        print(f"Configuration - cloud_function_sa: {self.cloud_function_sa}")
