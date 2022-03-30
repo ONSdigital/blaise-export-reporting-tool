@@ -3,7 +3,7 @@ from models.mi_hub_call_history_model import MiHubCallHistory
 
 
 def get_mi_hub_call_history(config, questionnaire_name, questionnaire_id):
-    print("Getting data for the MI hub call history report")
+    print(f"Getting MI hub call history report data for {questionnaire_name}")
     cati_data = get_cati_mi_hub_call_history_from_database(config)
     cati_mi_hub_call_history_list = []
     for item in cati_data:
@@ -18,10 +18,10 @@ def get_mi_hub_call_history(config, questionnaire_name, questionnaire_id):
             dial_line_number=item.get("DialedNumber"),
             seconds_interview=item.get("dial_secs"),
             outcome_code=item.get("OutcomeCode"),
-        )
-        cati_mi_hub_call_history.generate_dial_date_and_time_fields(
-            item.get("StartTime"), item.get("EndTime")
-        )
-        cati_mi_hub_call_history.questionnaire_name = questionnaire_name
-        cati_mi_hub_call_history_list.append(cati_mi_hub_call_history)
+            )
+            cati_mi_hub_call_history.generate_dial_date_and_time_fields(
+                item.get("StartTime"), item.get("EndTime")
+            )
+            cati_mi_hub_call_history.questionnaire_name = questionnaire_name
+            cati_mi_hub_call_history_list.append(cati_mi_hub_call_history)
     return cati_mi_hub_call_history_list
