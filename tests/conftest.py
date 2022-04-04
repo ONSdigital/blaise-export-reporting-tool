@@ -16,7 +16,11 @@ def config():
         mysql_password="blah",
         mysql_database="blah",
         blaise_api_url="blah",
-        nifi_staging_bucket="blah"
+        nifi_staging_bucket="blah",
+        deliver_mi_hub_reports_task_queue_id="blah",
+        gcloud_project="blah",
+        region="blah",
+        cloud_function_sa="cloud_function_sa_mock"
     )
 
 
