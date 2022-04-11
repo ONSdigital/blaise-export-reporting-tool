@@ -48,3 +48,11 @@ def identify_webnudge_cases(records):
             record["call_result"] = "WebNudge"
             record["status"] = "WebNudge"
     return records
+
+
+def get_call_history_instruments(interviewer, start_date, end_date, survey_tla):
+    records = get_call_history_records(interviewer, start_date, end_date, survey_tla)
+    _list_of_instruments = []
+    for record in records:
+        _list_of_instruments.append(record["questionnaire_name"])
+    return list(set(_list_of_instruments))
