@@ -5,9 +5,9 @@ import pytest
 from google.api_core.datetime_helpers import DatetimeWithNanoseconds
 
 from models.error_capture import BertException
-from reports.interviewer_call_history_report import get_call_history_records, get_datastore_records
-from tests.helpers.interviewer_call_history_helpers import entity_builder
 from reports.interviewer_call_history_report import get_call_history_records, get_call_history_instruments
+from reports.interviewer_call_history_report import get_datastore_records
+from tests.helpers.interviewer_call_history_helpers import entity_builder
 
 
 def test_get_call_history_records_with_invalid_dates(interviewer_name, invalid_date):
@@ -33,6 +33,13 @@ def test_get_call_history_records_with_one_datastore_entity(mock_get_datastore_r
 
     assert len(results) == 1
     assert results == mock_datastore_entity
+    mock_get_datastore_records.assert_called_with(
+        interviewer_name,
+        datetime.datetime(2021, 9, 22, 0, 0),
+        datetime.datetime(2021, 9, 22, 23, 59, 59),
+        None,
+        None
+    )
 
 
 @patch("reports.interviewer_call_history_report.get_datastore_records")
@@ -284,3 +291,28 @@ def test_get_call_history_instruments_returns_a_list_of_unique_instruments(mock_
     results = get_call_history_instruments(interviewer_name, start_date_as_string, end_date_as_string, "LMS")
 
     assert set(results) == {"LMS2101_AA1", "LMS2202_TST"}
+
+
+@patch("reports.interviewer_call_history_report.get_datastore_records")
+def test_get_call_history_records_with_a_list_of_instruments(mock_get_datastore_records, interviewer_name,
+                                                             start_date_as_string, end_date_as_string,
+                                                             arbitrary_outcome_code):
+    mock_datastore_entity = [
+        entity_builder(
+            1, interviewer_name, start_date_as_string, end_date_as_string, arbitrary_outcome_code, "Completed"
+        )
+    ]
+
+    mock_get_datastore_records.return_value = mock_datastore_entity
+    results = get_call_history_records(interviewer_name, start_date_as_string, end_date_as_string, survey_tla="LMS",
+                                       instruments=["LMS2202_TST", "LMS2101_AA1"])
+
+    assert len(results) == 1
+    assert results == mock_datastore_entity
+    mock_get_datastore_records.assert_called_with(
+        interviewer_name,
+        datetime.datetime(2021, 9, 22, 0, 0),
+        datetime.datetime(2021, 9, 22, 23, 59, 59),
+        "LMS",
+        ["LMS2202_TST", "LMS2101_AA1"]
+    )
