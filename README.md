@@ -175,6 +175,19 @@ poetry run python -c "import flask; from main import deliver_mi_hub_reports_proc
 
 Run Tests
 
+You will need the Google Cloud Datastore Emulator to run the full test suite (including Datastore integration tests)
+
 ```shell
+gcloud components install cloud-datastore-emulator
+```
+
+```shell
+gcloud beta emulators datastore start --no-store-on-disk
+```
+
+In a separate terminal
+
+```shell
+$(gcloud beta emulators datastore env-init)
 poetry run python -m pytest
 ```

@@ -1,11 +1,12 @@
-import pytest
-
-from tests.helpers.interviewer_call_history_helpers import entity_builder
-
+import datetime
 from unittest.mock import patch
 
+import pytest
+from google.api_core.datetime_helpers import DatetimeWithNanoseconds
+
 from models.error_capture import BertException
-from reports.interviewer_call_history_report import get_call_history_records
+from reports.interviewer_call_history_report import get_call_history_records, get_datastore_records
+from tests.helpers.interviewer_call_history_helpers import entity_builder
 
 
 def test_get_call_history_records_with_invalid_dates(interviewer_name, invalid_date):
@@ -114,3 +115,146 @@ def test_get_call_history_records_with_multiple_entities_returns_all_webnudges(
     assert len(results) == 2
     assert results[0]["status"] == new_status
     assert results[1]["status"] == new_status
+
+
+@pytest.mark("integration_test")
+def test_get_datastore_records_returns_expected_result_when_for_all_tlas(records_in_datastore):
+    records = [
+        {
+            "name": "name=100001-2022-01-25 12:45:03",
+            "interviewer": "James",
+            "call_start_time": datetime.datetime(2022, 1, 25, 12, 45),
+            "call_end_time": datetime.datetime(2022, 1, 25, 12, 47),
+            "survey": "LMS",
+        },
+        {
+            "name": "name=100002-2022-01-25 12:45:03",
+            "interviewer": "James",
+            "call_start_time": datetime.datetime(2022, 1, 25, 12, 45),
+            "call_end_time": datetime.datetime(2022, 1, 25, 12, 47),
+            "survey": "OPN",
+        },
+    ]
+
+    with records_in_datastore(records):
+        result = get_datastore_records("James", datetime.datetime(2021, 9, 22, 23, ),
+                                       datetime.datetime(2022, 1, 26, 23, ), None)
+
+        expected = [
+            {
+                "interviewer": "James",
+                "call_start_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 45, tzinfo=datetime.timezone.utc),
+                "call_end_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 47, tzinfo=datetime.timezone.utc),
+                "survey": "LMS",
+            },
+            {
+                "interviewer": "James",
+                "call_start_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 45, tzinfo=datetime.timezone.utc),
+                "call_end_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 47, tzinfo=datetime.timezone.utc),
+                "survey": "OPN",
+            },
+        ]
+
+        result = [dict(r) for r in result]
+
+        assert result == expected
+
+
+@pytest.mark("integration_test")
+def test_get_datastore_records_returns_expected_result_when_called_with_a_given_tla(
+        records_in_datastore):
+    records = [
+        {
+            "name": "name=100001-2022-01-25 12:45:03",
+            "interviewer": "James",
+            "call_start_time": datetime.datetime(2022, 1, 25, 12, 45),
+            "call_end_time": datetime.datetime(2022, 1, 25, 12, 47),
+            "survey": "LMS",
+        },
+        {
+            "name": "name=100002-2022-01-25 12:45:03",
+            "interviewer": "James",
+            "call_start_time": datetime.datetime(2022, 1, 25, 12, 45),
+            "call_end_time": datetime.datetime(2022, 1, 25, 12, 47),
+            "survey": "OPN",
+        },
+    ]
+    with records_in_datastore(records):
+        result = get_datastore_records("James", datetime.datetime(2021, 9, 22, 23, ),
+                                       datetime.datetime(2022, 1, 26, 23, ), "LMS")
+
+        expected = [{
+            "interviewer": "James",
+            "call_start_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 45, tzinfo=datetime.timezone.utc),
+            "call_end_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 47, tzinfo=datetime.timezone.utc),
+            "survey": "LMS"
+        }]
+
+        result = [dict(r) for r in result]
+
+        assert result == expected
+
+
+@pytest.mark("integration_test")
+def test_get_datastore_records_returns_expected_result_when_called_with_multiple_interviewers(
+        records_in_datastore):
+    records = [
+        {
+            "name": "name=100001-2022-01-25 12:45:03",
+            "interviewer": "James",
+            "call_start_time": datetime.datetime(2022, 1, 25, 12, 45),
+            "call_end_time": datetime.datetime(2022, 1, 25, 12, 47),
+            "survey": "LMS",
+        },
+        {
+            "name": "name=100002-2022-01-25 12:45:03",
+            "interviewer": "El",
+            "call_start_time": datetime.datetime(2022, 1, 25, 12, 45),
+            "call_end_time": datetime.datetime(2022, 1, 25, 12, 47),
+            "survey": "LMS",
+        },
+    ]
+    with records_in_datastore(records):
+        result = get_datastore_records("James", datetime.datetime(2021, 9, 22, 23, ),
+                                       datetime.datetime(2022, 1, 26, 23, ), None)
+
+        expected = [{
+            "interviewer": "James",
+            "call_start_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 45, tzinfo=datetime.timezone.utc),
+            "call_end_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 47, tzinfo=datetime.timezone.utc),
+            "survey": "LMS"
+        }]
+
+        result = [dict(r) for r in result]
+
+        assert result == expected
+
+
+@pytest.mark("integration_test")
+def test_get_datastore_records_returns_expected_result_when_called_with_calls_outside_of_date_range(
+        records_in_datastore):
+    records = [
+        {
+            "name": "name=100001-2022-01-25 12:45:03",
+            "interviewer": "James",
+            "call_start_time": datetime.datetime(2022, 1, 25, 12, 45),
+            "call_end_time": datetime.datetime(2022, 1, 25, 12, 47),
+            "survey": "LMS",
+        },
+        {
+            "name": "name=100002-2022-01-25 12:45:03",
+            "interviewer": "El",
+            "call_start_time": datetime.datetime(2021, 1, 25, 12, 45),
+            "call_end_time": datetime.datetime(2021, 1, 25, 12, 47),
+            "survey": "LMS",
+        },
+    ]
+    with records_in_datastore(records):
+        result = get_datastore_records("James", datetime.datetime(2021, 9, 22, 23, ),
+                                       datetime.datetime(2021, 9, 26, 23, ), None)
+
+        expected = []
+
+        result = [dict(r) for r in result]
+
+        assert result == expected
