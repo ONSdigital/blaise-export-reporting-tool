@@ -117,7 +117,7 @@ def test_get_call_history_records_with_multiple_entities_returns_all_webnudges(
     assert results[1]["status"] == new_status
 
 
-@pytest.mark("integration_test")
+@pytest.mark.integration_test
 def test_get_datastore_records_returns_expected_result_when_for_all_tlas(records_in_datastore):
     records = [
         {
@@ -160,7 +160,7 @@ def test_get_datastore_records_returns_expected_result_when_for_all_tlas(records
         assert result == expected
 
 
-@pytest.mark("integration_test")
+@pytest.mark.integration_test
 def test_get_datastore_records_returns_expected_result_when_called_with_a_given_tla(
         records_in_datastore):
     records = [
@@ -195,7 +195,7 @@ def test_get_datastore_records_returns_expected_result_when_called_with_a_given_
         assert result == expected
 
 
-@pytest.mark("integration_test")
+@pytest.mark.integration_test
 def test_get_datastore_records_returns_expected_result_when_called_with_multiple_interviewers(
         records_in_datastore):
     records = [
@@ -230,7 +230,7 @@ def test_get_datastore_records_returns_expected_result_when_called_with_multiple
         assert result == expected
 
 
-@pytest.mark("integration_test")
+@pytest.mark.integration_test
 def test_get_datastore_records_returns_expected_result_when_called_with_calls_outside_of_date_range(
         records_in_datastore):
     records = [
