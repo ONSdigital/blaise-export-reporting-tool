@@ -25,13 +25,13 @@ def test_call_history_report(mock_get_call_history_records, client):
     assert json.loads(response.get_data(as_text=True)) == []
 
 
-@patch("app.app.get_call_history_instruments")
-def test_call_history_instruments(mock_get_call_history_instruments, client):
-    mock_get_call_history_instruments.return_value = ["LMS2202_TST"]
-    response = client.get("/api/reports/call-history/matpal/instruments?start-date=2021-01-01&end-date=2021-01-01&survey-tla=lms")
+@patch("app.app.get_call_history_questionnaires")
+def test_call_history_questionnaires(mock_get_call_history_questionnaires, client):
+    mock_get_call_history_questionnaires.return_value = ["LMS2202_TST"]
+    response = client.get("/api/reports/call-history/matpal/questionnaires?start-date=2021-01-01&end-date=2021-01-01&survey-tla=lms")
     assert response.status_code == 200
     assert json.loads(response.get_data(as_text=True)) == ["LMS2202_TST"]
-    mock_get_call_history_instruments.assert_called_with("matpal", "2021-01-01", "2021-01-01", "LMS")
+    mock_get_call_history_questionnaires.assert_called_with("matpal", "2021-01-01", "2021-01-01", "LMS")
 
 
 @patch("app.app.get_call_history_records")
