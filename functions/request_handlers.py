@@ -31,3 +31,12 @@ def survey_tla_handler(request):
         raise(BertException(f"Invalid request, {survey_tla} is not a valid survey three letter acronym", 400))
 
     return survey_tla.upper()
+
+
+def questionnaire_handler(request):
+    questionnaire = request.args.get("questionnaires", None)
+
+    if questionnaire is not None:
+        return questionnaire.split(",")
+    else:
+        return None
