@@ -26,18 +26,20 @@ def is_invalid(date):
 
 
 def get_datastore_records(interviewer_name, start_date, end_date, survey_tla, questionnaires):
+    client = datastore.Client()
+
     if questionnaires is None:
-        return get_datastore_records_for_questionnaire(interviewer_name, start_date, survey_tla, end_date, None)
+        return get_datastore_records_for_questionnaire(client, interviewer_name, start_date, survey_tla, end_date, None)
+
     records = []
     for questionnaire in questionnaires:
-        records += get_datastore_records_for_questionnaire(interviewer_name, start_date, survey_tla, end_date,
+        records += get_datastore_records_for_questionnaire(client, interviewer_name, start_date, survey_tla, end_date,
                                                            questionnaire)
     return sorted(records, key=lambda record: record['call_start_time'])
 
 
-def get_datastore_records_for_questionnaire(interviewer_name, start_date, survey_tla, end_date, questionnaire):
+def get_datastore_records_for_questionnaire(client, interviewer_name, start_date, survey_tla, end_date, questionnaire):
     print(f"Getting call history data for interviewer '{interviewer_name}' between '{start_date}' and '{end_date}'")
-    client = datastore.Client()
     query = client.query(kind="CallHistory")
     query.add_filter("interviewer", "=", interviewer_name)
     query.add_filter("call_start_time", ">=", start_date)
