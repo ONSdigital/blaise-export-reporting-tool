@@ -2,7 +2,6 @@ from google.cloud import datastore
 
 from functions.date_functions import parse_date_string_to_datetime
 from models.error_capture import BertException
-import datetime
 
 
 def get_call_history_records(interviewer_name, start_date_string, end_date_string, survey_tla=None,
@@ -43,13 +42,15 @@ def get_datastore_records_for_questionnaire(interviewer_name, start_date, survey
     query.add_filter("interviewer", "=", interviewer_name)
     query.add_filter("call_start_time", ">=", start_date)
     query.add_filter("call_start_time", "<=", end_date)
+
     if survey_tla is not None:
         print(f"Filtering call history data by survey '{survey_tla}'")
         query.add_filter("survey", "=", survey_tla)
+
     if questionnaire is not None:
         print(f"Filtering call history data by instrument '{questionnaire}'")
         query.add_filter("questionnaire_name", "=", questionnaire)
-    # query.order = ["call_start_time"]
+
     records = list(query.fetch())
     print(f"get_call_history_records_by_interviewer_and_date_range - {len(records)} records found")
     return records
