@@ -1,0 +1,3 @@
+[pytest]
+markers =
+    integration_test: tests which check integrations with external dependencies
