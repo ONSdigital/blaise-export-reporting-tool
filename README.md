@@ -178,16 +178,16 @@ Run Tests
 You will need the Google Cloud Datastore Emulator to run the full test suite (including Datastore integration tests)
 
 ```shell
-gcloud components install cloud-datastore-emulator
+make start-datastore-emulator
 ```
 
+**In a separate terminal window**
+
 ```shell
-gcloud beta emulators datastore start --no-store-on-disk
+make test
 ```
 
-In a separate terminal
-
+to run the unit tests without the Datastore emulator (i.e. integration tests)
 ```shell
-$(gcloud beta emulators datastore env-init)
-poetry run python -m pytest
+make test-unit
 ```
