@@ -12,9 +12,9 @@ def get_cati_mi_hub_call_history_from_database(config):
     return CatiMiHubCallHistoryTable.select_from(config)
 
 
-def get_cati_appointment_resource_planning_from_database(config, date):
-    return CatiAppointmentResourcePlanningTable.get_appointments_for_date(config, date)
+def get_cati_appointment_resource_planning_from_database(config, date, survey_tla):
+    return CatiAppointmentResourcePlanningTable.get_appointments_for_date(config, date, survey_tla)
 
 
-def get_cati_appointment_language_summary_from_database(config, date):
-    return CatiAppointmentLanguageSummaryTable.get_language_summary_for_date(config, date)
+def get_cati_appointment_language_summary_from_database(config, date, survey_tla):
+    return CatiAppointmentLanguageSummaryTable.get_language_summary_for_date(config, date, survey_tla)
