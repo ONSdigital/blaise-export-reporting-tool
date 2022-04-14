@@ -218,8 +218,63 @@ def test_get_datastore_records_returns_expected_result_when_called_with_given_qu
         {
             "name": "name=100002-2022-01-25 12:45:03",
             "interviewer": "James",
-            "call_start_time": datetime.datetime(2022, 1, 25, 12, 45),
-            "call_end_time": datetime.datetime(2022, 1, 25, 12, 47),
+            "call_start_time": datetime.datetime(2022, 1, 25, 13, 45),
+            "call_end_time": datetime.datetime(2022, 1, 25, 13, 47),
+            "survey": "LMS",
+            "questionnaire_name": "LMS2101_BB1"
+        },
+        {
+            "name": "name=100003-2022-01-25 12:45:03",
+            "interviewer": "James",
+            "call_start_time": datetime.datetime(2022, 1, 25, 14, 45),
+            "call_end_time": datetime.datetime(2022, 1, 25, 14, 47),
+            "survey": "OPN",
+            "questionnaire_name": "OPN2101_CC1"
+        },
+    ]
+    with records_in_datastore(records):
+        result = get_datastore_records("James", datetime.datetime(2021, 9, 22, 23, ),
+                                       datetime.datetime(2022, 1, 26, 23, ), None, ["LMS2101_AA1", "LMS2101_BB1"])
+
+        expected = [
+            {
+                "interviewer": "James",
+                "call_start_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 45, tzinfo=datetime.timezone.utc),
+                "call_end_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 47, tzinfo=datetime.timezone.utc),
+                "survey": "LMS",
+                "questionnaire_name": "LMS2101_AA1"
+            },
+            {
+                "interviewer": "James",
+                "call_start_time": DatetimeWithNanoseconds(2022, 1, 25, 13, 45, tzinfo=datetime.timezone.utc),
+                "call_end_time": DatetimeWithNanoseconds(2022, 1, 25, 13, 47, tzinfo=datetime.timezone.utc),
+                "survey": "LMS",
+                "questionnaire_name": "LMS2101_BB1"
+            },
+        ]
+
+        result = [dict(r) for r in result]
+
+        assert result == expected
+
+
+@pytest.mark.integration_test
+def test_get_datastore_records_returns_expected_result_when_called_with_given_questionnaires_sorted_by_time(
+        records_in_datastore):
+    records = [
+        {
+            "name": "name=100001-2022-01-25 12:45:03",
+            "interviewer": "James",
+            "call_start_time": datetime.datetime(2022, 1, 25, 14, 45),
+            "call_end_time": datetime.datetime(2022, 1, 25, 14, 47),
+            "survey": "LMS",
+            "questionnaire_name": "LMS2101_AA1"
+        },
+        {
+            "name": "name=100002-2022-01-25 12:45:03",
+            "interviewer": "James",
+            "call_start_time": datetime.datetime(2022, 1, 25, 13, 45),
+            "call_end_time": datetime.datetime(2022, 1, 25, 13, 47),
             "survey": "LMS",
             "questionnaire_name": "LMS2101_BB1"
         },
@@ -239,17 +294,17 @@ def test_get_datastore_records_returns_expected_result_when_called_with_given_qu
         expected = [
             {
                 "interviewer": "James",
-                "call_start_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 45, tzinfo=datetime.timezone.utc),
-                "call_end_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 47, tzinfo=datetime.timezone.utc),
+                "call_start_time": DatetimeWithNanoseconds(2022, 1, 25, 13, 45, tzinfo=datetime.timezone.utc),
+                "call_end_time": DatetimeWithNanoseconds(2022, 1, 25, 13, 47, tzinfo=datetime.timezone.utc),
                 "survey": "LMS",
-                "questionnaire_name": "LMS2101_AA1"
+                "questionnaire_name": "LMS2101_BB1"
             },
             {
                 "interviewer": "James",
-                "call_start_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 45, tzinfo=datetime.timezone.utc),
-                "call_end_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 47, tzinfo=datetime.timezone.utc),
+                "call_start_time": DatetimeWithNanoseconds(2022, 1, 25, 14, 45, tzinfo=datetime.timezone.utc),
+                "call_end_time": DatetimeWithNanoseconds(2022, 1, 25, 14, 47, tzinfo=datetime.timezone.utc),
                 "survey": "LMS",
-                "questionnaire_name": "LMS2101_BB1"
+                "questionnaire_name": "LMS2101_AA1"
             },
         ]
 
@@ -321,6 +376,39 @@ def test_get_datastore_records_returns_expected_result_when_called_with_calls_ou
         result = [dict(r) for r in result]
 
         assert result == expected
+
+
+@patch("reports.interviewer_call_history_report.get_datastore_records")
+def test_get_call_history_instruments_returns_a_list_of_unique_questionnaires(mock_get_datastore_records,
+                                                                              interviewer_name,
+                                                                              start_date_as_string, end_date_as_string,
+                                                                              arbitrary_outcome_code):
+    mock_datastore_entity = [
+        entity_builder(
+            1, interviewer_name, start_date_as_string, end_date_as_string, arbitrary_outcome_code, "Completed",
+            "LMS2202_TST"
+        ),
+        entity_builder(
+            2, interviewer_name, start_date_as_string, end_date_as_string, arbitrary_outcome_code, "Completed",
+            "LMS2202_TST"
+        ),
+        entity_builder(
+            1, interviewer_name, start_date_as_string, end_date_as_string, arbitrary_outcome_code, "Completed",
+            "LMS2101_AA1"
+        ),
+    ]
+
+    mock_get_datastore_records.return_value = mock_datastore_entity
+    results = get_call_history_questionnaires(interviewer_name, start_date_as_string, end_date_as_string, "LMS")
+
+    assert set(results) == {"LMS2101_AA1", "LMS2202_TST"}
+    mock_get_datastore_records.assert_called_with(
+        interviewer_name,
+        datetime.datetime(2021, 9, 22, 0, 0),
+        datetime.datetime(2021, 9, 22, 23, 59, 59),
+        "LMS",
+        None
+    )
 
 
 @patch("reports.interviewer_call_history_report.get_datastore_records")
