@@ -146,7 +146,7 @@ def test_get_datastore_records_returns_expected_result_when_for_all_tlas(records
 
     with records_in_datastore(records):
         result = get_datastore_records("James", datetime.datetime(2021, 9, 22, 23, ),
-                                       datetime.datetime(2022, 1, 26, 23, ), None)
+                                       datetime.datetime(2022, 1, 26, 23, ), None, None)
 
         expected = [
             {
@@ -189,7 +189,7 @@ def test_get_datastore_records_returns_expected_result_when_called_with_a_given_
     ]
     with records_in_datastore(records):
         result = get_datastore_records("James", datetime.datetime(2021, 9, 22, 23, ),
-                                       datetime.datetime(2022, 1, 26, 23, ), "LMS")
+                                       datetime.datetime(2022, 1, 26, 23, ), "LMS", None)
 
         expected = [{
             "interviewer": "James",
@@ -197,6 +197,61 @@ def test_get_datastore_records_returns_expected_result_when_called_with_a_given_
             "call_end_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 47, tzinfo=datetime.timezone.utc),
             "survey": "LMS"
         }]
+
+        result = [dict(r) for r in result]
+
+        assert result == expected
+
+
+@pytest.mark.integration_test
+def test_get_datastore_records_returns_expected_result_when_called_with_given_questionnaires(
+        records_in_datastore):
+    records = [
+        {
+            "name": "name=100001-2022-01-25 12:45:03",
+            "interviewer": "James",
+            "call_start_time": datetime.datetime(2022, 1, 25, 12, 45),
+            "call_end_time": datetime.datetime(2022, 1, 25, 12, 47),
+            "survey": "LMS",
+            "questionnaire_name": "LMS2101_AA1"
+        },
+        {
+            "name": "name=100002-2022-01-25 12:45:03",
+            "interviewer": "James",
+            "call_start_time": datetime.datetime(2022, 1, 25, 12, 45),
+            "call_end_time": datetime.datetime(2022, 1, 25, 12, 47),
+            "survey": "LMS",
+            "questionnaire_name": "LMS2101_BB1"
+        },
+        {
+            "name": "name=100003-2022-01-25 12:45:03",
+            "interviewer": "James",
+            "call_start_time": datetime.datetime(2022, 1, 25, 12, 45),
+            "call_end_time": datetime.datetime(2022, 1, 25, 12, 47),
+            "survey": "OPN",
+            "questionnaire_name": "OPN2101_CC1"
+        },
+    ]
+    with records_in_datastore(records):
+        result = get_datastore_records("James", datetime.datetime(2021, 9, 22, 23, ),
+                                       datetime.datetime(2022, 1, 26, 23, ), None, ["LMS2101_AA1", "LMS2101_BB1"])
+
+        expected = [
+            {
+                "interviewer": "James",
+                "call_start_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 45, tzinfo=datetime.timezone.utc),
+                "call_end_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 47, tzinfo=datetime.timezone.utc),
+                "survey": "LMS",
+                "questionnaire_name": "LMS2101_AA1"
+            },
+            {
+                "interviewer": "James",
+                "call_start_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 45, tzinfo=datetime.timezone.utc),
+                "call_end_time": DatetimeWithNanoseconds(2022, 1, 25, 12, 47, tzinfo=datetime.timezone.utc),
+                "survey": "LMS",
+                "questionnaire_name": "LMS2101_BB1"
+            },
+        ]
 
         result = [dict(r) for r in result]
 
@@ -224,7 +279,7 @@ def test_get_datastore_records_returns_expected_result_when_called_with_multiple
     ]
     with records_in_datastore(records):
         result = get_datastore_records("James", datetime.datetime(2021, 9, 22, 23, ),
-                                       datetime.datetime(2022, 1, 26, 23, ), None)
+                                       datetime.datetime(2022, 1, 26, 23, ), None, None)
 
         expected = [{
             "interviewer": "James",
@@ -259,7 +314,7 @@ def test_get_datastore_records_returns_expected_result_when_called_with_calls_ou
     ]
     with records_in_datastore(records):
         result = get_datastore_records("James", datetime.datetime(2021, 9, 22, 23, ),
-                                       datetime.datetime(2021, 9, 26, 23, ), None)
+                                       datetime.datetime(2021, 9, 26, 23, ), None, None)
 
         expected = []
 
