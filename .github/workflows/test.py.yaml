@@ -11,24 +11,37 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9]
-
+        python-version: [ 3.9 ]
+    services:
+      datastore:
+        image: milesmcc/gcp-emulator
+        env:
+          DATASTORE_PROJECT_ID: project-test
+          DATASTORE_LISTEN_ADDRESS: 0.0.0.0:8081
+        ports:
+          - "8081:8081"
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        pip install poetry
-        poetry install
-    - name: Run pytest
-      run: |
-        poetry run python -m pytest --cov=./
-        poetry run python -m coverage xml -i
-    - name: Codecov
-      uses: codecov/codecov-action@v1.5.0
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        fail_ci_if_error: true
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          poetry install
+      - name: Run pytest
+        env:
+          DATASTORE_DATASET: ons-blaise-ci
+          DATASTORE_EMULATOR_HOST: localhost:8081
+          DATASTORE_EMULATOR_HOST_PATH: localhost:8081/datastore
+          DATASTORE_HOST: http://localhost:8081
+          DATASTORE_PROJECT_ID: project-test
+        run: |
+          poetry run python -m pytest --cov=./
+          poetry run python -m coverage xml -i
+      - name: Codecov
+        uses: codecov/codecov-action@v1.5.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
