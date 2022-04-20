@@ -47,12 +47,14 @@ def call_pattern(interviewer):
 
 @app.route("/api/reports/appointment-resource-planning/<date>")
 def appointment_resource_planning(date):
-    return jsonify(get_appointment_resource_planning_by_date(date))
+    survey_tla = survey_tla_handler(request)
+    return jsonify(get_appointment_resource_planning_by_date(date, survey_tla))
 
 
 @app.route("/api/reports/appointment-resource-planning-summary/<date>")
 def appointment_language_summary(date):
-    return jsonify(get_appointment_language_summary_by_date(date))
+    survey_tla = survey_tla_handler(request)
+    return jsonify(get_appointment_language_summary_by_date(date, survey_tla))
 
 
 @app.route("/bert/<version>/health")

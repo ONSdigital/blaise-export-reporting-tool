@@ -21,16 +21,20 @@ class CatiAppointmentLanguageSummaryTable(DataBaseBase):
     AppointmentType: int
 
     @classmethod
-    def get_language_summary_for_date(cls, config, date):
+    def get_language_summary_for_date(cls, config, date, survey_tla):
         query = f"""
             with UniqueDialHistoryIdTable as
                 (SELECT
                     max(Id) as id,
-                    PrimaryKeyValue
+                    dh.PrimaryKeyValue
                 FROM
-                    DialHistory
-                group by
-                    PrimaryKeyValue)
+                    DialHistory dh
+                INNER JOIN
+                    configuration.Configuration cf
+                ON dh.InstrumentId = cf.InstrumentId
+                WHERE cf.InstrumentName LIKE '{str(survey_tla or '')}%'
+                GROUP BY
+                    dh.PrimaryKeyValue)
 
                 select
                     CASE
@@ -57,7 +61,7 @@ class CatiAppointmentLanguageSummaryTable(DataBaseBase):
                     ON dh.PrimaryKeyValue = dbci.PrimaryKeyValue
                     AND dh.DialResult = "Appointment"
                 inner join UniqueDialHistoryIdTable uid
-                    on dh.id = uid.id
+                    ON dh.id = uid.id
                 WHERE
                    dbci.AppointmentType != "0"
                    AND dbci.AppointmentStartDate LIKE "{date}%"

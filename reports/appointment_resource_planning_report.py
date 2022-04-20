@@ -5,12 +5,12 @@ from models.appointment_resource_planning_model import AppointmentResourcePlanni
 from models.config_model import Config
 
 
-def get_appointment_resource_planning_by_date(date):
-    print(f"Getting data for the appointment resource planning report for {date}")
+def get_appointment_resource_planning_by_date(date, survey_tla):
+    print(f"Getting data for the appointment resource planning report for {date} and TLA {survey_tla}")
     config = Config.from_env()
     config.log()
     installed_questionnaire_list = get_list_of_installed_questionnaires(config)
-    results = get_cati_appointment_resource_planning_from_database(config, date)
+    results = get_cati_appointment_resource_planning_from_database(config, date, survey_tla)
     cati_appointment_resource_planning_list = []
     for item in results:
         cati_appointment_resource_planning = AppointmentResourcePlanning(
