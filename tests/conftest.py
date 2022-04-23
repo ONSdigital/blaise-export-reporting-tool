@@ -1,5 +1,7 @@
 import pytest
+
 from unittest import mock
+from google.cloud import datastore
 
 from app.app import app as flask_app
 
@@ -236,3 +238,30 @@ def interviewer_call_pattern_report():
         web_nudge=10,
         invalid_fields="n/a",
     )
+
+
+class RecordsInDatastore:
+    def __init__(self, list_of_records):
+        self.list_of_records = list_of_records
+        self.datastore_client = datastore.Client()
+        self.keys = []
+
+    def __enter__(self):
+        kind = "CallHistory"
+
+        for record in self.list_of_records:
+            entity_key = self.datastore_client.key(kind, record["name"])
+            entity = datastore.Entity(key=entity_key)
+            del record['name']
+            entity.update(record)
+            self.datastore_client.put(entity)
+            self.keys.append(entity_key)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print("Deleting keys", self.keys)
+        self.datastore_client.delete_multi(self.keys)
+
+
+@pytest.fixture()
+def records_in_datastore():
+    return RecordsInDatastore
