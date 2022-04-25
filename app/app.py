@@ -35,7 +35,7 @@ def call_history(interviewer):
     return jsonify(get_call_history_records(interviewer, start_date, end_date, survey_tla, questionnaires))
 
 
-@app.route("/api/reports/call-history/<interviewer>/questionnaires")
+@app.route("/api/<interviewer>/questionnaires")
 def call_questionnaires(interviewer):
     start_date, end_date = date_handler(request)
     survey_tla = survey_tla_handler(request)
