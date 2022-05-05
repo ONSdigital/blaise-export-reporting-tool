@@ -7,7 +7,7 @@ from models.error_capture import BertException
 from functions.request_handlers import date_handler, survey_tla_handler, questionnaire_handler
 from reports.appointment_resource_planning_report import get_appointment_resource_planning_by_date
 from reports.appointment_language_summary import get_appointment_language_summary_by_date
-from reports.interviewer_call_history_report import get_call_history_records, get_call_history_questionnaires
+from reports.interviewer_call_history_report import get_call_history_records, get_call_history_report
 from reports.interviewer_call_pattern_report import get_call_pattern_report
 app = Flask(__name__)
 
@@ -39,7 +39,7 @@ def call_history(interviewer):
 def call_questionnaires(interviewer):
     start_date, end_date = date_handler(request)
     survey_tla = survey_tla_handler(request)
-    return jsonify(get_call_history_questionnaires(interviewer, start_date, end_date, survey_tla))
+    return jsonify(get_call_history_report(interviewer, start_date, end_date, survey_tla))
 
 
 @app.route("/api/reports/call-pattern/<interviewer>")

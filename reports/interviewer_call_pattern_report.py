@@ -3,7 +3,7 @@ import datetime
 import numpy as np
 import pandas as pd
 
-from reports.interviewer_call_history_report import get_call_history_records
+from functions.datastore_functions import get_call_history_records
 
 from models.interviewer_call_pattern_model import (
     InterviewerCallPattern, InterviewerCallPatternWithNoValidData

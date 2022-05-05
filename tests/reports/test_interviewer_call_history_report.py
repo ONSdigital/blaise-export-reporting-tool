@@ -5,8 +5,8 @@ import pytest
 from google.api_core.datetime_helpers import DatetimeWithNanoseconds
 
 from models.error_capture import BertException
-from reports.interviewer_call_history_report import get_call_history_records, get_call_history_questionnaires
-from reports.interviewer_call_history_report import get_datastore_records
+from functions.datastore_functions import get_call_history_records
+from reports.interviewer_call_history_report import get_call_history_report
 from tests.helpers.interviewer_call_history_helpers import entity_builder
 
 
@@ -18,7 +18,7 @@ def test_get_call_history_records_with_invalid_dates(interviewer_name, invalid_d
     assert err.value.code == 400
 
 
-@patch("reports.interviewer_call_history_report.get_datastore_records")
+@patch("functions.datastore_functions.get_datastore_records")
 def test_get_call_history_records_with_one_datastore_entity(mock_get_datastore_records, interviewer_name,
                                                             start_date_as_string, end_date_as_string,
                                                             arbitrary_outcome_code):
@@ -42,7 +42,7 @@ def test_get_call_history_records_with_one_datastore_entity(mock_get_datastore_r
     )
 
 
-@patch("reports.interviewer_call_history_report.get_datastore_records")
+@patch("functions.datastore_functions.get_datastore_records")
 def test_get_call_history_records_with_one_datastore_entity_returns_webnudge(mock_get_datastore_records,
                                                                              interviewer_name, start_date_as_string,
                                                                              end_date_as_string, webnudge_outcome_code):
@@ -65,7 +65,7 @@ def test_get_call_history_records_with_one_datastore_entity_returns_webnudge(moc
     assert results[0]["status"] == new_status
 
 
-@patch("reports.interviewer_call_history_report.get_datastore_records")
+@patch("functions.datastore_functions.get_datastore_records")
 def test_get_call_history_records_with_multiple_entities_returns_one_webnudge(
         mock_get_datastore_records, interviewer_name, start_date_as_string,
         end_date_as_string, webnudge_outcome_code, arbitrary_outcome_code):
@@ -98,7 +98,7 @@ def test_get_call_history_records_with_multiple_entities_returns_one_webnudge(
     assert results[2]["status"] == original_status
 
 
-@patch("reports.interviewer_call_history_report.get_datastore_records")
+@patch("functions.datastore_functions.get_datastore_records")
 def test_get_call_history_records_with_multiple_entities_returns_all_webnudges(
         mock_get_datastore_records, interviewer_name, start_date_as_string, end_date_as_string, webnudge_outcome_code):
     original_status = "Questionnaire"
@@ -368,7 +368,7 @@ def datastore_formatted_records(records):
 #         assert result == expected
 
 
-@patch("reports.interviewer_call_history_report.get_datastore_records")
+@patch("functions.datastore_functions.get_datastore_records")
 def test_get_call_history_instruments_returns_a_list_of_unique_questionnaires(mock_get_datastore_records,
                                                                               interviewer_name,
                                                                               start_date_as_string, end_date_as_string,
@@ -389,7 +389,7 @@ def test_get_call_history_instruments_returns_a_list_of_unique_questionnaires(mo
     ]
 
     mock_get_datastore_records.return_value = mock_datastore_entity
-    results = get_call_history_questionnaires(interviewer_name, start_date_as_string, end_date_as_string, "LMS")
+    results = get_call_history_report(interviewer_name, start_date_as_string, end_date_as_string, "LMS")
 
     assert set(results) == {"LMS2101_AA1", "LMS2202_TST"}
     mock_get_datastore_records.assert_called_with(
@@ -401,7 +401,7 @@ def test_get_call_history_instruments_returns_a_list_of_unique_questionnaires(mo
     )
 
 
-@patch("reports.interviewer_call_history_report.get_datastore_records")
+@patch("functions.datastore_functions.get_datastore_records")
 def test_get_call_history_records_with_a_list_of_questionnaires(mock_get_datastore_records, interviewer_name,
                                                                 start_date_as_string, end_date_as_string,
                                                                 arbitrary_outcome_code):
