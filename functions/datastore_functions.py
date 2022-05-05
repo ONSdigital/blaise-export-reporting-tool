@@ -3,6 +3,11 @@ from functions.date_functions import parse_date_string_to_datetime
 from models.error_capture import BertException
 
 
+def get_call_history_questionnaires(interviewer, start_date, end_date, survey_tla):
+    records = get_call_history_records(interviewer, start_date, end_date, survey_tla)
+    return list(set([record["questionnaire_name"] for record in records]))
+
+
 def get_call_history_records(interviewer_name, start_date_string, end_date_string, survey_tla=None,
                              questionnaires=None):
     start_date, end_date = parse_dates(start_date_string, end_date_string)

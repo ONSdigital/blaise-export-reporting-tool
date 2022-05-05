@@ -14,7 +14,7 @@ columns_to_check_for_nulls = ["call_start_time", "call_end_time"]
 
 
 def get_call_pattern_report(interviewer_name: str, start_date_string: str,
-                            end_date_string: str, survey_tla: str) -> object:
+                            end_date_string: str, survey_tla: str,) -> object:
     result = get_call_history_records(interviewer_name, start_date_string, end_date_string, survey_tla)
     records = pd.DataFrame(result)
 
