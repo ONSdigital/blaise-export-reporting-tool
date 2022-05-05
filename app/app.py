@@ -48,7 +48,8 @@ def call_questionnaires(interviewer):
 def call_pattern(interviewer):
     start_date, end_date = date_handler(request)
     survey_tla = survey_tla_handler(request)
-    results = get_call_pattern_report(interviewer, start_date, end_date, survey_tla)
+    questionnaires = questionnaire_handler(request)
+    results = get_call_pattern_report(interviewer, start_date, end_date, survey_tla, questionnaires)
     if results == {}:
         return {}
     else:

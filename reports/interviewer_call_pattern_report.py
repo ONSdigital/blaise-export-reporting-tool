@@ -13,9 +13,9 @@ from models.error_capture import BertException
 columns_to_check_for_nulls = ["call_start_time", "call_end_time"]
 
 
-def get_call_pattern_report(interviewer_name: str, start_date_string: str,
-                            end_date_string: str, survey_tla: str,) -> object:
-    result = get_call_history_records(interviewer_name, start_date_string, end_date_string, survey_tla)
+def get_call_pattern_report(interviewer_name: str, start_date_string: str, end_date_string: str, survey_tla: str,
+                            questionnaires=None) -> object:
+    result = get_call_history_records(interviewer_name, start_date_string, end_date_string, survey_tla, questionnaires)
     records = pd.DataFrame(result)
 
     print(f"Calculating call pattern data for interviewer '{interviewer_name}'")
