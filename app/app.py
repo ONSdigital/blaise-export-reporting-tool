@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, current_app
 from google.cloud import datastore
 
 from data_sources.call_history_data import CallHistoryClient
-from functions.datastore_functions import get_call_history_questionnaires
+from functions.datastore_functions import get_questionnaires
 from models.config_model import Config
 from models.error_capture import BertException
 from functions.request_handlers import date_handler, survey_tla_handler, questionnaire_handler
@@ -41,7 +41,7 @@ def call_history(interviewer):
 def call_questionnaires(interviewer):
     start_date, end_date = date_handler(request)
     survey_tla = survey_tla_handler(request)
-    return jsonify(get_call_history_questionnaires(interviewer, start_date, end_date, survey_tla))
+    return jsonify(get_questionnaires(interviewer, start_date, end_date, survey_tla))
 
 
 @app.route("/api/reports/call-pattern/<interviewer>")

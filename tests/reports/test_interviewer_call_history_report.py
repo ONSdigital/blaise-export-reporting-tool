@@ -5,7 +5,7 @@ import pytest
 from google.api_core.datetime_helpers import DatetimeWithNanoseconds
 
 from models.error_capture import BertException
-from functions.datastore_functions import get_call_history_records, get_call_history_questionnaires
+from functions.datastore_functions import get_call_history_records, get_questionnaires
 from tests.helpers.interviewer_call_history_helpers import entity_builder
 
 
@@ -388,7 +388,7 @@ def test_get_call_history_instruments_returns_a_list_of_unique_questionnaires(mo
     ]
 
     mock_get_datastore_records.return_value = mock_datastore_entity
-    results = get_call_history_questionnaires(interviewer_name, start_date_as_string, end_date_as_string, "LMS")
+    results = get_questionnaires(interviewer_name, start_date_as_string, end_date_as_string, "LMS")
 
     assert set(results) == {"LMS2101_AA1", "LMS2202_TST"}
     mock_get_datastore_records.assert_called_with(
