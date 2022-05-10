@@ -43,10 +43,6 @@ def call_questionnaires(interviewer):
     survey_tla = survey_tla_handler(request)
     return jsonify(get_questionnaires(interviewer, start_date, end_date, survey_tla))
 
-@app.route("/api/<date>/questionnaires")
-def call_appointment_questionnaires(date):
-    survey_tla = survey_tla_handler(request)
-    return jsonify(get_appointment_questionnaires(date, survey_tla))
 
 @app.route("/api/reports/call-pattern/<interviewer>")
 def call_pattern(interviewer):
@@ -70,6 +66,12 @@ def appointment_resource_planning(date):
 def appointment_language_summary(date):
     survey_tla = survey_tla_handler(request)
     return jsonify(get_appointment_language_summary_by_date(date, survey_tla))
+
+
+@app.route("/api/appointment-resource-planning-summary/<date>/questionnaires")
+def call_appointment_questionnaires(date):
+    survey_tla = survey_tla_handler(request)
+    return jsonify(get_appointment_questionnaires(date, survey_tla))
 
 
 @app.route("/bert/<version>/health")
