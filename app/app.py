@@ -43,7 +43,7 @@ def call_questionnaires(interviewer):
     survey_tla = survey_tla_handler(request)
     return jsonify(get_questionnaires(interviewer, start_date, end_date, survey_tla))
 
-@app.route("api/<date>/questionnaires")
+@app.route("/api/<date>/questionnaires")
 def call_appointment_questionnaires(date):
     survey_tla = survey_tla_handler(request)
     return jsonify(get_appointment_questionnaires(date, survey_tla))
