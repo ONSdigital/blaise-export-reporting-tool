@@ -25,3 +25,12 @@ def get_appointment_resource_planning_by_date(date, survey_tla):
             cati_appointment_resource_planning.questionnaire_name = questionnaire_name
         cati_appointment_resource_planning_list.append(cati_appointment_resource_planning)
     return cati_appointment_resource_planning_list
+
+def get_appointment_questionnaires(date, survey_tla):
+    appointment_resource_planning_list = get_appointment_resource_planning_by_date(date, survey_tla)
+    questionnaire_list = []
+    for item in appointment_resource_planning_list:
+        if item.questionnaire_name not in questionnaire_list:
+            questionnaire_list.append(item.questionnaire_name)
+    return questionnaire_list
+    

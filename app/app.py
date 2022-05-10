@@ -6,7 +6,7 @@ from functions.datastore_functions import get_questionnaires
 from models.config_model import Config
 from models.error_capture import BertException
 from functions.request_handlers import date_handler, survey_tla_handler, questionnaire_handler
-from reports.appointment_resource_planning_report import get_appointment_resource_planning_by_date
+from reports.appointment_resource_planning_report import get_appointment_questionnaires, get_appointment_resource_planning_by_date
 from reports.appointment_language_summary import get_appointment_language_summary_by_date
 from reports.interviewer_call_history_report import get_call_history_report
 from reports.interviewer_call_pattern_report import get_call_pattern_report
@@ -43,6 +43,10 @@ def call_questionnaires(interviewer):
     survey_tla = survey_tla_handler(request)
     return jsonify(get_questionnaires(interviewer, start_date, end_date, survey_tla))
 
+@app.route("api/<date>/questionnaires")
+def call_appointment_questionnaires(date):
+    survey_tla = survey_tla_handler(request)
+    return jsonify(get_appointment_questionnaires(date, survey_tla))
 
 @app.route("/api/reports/call-pattern/<interviewer>")
 def call_pattern(interviewer):
