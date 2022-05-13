@@ -26,7 +26,7 @@ class CatiAppointmentResourcePlanningTable(DataBaseBase):
 
     @classmethod
     def  get_appointments_for_date(cls, config, date, survey_tla, questionnaires):
-        questionnaire_filter = None if questionnaires.empty else (', '.join("'" + item + "'" for item in questionnaires))
+        questionnaire_filter = None if questionnaires == None else (', '.join("'" + item + "'" for item in questionnaires))
         print(f"Questionnaire filter = {questionnaire_filter}")
         
         query = f"""
