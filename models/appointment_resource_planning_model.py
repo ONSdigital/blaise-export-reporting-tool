@@ -25,7 +25,10 @@ class CatiAppointmentResourcePlanningTable(DataBaseBase):
     AppointmentType: int
 
     @classmethod
-    def  get_appointments_for_date(cls, config, date, survey_tla):
+    def  get_appointments_for_date(cls, config, date, survey_tla, questionnaires):
+        questionnaire_filter = None if questionnaires.empty else (', '.join("'" + item + "'" for item in questionnaires))
+        print(f"Questionnaire filter = {questionnaire_filter}")
+        
         query = f"""
             with UniqueDialHistoryIdTable as
                 (SELECT
@@ -37,7 +40,8 @@ class CatiAppointmentResourcePlanningTable(DataBaseBase):
                 INNER JOIN
                     configuration.Configuration cf
                 ON dh.InstrumentId = cf.InstrumentId
-                WHERE cf.InstrumentName LIKE '{str(survey_tla or '')}%'
+                WHERE (NULLIF({questionnaire_filter}, '') IS NOT NULL AND cf.InstrumentName IN ({questionnaire_filter})) 
+                    OR (cf.InstrumentName LIKE '{str(survey_tla or '')}%')
                 GROUP BY
                     dh.PrimaryKeyValue,
                     dh.InstrumentId)
