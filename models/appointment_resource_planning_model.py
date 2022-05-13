@@ -40,8 +40,8 @@ class CatiAppointmentResourcePlanningTable(DataBaseBase):
                 INNER JOIN
                     configuration.Configuration cf
                 ON dh.InstrumentId = cf.InstrumentId
-                WHERE (NULLIF({questionnaire_filter}, '') IS NOT NULL AND cf.InstrumentName IN ({questionnaire_filter})) 
-                    OR (cf.InstrumentName LIKE '{str(survey_tla or '')}%')
+                WHERE (LENGTH({questionnaire_filter}) > 0 AND cf.InstrumentName IN ({questionnaire_filter}))
+                    OR (LENGTH({questionnaire_filter}) = 0 AND cf.InstrumentName LIKE '{str(survey_tla or '')}%')
                 GROUP BY
                     dh.PrimaryKeyValue,
                     dh.InstrumentId)
