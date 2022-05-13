@@ -250,10 +250,11 @@ class RecordsInDatastore:
         kind = "CallHistory"
 
         for record in self.list_of_records:
-            entity_key = self.datastore_client.key(kind, record["name"])
+            record_copy = record.copy()
+            entity_key = self.datastore_client.key(kind, record_copy["name"])
             entity = datastore.Entity(key=entity_key)
-            del record['name']
-            entity.update(record)
+            del record_copy['name']
+            entity.update(record_copy)
             self.datastore_client.put(entity)
             self.keys.append(entity_key)
 

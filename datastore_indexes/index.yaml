@@ -9,3 +9,8 @@ indexes:
       - name: survey
       - name: interviewer
       - name: call_start_time
+
+  - kind: CallHistory
+    properties:
+      - name: questionnaire_name
+      - name: call_start_time

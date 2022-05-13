@@ -17,15 +17,43 @@ def test_call_history_report_status(client):
     assert response.get_data() is not None
 
 
-@patch("app.app.get_call_history_records")
-def test_call_history_report(mock_get_call_history_records, client):
+@patch("app.app.get_call_history_report")
+def test_call_history_report_with_survey_tla(mock_get_call_history_records, client):
     mock_get_call_history_records.return_value = []
     response = client.get("/api/reports/call-history/matpal?start-date=2021-01-01&end-date=2021-01-01&survey-tla=opn")
     assert response.status_code == 200
     assert json.loads(response.get_data(as_text=True)) == []
+    mock_get_call_history_records.assert_called_with("matpal", "2021-01-01", "2021-01-01", "OPN", None)
 
 
-@patch("app.app.get_call_history_records")
+@patch("app.app.get_call_history_report")
+def test_call_history_report_without_survey_tla(mock_get_call_history_records, client):
+    mock_get_call_history_records.return_value = []
+    response = client.get("/api/reports/call-history/matpal?start-date=2021-01-01&end-date=2021-01-01")
+    assert response.status_code == 200
+    assert json.loads(response.get_data(as_text=True)) == []
+    mock_get_call_history_records.assert_called_with("matpal", "2021-01-01", "2021-01-01", None, None)
+
+
+@patch("app.app.get_call_history_report")
+def test_call_history_report_with_questionnaires(mock_get_call_history_records, client):
+    mock_get_call_history_records.return_value = []
+    response = client.get("/api/reports/call-history/matpal?start-date=2021-01-01&end-date=2021-01-01&questionnaires=LMS2202_TST,LMS2101_AA1")
+    assert response.status_code == 200
+    assert json.loads(response.get_data(as_text=True)) == []
+    mock_get_call_history_records.assert_called_with("matpal", "2021-01-01", "2021-01-01", None, ["LMS2202_TST", "LMS2101_AA1"])
+
+
+@patch("app.app.get_questionnaires")
+def test_call_history_questionnaires(mock_get_call_history_questionnaires, client):
+    mock_get_call_history_questionnaires.return_value = ["LMS2202_TST"]
+    response = client.get("/api/matpal/questionnaires?start-date=2021-01-01&end-date=2021-01-01&survey-tla=lms")
+    assert response.status_code == 200
+    assert json.loads(response.get_data(as_text=True)) == ["LMS2202_TST"]
+    mock_get_call_history_questionnaires.assert_called_with("matpal", "2021-01-01", "2021-01-01", "LMS")
+
+
+@patch("app.app.get_call_history_report")
 def test_call_history_report_returns_error(mock_get_call_history_records, client):
     mock_get_call_history_records.side_effect = BertException("Invalid date range parameters provided", 400)
     response = client.get("/api/reports/call-history/matpal?start-date=2021-01-01&end-date=2021-01-01")
