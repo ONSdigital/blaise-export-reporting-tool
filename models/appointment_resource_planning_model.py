@@ -87,6 +87,7 @@ class CatiAppointmentResourcePlanningTable(DataBaseBase):
                AppointmentLanguage ASC       
      
         """
+        print(f"Query = {query}")
         return cls.query(config, query)
 
     @classmethod
