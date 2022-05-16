@@ -63,16 +63,16 @@ def appointment_resource_planning(date):
     return jsonify(get_appointment_resource_planning_by_date(date, survey_tla, questionnaires))
 
 
+@app.route("/api/appointment-resource-planning/<date>/questionnaires")
+def call_appointment_questionnaires(date):
+    survey_tla = survey_tla_handler(request)
+    return jsonify(get_appointment_questionnaires(date, survey_tla))
+
+
 @app.route("/api/reports/appointment-resource-planning-summary/<date>")
 def appointment_language_summary(date):
     survey_tla = survey_tla_handler(request)
     return jsonify(get_appointment_language_summary_by_date(date, survey_tla))
-
-
-@app.route("/api/appointment-resource-planning-summary/<date>/questionnaires")
-def call_appointment_questionnaires(date):
-    survey_tla = survey_tla_handler(request)
-    return jsonify(get_appointment_questionnaires(date, survey_tla))
 
 
 @app.route("/bert/<version>/health")
