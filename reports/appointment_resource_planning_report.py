@@ -27,7 +27,7 @@ def get_appointment_resource_planning_by_date(date, survey_tla, questionnaires):
     return cati_appointment_resource_planning_list
 
 def get_appointment_questionnaires(date, survey_tla):
-    appointment_resource_planning_list = get_appointment_resource_planning_by_date(date, survey_tla)
+    appointment_resource_planning_list = get_appointment_resource_planning_by_date(date, survey_tla, None)
     questionnaire_list = []
     for item in appointment_resource_planning_list:
         if item.questionnaire_name not in questionnaire_list:
