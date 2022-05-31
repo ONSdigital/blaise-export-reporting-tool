@@ -1,4 +1,5 @@
 import pytest
+import time
 
 from unittest import mock
 from google.cloud import datastore
@@ -241,26 +242,65 @@ def interviewer_call_pattern_report():
 
 
 class RecordsInDatastore:
+    DATASTORE_KIND = "CallHistory"
+    MAX_RETRIES = 5
+    RETRY_WAIT_SECONDS = 0.2
+
     def __init__(self, list_of_records):
         self.list_of_records = list_of_records
         self.datastore_client = datastore.Client()
         self.keys = []
 
     def __enter__(self):
-        kind = "CallHistory"
-
+        self._assert_datastore_is_empty()
         for record in self.list_of_records:
-            record_copy = record.copy()
-            entity_key = self.datastore_client.key(kind, record_copy["name"])
-            entity = datastore.Entity(key=entity_key)
-            del record_copy['name']
-            entity.update(record_copy)
-            self.datastore_client.put(entity)
-            self.keys.append(entity_key)
+            self._add_record(record)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         print("Deleting keys", self.keys)
         self.datastore_client.delete_multi(self.keys)
+        self._wait_for_datastore_to_be_empty()
+
+    def _add_record(self, record):
+        record_copy = record.copy()
+        key = self.datastore_client.key(self.DATASTORE_KIND, record_copy["name"])
+        entity = datastore.Entity(key=key)
+        del record_copy['name']
+        entity.update(record_copy)
+        self.datastore_client.put(entity)
+        self.keys.append(key)
+        self._wait_for_record_to_be_available(key)
+
+    def _assert_datastore_is_empty(self):
+        count = self._number_of_records_in_datastore()
+        if count > 0:
+            raise Exception(f"Expected datastore to be empty, found {count} entities. Try restarting the DataStore emulator.")
+
+    def _wait_for_record_to_be_available(self, key):
+        retries = self.MAX_RETRIES
+        while self._entity_is_not_available(key):
+            print(f"Waiting for record {key} to be available")
+            time.sleep(self.RETRY_WAIT_SECONDS)
+            retries -= 1
+            if retries < 1:
+                raise Exception(f"Record {key} never became available.")
+
+    def _wait_for_datastore_to_be_empty(self):
+        retries = self.MAX_RETRIES
+        while self._number_of_records_in_datastore() > 0:
+            print("Waiting for records to be deleted")
+            time.sleep(self.RETRY_WAIT_SECONDS)
+            retries -= 1
+            if retries < 1:
+                raise Exception("Failed to clear datastore. Try restarting the DataStore emulator.")
+
+    def _entity_is_not_available(self, key):
+        return self.datastore_client.get(key) is None
+
+    def _number_of_records_in_datastore(self):
+        query = self.datastore_client.query(kind=self.DATASTORE_KIND)
+        count = len(list(query.fetch()))
+        return count
 
 
 @pytest.fixture()
