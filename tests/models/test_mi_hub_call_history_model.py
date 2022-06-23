@@ -19,7 +19,7 @@ def test_cati_mi_hub_call_history_table_fields():
     fields = CatiMiHubCallHistoryTable.fields()
     assert fields == ", ".join(
         [
-            "InstrumentId",
+            "QuestionnaireId",
             "PrimaryKeyValue",
             "Id",
             "StartTime",

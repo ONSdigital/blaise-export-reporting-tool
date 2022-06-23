@@ -36,7 +36,7 @@ class CallHistory:
 
 @dataclass
 class CatiCallHistoryTable(DataBaseBase):
-    InstrumentId: str
+    QuestionnaireId: str
     PrimaryKeyValue: str
     CallNumber: int
     DialNumber: int

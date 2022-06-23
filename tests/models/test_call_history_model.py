@@ -53,7 +53,7 @@ def test_cati_call_history_table_fields():
     fields = CatiCallHistoryTable.fields()
     assert fields == ", ".join(
         [
-            "InstrumentId",
+            "QuestionnaireId",
             "PrimaryKeyValue",
             "CallNumber",
             "DialNumber",
