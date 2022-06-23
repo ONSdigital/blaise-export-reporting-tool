@@ -40,3 +40,4 @@ def get_questionnaire_data(questionnaire_name, config, fields):
     except ConnectionResetError:
         print("Connection error")
         return []
+
