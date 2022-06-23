@@ -15,7 +15,7 @@ def test_cati_appointment_resource_planning_table_fields():
     fields = CatiAppointmentResourcePlanningTable.fields()
     assert fields == ", ".join(
         [
-            "QuestionnaireId",
+            "InstrumentId",
             "AppointmentStartDate",
             "AppointmentStartTime",
             "GroupName",

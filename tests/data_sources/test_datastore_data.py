@@ -87,7 +87,7 @@ def test_get_cati_call_history(mock_get_cati_call_history_from_database):
 
     mock_get_cati_call_history_from_database.return_value = [
         {
-            "QuestionnaireId": "05cf69af-3a4e-47df-819a-928350fdda5a",
+            "InstrumentId": "05cf69af-3a4e-47df-819a-928350fdda5a",
             "PrimaryKeyValue": "1001011",
             "CallNumber": 1,
             "DialNumber": 1,

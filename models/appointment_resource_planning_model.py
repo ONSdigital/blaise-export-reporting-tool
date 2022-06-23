@@ -17,7 +17,7 @@ class AppointmentResourcePlanning:
 
 @dataclass
 class CatiAppointmentResourcePlanningTable(DataBaseBase):
-    QuestionnaireId: str
+    InstrumentId: str
     AppointmentStartDate: str
     AppointmentStartTime: str
     GroupName: str

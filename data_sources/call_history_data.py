@@ -41,7 +41,7 @@ class CallHistoryClient:
         cati_call_history_list = []
         for item in results:
             cati_call_history = CallHistory(
-                questionnaire_id=item.get("QuestionnaireId"),
+                questionnaire_id=item.get("InstrumentId"),
                 serial_number=item.get("PrimaryKeyValue"),
                 call_number=item.get("CallNumber"),
                 dial_number=item.get("DialNumber"),

@@ -18,9 +18,9 @@ def get_appointment_resource_planning_by_date(date, survey_tla, questionnaires):
             appointment_language=item.get("AppointmentLanguage"),
             total=item.get("Total")
         )
-        questionnaire_name = get_questionnaire_name_from_id(item.get("QuestionnaireId"), installed_questionnaire_list)
+        questionnaire_name = get_questionnaire_name_from_id(item.get("InstrumentId"), installed_questionnaire_list)
         if questionnaire_name == "":
-            print(f"Appointment with unknown questionnaire_name for QuestionnaireId: {item.get('QuestionnaireId')}")
+            print(f"Appointment with unknown questionnaire_name for InstrumentId: {item.get('InstrumentId')}")
         else:
             cati_appointment_resource_planning.questionnaire_name = questionnaire_name
         cati_appointment_resource_planning_list.append(cati_appointment_resource_planning)

@@ -35,7 +35,7 @@ class MiHubCallHistory:
 
 @dataclass
 class CatiMiHubCallHistoryTable(DataBaseBase):
-    QuestionnaireId: str
+    InstrumentId: str
     PrimaryKeyValue: str
     Id: int
     StartTime: datetime

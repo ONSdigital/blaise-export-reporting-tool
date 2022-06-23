@@ -7,9 +7,9 @@ def get_mi_hub_call_history(config, questionnaire_name, questionnaire_id):
     cati_data = get_cati_mi_hub_call_history_from_database(config)
     cati_mi_hub_call_history_list = []
     for item in cati_data:
-        if item.get("QuestionnaireId") == questionnaire_id:
+        if item.get("InstrumentId") == questionnaire_id:
             cati_mi_hub_call_history = MiHubCallHistory(
-            questionnaire_id=item.get("QuestionnaireId"),
+            questionnaire_id=item.get("InstrumentId"),
             serial_number=item.get("PrimaryKeyValue"),
             call_number=item.get("CallNumber"),
             dial_number=item.get("DialNumber"),
