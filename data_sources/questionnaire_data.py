@@ -4,7 +4,7 @@ import requests
 def get_list_of_installed_questionnaires(config):
     print("Getting list of installed questionnaires")
     response = requests.get(
-        f"http://{config.blaise_api_url}/api/v1/serverparks/gusty/instruments"
+        f"http://{config.blaise_api_url}/api/v2/serverparks/gusty/questionnaires"
     )
     questionnaire_list = response.json()
     print(f"Found {len(questionnaire_list)} questionnaires installed")
@@ -25,7 +25,7 @@ def get_questionnaire_data(questionnaire_name, config, fields):
     print(f"Getting questionnaire data for questionnaire {questionnaire_name}")
     try:
         response = requests.get(
-            f"http://{config.blaise_api_url}/api/v1/serverparks/gusty/instruments/{questionnaire_name}/report",
+            f"http://{config.blaise_api_url}/api/v2/serverparks/gusty/questionnaires/{questionnaire_name}/report",
             params=fields_to_get,
         )
         if response.status_code != 200:
