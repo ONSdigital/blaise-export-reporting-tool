@@ -3,7 +3,7 @@ from data_sources.questionnaire_data import get_list_of_installed_questionnaires
 
 
 def test_get_list_of_installed_questionnaires(config, requests_mock, api_installed_questionnaires_response):
-    requests_mock.get(f"http://{config.blaise_api_url}/api/v1/serverparks/gusty/instruments",
+    requests_mock.get(f"http://{config.blaise_api_url}/api/V2/serverparks/gusty/questionnaires",
                       json=api_installed_questionnaires_response)
     questionnaire_list = get_list_of_installed_questionnaires(config)
     assert questionnaire_list == api_installed_questionnaires_response
@@ -16,7 +16,7 @@ def test_get_questionnaire_data(questionnaire_name,
                                 requests_mock,
                                 api_reporting_data_response):
     requests_mock.get(
-        f"http://{config.blaise_api_url}/api/v1/serverparks/gusty/instruments/{questionnaire_name}/report",
+        f"http://{config.blaise_api_url}/api/v2/serverparks/gusty/questionnaires/{questionnaire_name}/report",
         json=api_reporting_data_response
     )
     reporting_data = get_questionnaire_data(questionnaire_name, config, questionnaire_fields_to_get)
