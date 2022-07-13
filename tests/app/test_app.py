@@ -99,6 +99,6 @@ def test_appointment_language_summary(
         mock_get_appointment_language_summary_by_date,
         client):
     mock_get_appointment_language_summary_by_date.return_value = None, []
-    response = client.get("api/reports/appointment-resource-planning-summary/2021-12-31")
+    response = client.get("api/reports/appointment-resource-planning-summary/2021-12-31/questionnaires")
     assert response.status_code == 200
     assert response.get_data() is not None
