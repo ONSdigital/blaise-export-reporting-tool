@@ -16,5 +16,5 @@ def get_cati_appointment_resource_planning_from_database(config, date, survey_tl
     return CatiAppointmentResourcePlanningTable.get_appointments_for_date(config, date, survey_tla, questionnaires)
 
 
-def get_cati_appointment_language_summary_from_database(config, date, survey_tla):
-    return CatiAppointmentLanguageSummaryTable.get_language_summary_for_date(config, date, survey_tla)
+def get_cati_appointment_language_summary_from_database(config, date, survey_tla, questionnaires):
+    return CatiAppointmentLanguageSummaryTable.get_language_summary_for_date(config, date, survey_tla, questionnaires)

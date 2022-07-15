@@ -21,7 +21,10 @@ class CatiAppointmentLanguageSummaryTable(DataBaseBase):
     AppointmentType: int
 
     @classmethod
-    def get_language_summary_for_date(cls, config, date, survey_tla):
+    def get_language_summary_for_date(cls, config, date, survey_tla, questionnaires):
+        questionnaire_filter = "''" if questionnaires == None else (', '.join("'" + item + "'" for item in questionnaires))
+        print(f"Questionnaire filter = {questionnaire_filter}")
+
         query = f"""
             with UniqueDialHistoryIdTable as
                 (SELECT
@@ -32,7 +35,8 @@ class CatiAppointmentLanguageSummaryTable(DataBaseBase):
                 INNER JOIN
                     configuration.Configuration cf
                 ON dh.InstrumentId = cf.InstrumentId
-                WHERE cf.InstrumentName LIKE '{str(survey_tla or '')}%'
+                WHERE (LENGTH({questionnaire_filter}) > 0 AND cf.InstrumentName IN ({questionnaire_filter}))
+                    OR (LENGTH({questionnaire_filter}) = 0 AND cf.InstrumentName LIKE '{str(survey_tla or '')}%')
                 GROUP BY
                     dh.PrimaryKeyValue)
 
