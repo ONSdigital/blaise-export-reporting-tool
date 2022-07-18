@@ -74,6 +74,7 @@ def test_mysql_with_questionnaires(mock_query):
         '                    cati.DaybatchCaseInfo AS dbci\n' +
         '                left join DialHistory dh\n' +
         '                    ON dh.PrimaryKeyValue = dbci.PrimaryKeyValue\n' +
+        '                    AND dh.InstrumentId = dbci.InstrumentId\n' +
         '                    AND dh.DialResult = "Appointment"\n' +
         '                inner join UniqueDialHistoryIdTable uid\n' +
         '                    ON dh.id = uid.id\n' +
@@ -133,6 +134,7 @@ def test_mysql_without_questionnaires(mock_query):
         '                    cati.DaybatchCaseInfo AS dbci\n' +
         '                left join DialHistory dh\n' +
         '                    ON dh.PrimaryKeyValue = dbci.PrimaryKeyValue\n' +
+        '                    AND dh.InstrumentId = dbci.InstrumentId\n' +
         '                    AND dh.DialResult = "Appointment"\n' +
         '                inner join UniqueDialHistoryIdTable uid\n' +
         '                    ON dh.id = uid.id\n' +
