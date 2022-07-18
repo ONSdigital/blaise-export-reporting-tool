@@ -66,6 +66,7 @@ class CatiAppointmentLanguageSummaryTable(DataBaseBase):
                     cati.DaybatchCaseInfo AS dbci
                 left join DialHistory dh
                     ON dh.PrimaryKeyValue = dbci.PrimaryKeyValue
+                    AND dh.InstrumentId = dbci.InstrumentId
                     AND dh.DialResult = "Appointment"
                 inner join UniqueDialHistoryIdTable uid
                     ON dh.id = uid.id
