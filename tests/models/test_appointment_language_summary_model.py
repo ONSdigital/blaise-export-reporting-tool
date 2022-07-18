@@ -49,7 +49,7 @@ def test_mysql_with_questionnaires(mock_query):
         '                ON dh.InstrumentId = cf.InstrumentId\n' +
         '                WHERE cf.InstrumentName IN(\'DST2111Z\', \'DST2106Z\')\n' +
         '                GROUP BY\n' +
-        '                    dh.PrimaryKeyValue)\n' +
+        '                    dh.PrimaryKeyValue, dh.InstrumentId)\n' +
         '\n' +
         '                select\n' +
         '                    CASE\n' +
@@ -109,7 +109,7 @@ def test_mysql_without_questionnaires(mock_query):
         '                ON dh.InstrumentId = cf.InstrumentId\n' +
         '                WHERE cf.InstrumentName LIKE \'DST%\'\n' +
         '                GROUP BY\n' +
-        '                    dh.PrimaryKeyValue)\n' +
+        '                    dh.PrimaryKeyValue, dh.InstrumentId)\n' +
         '\n' +
         '                select\n' +
         '                    CASE\n' +

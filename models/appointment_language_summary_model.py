@@ -41,7 +41,7 @@ class CatiAppointmentLanguageSummaryTable(DataBaseBase):
                 ON dh.InstrumentId = cf.InstrumentId
                 WHERE {questionnaire_filter}
                 GROUP BY
-                    dh.PrimaryKeyValue)
+                    dh.PrimaryKeyValue, dh.InstrumentId)
 
                 select
                     CASE
