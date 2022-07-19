@@ -15,7 +15,7 @@ def test_get_appointment_language_summary_by_date_returns_empty_list(
     mock_get_cati_appointment_language_summary.return_value = (
         []
     )
-    result = get_appointment_language_summary_by_date("2021-12-31", "")
+    result = get_appointment_language_summary_by_date("2021-12-31", "", "")
     assert result == []
 
 
@@ -30,7 +30,7 @@ def test_get_appointment_language_summary_by_date_returns_english_total_only(
             {'AppointmentLanguage': 'English', 'Total': 1}
         ]
     )
-    result = get_appointment_language_summary_by_date("2021-12-31", "")
+    result = get_appointment_language_summary_by_date("2021-12-31", "", "")
     assert result == [AppointmentLanguageSummary(language='English', total=1)]
 
 
@@ -46,7 +46,7 @@ def test_get_appointment_language_summary_by_date_returns_english_and_welsh_tota
             {'AppointmentLanguage': 'Welsh', 'Total': 2}
         ]
     )
-    result = get_appointment_language_summary_by_date("2021-12-31", "")
+    result = get_appointment_language_summary_by_date("2021-12-31", "", "")
     assert result == [AppointmentLanguageSummary(language='English', total=1),
                       AppointmentLanguageSummary(language='Welsh', total=2)]
 
@@ -64,7 +64,7 @@ def test_get_appointment_language_summary_by_date_returns_totals_for_english_wel
             {'AppointmentLanguage': 'Other', 'Total': 3}
         ]
     )
-    result = get_appointment_language_summary_by_date("2021-12-31", "")
+    result = get_appointment_language_summary_by_date("2021-12-31", "", "")
     assert result == [AppointmentLanguageSummary(language='English', total=1),
                       AppointmentLanguageSummary(language='Welsh', total=2),
                       AppointmentLanguageSummary(language='Other', total=3)
@@ -86,7 +86,7 @@ def test_get_appointment_language_summary_by_date_returns_totals_for_english_wel
             {'AppointmentLanguage': 'Profanity', 'Total': 5}
         ]
     )
-    result = get_appointment_language_summary_by_date("2021-12-31", "")
+    result = get_appointment_language_summary_by_date("2021-12-31", "", "")
     assert result == [AppointmentLanguageSummary(language='English', total=1),
                       AppointmentLanguageSummary(language='Welsh', total=2),
                       AppointmentLanguageSummary(language='Other', total=3),
