@@ -57,7 +57,7 @@ def calculate_hours_worked_as_datetime(records: pd.DataFrame) -> str:
     return convert_timedelta_to_hhmmss_as_string(datetime.timedelta(seconds=hours_worked_in_seconds))
 
 
-def calculate_call_time_as_datetime(records: pd.DataFrame) -> datetime:
+def calculate_call_time_as_datetime(records: pd.DataFrame) -> str:
     valid_records = get_valid_records(records)
     call_time_in_seconds = calculate_call_time_in_seconds(valid_records)
 
@@ -155,7 +155,7 @@ def number_of_records_which_has_status(records: pd.DataFrame, status: str) -> in
         raise BertException(f"number_of_records_which_has_status failed: {err}", 400)
 
 
-def convert_timedelta_to_hhmmss_as_string(td: datetime) -> str:
+def convert_timedelta_to_hhmmss_as_string(td: datetime.timedelta) -> str:
     hours, remainder = divmod(td.total_seconds(), 3600)
     minutes, seconds = divmod(remainder, 60)
     return f'{int(hours):02}:{int(minutes):02}:{int(seconds):02}'

@@ -30,6 +30,8 @@ pytest-lazy-fixture = "^0.6.3"
 isort = "^5.10.1"
 flake8 = "^4.0.1"
 mypy = "^0.942"
+types-requests = "^2.28.7"
+types-python-dateutil = "^2.8.19"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
