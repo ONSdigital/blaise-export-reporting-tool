@@ -1,15 +1,16 @@
+from unittest.mock import patch
+
 import pandas as pd
 import pytest
 
-from unittest.mock import patch
+from models.error_capture import BertException
+from reports.interviewer_call_pattern_report import *
 from tests.helpers.interviewer_call_history_helpers import entity_builder
 from tests.helpers.interviewer_call_pattern_helpers import (
-    interviewer_call_pattern_report_sample_case,
     datetime_helper,
     get_list_of_percentages,
+    interviewer_call_pattern_report_sample_case,
 )
-from reports.interviewer_call_pattern_report import *
-from models.error_capture import BertException
 
 
 def test_get_call_pattern_report_returns_an_empty_dict_if_no_records_were_found(

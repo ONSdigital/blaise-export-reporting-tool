@@ -1,10 +1,11 @@
+from unittest.mock import patch
+
+from data_sources.cati_data import get_cati_appointment_resource_planning_from_database
 from models.appointment_resource_planning_model import (
     AppointmentResourcePlanning,
     CatiAppointmentResourcePlanningTable,
 )
-from data_sources.cati_data import get_cati_appointment_resource_planning_from_database
 from models.config_model import Config
-from unittest.mock import patch
 
 
 def test_appointment_resource_planning():

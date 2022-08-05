@@ -1,7 +1,6 @@
 from data_sources.questionnaire_data import get_questionnaire_data
 from models.mi_hub_respondent_data_model import MiHubRespondentData
 
-
 questionnaire_fields_to_get = [
     {
         "QID.Serial_Number",

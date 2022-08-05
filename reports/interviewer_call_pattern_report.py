@@ -4,12 +4,11 @@ import numpy as np
 import pandas as pd
 
 from functions.datastore_functions import get_call_history_records
-
+from models.error_capture import BertException
 from models.interviewer_call_pattern_model import (
     InterviewerCallPattern,
     InterviewerCallPatternWithNoValidData,
 )
-from models.error_capture import BertException
 
 columns_to_check_for_nulls = ["call_start_time", "call_end_time"]
 

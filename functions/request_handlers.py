@@ -1,7 +1,7 @@
-from models.error_capture import BertException
-from functions.date_functions import validate_date
-
 import logging
+
+from functions.date_functions import validate_date
+from models.error_capture import BertException
 
 logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.DEBUG)
 

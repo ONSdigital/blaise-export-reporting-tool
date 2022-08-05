@@ -1,10 +1,11 @@
+from unittest.mock import patch
+
+from data_sources.cati_data import get_cati_appointment_language_summary_from_database
 from models.appointment_language_summary_model import (
     AppointmentLanguageSummary,
     CatiAppointmentLanguageSummaryTable,
 )
-from data_sources.cati_data import get_cati_appointment_language_summary_from_database
 from models.config_model import Config
-from unittest.mock import patch
 
 
 def test_appointment_language_summary():

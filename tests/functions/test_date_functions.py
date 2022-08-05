@@ -1,6 +1,6 @@
-import pytest
-
 from datetime import datetime
+
+import pytest
 
 from functions.date_functions import parse_date_string_to_datetime
 

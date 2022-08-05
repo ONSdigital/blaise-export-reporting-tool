@@ -1,8 +1,8 @@
-from models.appointment_resource_planning_model import (
-    CatiAppointmentResourcePlanningTable,
-)
 from models.appointment_language_summary_model import (
     CatiAppointmentLanguageSummaryTable,
+)
+from models.appointment_resource_planning_model import (
+    CatiAppointmentResourcePlanningTable,
 )
 from models.call_history_model import CatiCallHistoryTable
 from models.mi_hub_call_history_model import CatiMiHubCallHistoryTable

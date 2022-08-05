@@ -1,16 +1,15 @@
-import pytest
 import time
-
 from unittest import mock
+
+import pytest
 from google.cloud import datastore
 
 from app.app import app as flask_app
-
 from models.config_model import Config
 from models.interviewer_call_pattern_model import InterviewerCallPattern
 from tests.helpers.interviewer_call_pattern_helpers import (
-    interviewer_call_pattern_report_sample_case,
     datetime_helper,
+    interviewer_call_pattern_report_sample_case,
 )
 
 

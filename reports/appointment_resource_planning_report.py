@@ -1,6 +1,8 @@
 from data_sources.cati_data import get_cati_appointment_resource_planning_from_database
-from data_sources.questionnaire_data import get_list_of_installed_questionnaires
-from data_sources.questionnaire_data import get_questionnaire_name_from_id
+from data_sources.questionnaire_data import (
+    get_list_of_installed_questionnaires,
+    get_questionnaire_name_from_id,
+)
 from models.appointment_resource_planning_model import AppointmentResourcePlanning
 from models.config_model import Config
 

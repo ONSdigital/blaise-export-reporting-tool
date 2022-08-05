@@ -4,12 +4,12 @@ from unittest.mock import patch
 import pytest
 from google.api_core.datetime_helpers import DatetimeWithNanoseconds
 
-from models.error_capture import BertException
 from functions.datastore_functions import (
     get_call_history_records,
     get_datastore_records,
     get_questionnaires,
 )
+from models.error_capture import BertException
 from tests.helpers.interviewer_call_history_helpers import entity_builder
 
 

@@ -1,6 +1,6 @@
 import csv
-from dataclasses import asdict, is_dataclass
 import io
+from dataclasses import asdict, is_dataclass
 
 
 def write_csv(data):
