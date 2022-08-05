@@ -10,7 +10,7 @@ def test_mi_hub_call_history():
         interviewer="",
         dial_result=0,
         dial_line_number=0,
-        seconds_interview=0
+        seconds_interview=0,
     )
     assert mi_hub_call_history is not None
 

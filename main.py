@@ -8,7 +8,7 @@ from google.cloud import datastore
 from google.cloud import tasks_v2
 
 from app.app import app, load_config, setup_app
-from data_sources.call_history_data import (CallHistoryClient)
+from data_sources.call_history_data import CallHistoryClient
 from functions.csv_functions import write_csv
 from functions.google_storage_functions import init_google_storage
 from functions.zip_functions import create_zip
@@ -41,7 +41,9 @@ def deliver_mi_hub_reports_trigger(_event, _context):
     installed_questionnaire_list = get_list_of_installed_questionnaires(config)
     task_client = tasks_v2.CloudTasksClient()
     for questionnaire in installed_questionnaire_list:
-        print(f"Sending request to deliver_mi_hub_reports_processor for {questionnaire.get('name')} {questionnaire.get('id')}")        
+        print(
+            f"Sending request to deliver_mi_hub_reports_processor for {questionnaire.get('name')} {questionnaire.get('id')}"
+        )
         request = tasks_v2.CreateTaskRequest(
             parent=config.deliver_mi_hub_reports_task_queue_id,
             task=tasks_v2.Task(
@@ -72,7 +74,9 @@ def deliver_mi_hub_reports_processor(request):
     questionnaire_name = request_json["name"]
     questionnaire_id = request_json["id"]
     zip_data = []
-    mi_hub_call_history = get_mi_hub_call_history(config, questionnaire_name, questionnaire_id)
+    mi_hub_call_history = get_mi_hub_call_history(
+        config, questionnaire_name, questionnaire_id
+    )
     if mi_hub_call_history:
         call_history_csv = write_csv(mi_hub_call_history)
         zip_data.append({"filename": "call_history.csv", "content": call_history_csv})
@@ -81,7 +85,9 @@ def deliver_mi_hub_reports_processor(request):
     mi_hub_respondent_data = get_mi_hub_respondent_data(config, questionnaire_name)
     if mi_hub_respondent_data:
         respondent_data_csv = write_csv(mi_hub_respondent_data)
-        zip_data.append({"filename": "respondent_data.csv", "content": respondent_data_csv})
+        zip_data.append(
+            {"filename": "respondent_data.csv", "content": respondent_data_csv}
+        )
     else:
         print(f"No respondent data for {questionnaire_name}")
     if zip_data:
@@ -94,7 +100,7 @@ def deliver_mi_hub_reports_processor(request):
         google_storage.upload_zip(f"{mi_filename}.zip", zipped_data)
     else:
         print(f"No data for {questionnaire_name}")
-    return(f"Done - {questionnaire_name}")
+    return f"Done - {questionnaire_name}"
 
 
 if os.path.isfile("./.env"):

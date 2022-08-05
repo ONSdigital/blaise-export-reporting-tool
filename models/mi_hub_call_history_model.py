@@ -58,4 +58,7 @@ class CatiMiHubCallHistoryTable(DataBaseBase):
 
     @classmethod
     def extra_fields(cls):
-        return ["ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dial_secs", cls.get_outcome_code()]
+        return [
+            "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dial_secs",
+            cls.get_outcome_code(),
+        ]
