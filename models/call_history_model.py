@@ -1,5 +1,6 @@
 import datetime
 from dataclasses import dataclass
+from typing import Optional
 
 from models.database_base_model import DataBaseBase
 
@@ -11,8 +12,8 @@ class CallHistory:
     call_number: str
     dial_number: str
     busy_dials: int
-    call_start_time: datetime
-    call_end_time: datetime
+    call_start_time: datetime.datetime
+    call_end_time: datetime.datetime
     dial_secs: int
     status: str
     interviewer: str
@@ -21,10 +22,10 @@ class CallHistory:
     appointment_info: str
     questionnaire_name: str = ""
     survey: str = ""
-    wave: int = None
-    cohort: str = None
-    number_of_interviews: int = None
-    outcome_code: int = None
+    wave: Optional[int] = None
+    cohort: Optional[str] = None
+    number_of_interviews: Optional[int] = None
+    outcome_code: Optional[int] = None
 
     def generate_questionnaire_details(self, questionnaire_name):
         self.questionnaire_name = questionnaire_name
@@ -41,8 +42,8 @@ class CatiCallHistoryTable(DataBaseBase):
     CallNumber: int
     DialNumber: int
     BusyDials: int
-    StartTime: datetime
-    EndTime: datetime
+    StartTime: datetime.datetime
+    EndTime: datetime.datetime
     Status: str
     Interviewer: str
     DialResult: str

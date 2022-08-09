@@ -1,4 +1,5 @@
 from dataclasses import dataclass, fields
+from typing import Optional
 
 from models.database_base_model import DataBaseBase
 
@@ -8,7 +9,7 @@ class AppointmentResourcePlanning:
     questionnaire_name: str = ""
     appointment_time: str = ""
     appointment_language: str = ""
-    total: int = None
+    total: Optional[int] = None
 
     @classmethod
     def fields(cls):
