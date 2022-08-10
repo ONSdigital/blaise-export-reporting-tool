@@ -30,9 +30,9 @@ class CallHistory:
     def generate_questionnaire_details(self, questionnaire_name):
         self.questionnaire_name = questionnaire_name
         self.survey = questionnaire_name[0:3]
-        if self.survey == "LMS" and questionnaire_name[- 1:].isnumeric():
-            self.wave = int(questionnaire_name[- 1:])
-            self.cohort = questionnaire_name[- 3: -1]
+        if self.survey == "LMS" and questionnaire_name[-1:].isnumeric():
+            self.wave = int(questionnaire_name[-1:])
+            self.cohort = questionnaire_name[-3:-1]
 
 
 @dataclass

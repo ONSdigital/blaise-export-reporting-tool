@@ -26,14 +26,16 @@ class CatiAppointmentResourcePlanningTable(DataBaseBase):
     AppointmentType: int
 
     @classmethod
-    def  get_appointments_for_date(cls, config, date, survey_tla, questionnaires):
+    def get_appointments_for_date(cls, config, date, survey_tla, questionnaires):
         if questionnaires is None or len(questionnaires) == 0:
             questionnaire_filter = f"cf.InstrumentName LIKE '{str(survey_tla or '')}%'"
         else:
-            questionnaire_filter = ', '.join("'" + item + "'" for item in questionnaires)
+            questionnaire_filter = ", ".join(
+                "'" + item + "'" for item in questionnaires
+            )
             questionnaire_filter = f"cf.InstrumentName IN({questionnaire_filter})"
         print(f"Questionnaire filter = {questionnaire_filter}")
-        
+
         query = f"""
             with UniqueDialHistoryIdTable as
                 (SELECT

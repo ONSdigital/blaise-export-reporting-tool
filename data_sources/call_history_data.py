@@ -1,8 +1,9 @@
+import asyncio
 from dataclasses import asdict
 from datetime import datetime
+
 from dateutil.relativedelta import relativedelta
 from google.cloud import datastore
-import asyncio
 
 from data_sources.cati_data import get_cati_call_history_from_database
 from data_sources.questionnaire_data import (

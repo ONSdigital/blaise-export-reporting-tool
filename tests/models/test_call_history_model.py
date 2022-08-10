@@ -66,7 +66,8 @@ def test_cati_call_history_table_fields():
             "UpdateInfo",
             "AppointmentInfo",
             "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as DialSecs",
-            "ExtractValue(`AdditionalData`, '/Fields/Field[@Name=\"QHAdmin.HOut\"]/@Value') AS OutcomeCode"]
+            "ExtractValue(`AdditionalData`, '/Fields/Field[@Name=\"QHAdmin.HOut\"]/@Value') AS OutcomeCode",
+        ]
     )
 
 
