@@ -4,18 +4,25 @@ import numpy as np
 import pandas as pd
 
 from functions.datastore_functions import get_call_history_records
-
-from models.interviewer_call_pattern_model import (
-    InterviewerCallPattern, InterviewerCallPatternWithNoValidData
-)
 from models.error_capture import BertException
+from models.interviewer_call_pattern_model import (
+    InterviewerCallPattern,
+    InterviewerCallPatternWithNoValidData,
+)
 
 columns_to_check_for_nulls = ["call_start_time", "call_end_time"]
 
 
-def get_call_pattern_report(interviewer_name: str, start_date_string: str, end_date_string: str, survey_tla: str,
-                            questionnaires=None) -> object:
-    result = get_call_history_records(interviewer_name, start_date_string, end_date_string, survey_tla, questionnaires)
+def get_call_pattern_report(
+    interviewer_name: str,
+    start_date_string: str,
+    end_date_string: str,
+    survey_tla: str,
+    questionnaires=None,
+) -> object:
+    result = get_call_history_records(
+        interviewer_name, start_date_string, end_date_string, survey_tla, questionnaires
+    )
     records = pd.DataFrame(result)
 
     print(f"Calculating call pattern data for interviewer '{interviewer_name}'")
@@ -26,7 +33,7 @@ def get_call_pattern_report(interviewer_name: str, start_date_string: str, end_d
     if no_valid_records_are_found(records):
         return InterviewerCallPatternWithNoValidData(
             discounted_invalid_cases=percentage_of_invalid_records(records),
-            invalid_fields=", ".join(provide_reasons_for_invalid_records(records))
+            invalid_fields=", ".join(provide_reasons_for_invalid_records(records)),
         )
 
     return InterviewerCallPattern(
@@ -36,17 +43,27 @@ def get_call_pattern_report(interviewer_name: str, start_date_string: str, end_d
         hours_on_calls_percentage=calculate_hours_on_call_percentage(records),
         average_calls_per_hour=calculate_average_calls_per_hour(records),
         refusals=number_of_records_which_has_status(records, "Finished (Non response)"),
-        no_contacts=number_of_records_which_has_status(records, "Finished (No contact)"),
+        no_contacts=number_of_records_which_has_status(
+            records, "Finished (No contact)"
+        ),
         completed_successfully=number_of_records_which_has_status(records, "Completed"),
-        appointments_for_contacts=number_of_records_which_has_status(records, "Finished (Appointment made)"),
+        appointments_for_contacts=number_of_records_which_has_status(
+            records, "Finished (Appointment made)"
+        ),
         web_nudge=number_of_records_which_has_status(records, "WebNudge"),
-        no_contact_answer_service=total_no_contact_records_with_call_result(records, "AnswerService"),
+        no_contact_answer_service=total_no_contact_records_with_call_result(
+            records, "AnswerService"
+        ),
         no_contact_busy=total_no_contact_records_with_call_result(records, "Busy"),
-        no_contact_disconnect=total_no_contact_records_with_call_result(records, "Disconnect"),
-        no_contact_no_answer=total_no_contact_records_with_call_result(records, "NoAnswer"),
+        no_contact_disconnect=total_no_contact_records_with_call_result(
+            records, "Disconnect"
+        ),
+        no_contact_no_answer=total_no_contact_records_with_call_result(
+            records, "NoAnswer"
+        ),
         no_contact_other=total_no_contact_records_with_call_result(records, "Others"),
         discounted_invalid_cases=percentage_of_invalid_records(records),
-        invalid_fields=", ".join(provide_reasons_for_invalid_records(records))
+        invalid_fields=", ".join(provide_reasons_for_invalid_records(records)),
     )
 
 
@@ -54,17 +71,23 @@ def calculate_hours_worked_as_datetime(records: pd.DataFrame) -> str:
     valid_records = get_valid_records(records)
     hours_worked_in_seconds = calculate_hours_worked_in_seconds(valid_records)
 
-    return convert_timedelta_to_hhmmss_as_string(datetime.timedelta(seconds=hours_worked_in_seconds))
+    return convert_timedelta_to_hhmmss_as_string(
+        datetime.timedelta(seconds=hours_worked_in_seconds)
+    )
 
 
-def calculate_call_time_as_datetime(records: pd.DataFrame) -> datetime:
+def calculate_call_time_as_datetime(records: pd.DataFrame) -> str:
     valid_records = get_valid_records(records)
     call_time_in_seconds = calculate_call_time_in_seconds(valid_records)
 
-    return convert_timedelta_to_hhmmss_as_string(datetime.timedelta(seconds=call_time_in_seconds))
+    return convert_timedelta_to_hhmmss_as_string(
+        datetime.timedelta(seconds=call_time_in_seconds)
+    )
 
 
-def calculate_hours_on_call_percentage(records: pd.DataFrame, ) -> float:
+def calculate_hours_on_call_percentage(
+    records: pd.DataFrame,
+) -> float:
     valid_records = get_valid_records(records)
 
     hours_worked_in_seconds = calculate_hours_worked_in_seconds(valid_records)
@@ -83,11 +106,16 @@ def calculate_average_calls_per_hour(records: pd.DataFrame) -> float:
     return round(number_of_valid_records / float(hours_worked), 2)
 
 
-def total_no_contact_records_with_call_result(records: pd.DataFrame, call_result: str) -> int:
+def total_no_contact_records_with_call_result(
+    records: pd.DataFrame, call_result: str
+) -> int:
     valid_records = get_valid_records(records)
-    number_of_records_with_call_result = len(valid_records.loc[
-                                                 (valid_records["status"] == "Finished (No contact)") &
-                                                 (valid_records["call_result"] == call_result)])
+    number_of_records_with_call_result = len(
+        valid_records.loc[
+            (valid_records["status"] == "Finished (No contact)")
+            & (valid_records["call_result"] == call_result)
+        ]
+    )
 
     return number_of_records_with_call_result
 
@@ -120,7 +148,10 @@ def get_valid_records(records: pd.DataFrame) -> pd.DataFrame:
         if valid_records.empty:
             return pd.DataFrame()
         valid_records = valid_records.drop(
-            valid_records.loc[valid_records['status'].str.contains('Timed out', case=False)].index)
+            valid_records.loc[
+                valid_records["status"].str.contains("Timed out", case=False)
+            ].index
+        )
 
         return valid_records
 
@@ -131,19 +162,21 @@ def get_valid_records(records: pd.DataFrame) -> pd.DataFrame:
 def calculate_hours_worked_in_seconds(records: pd.DataFrame) -> int:
     try:
         daily_call_history_by_date = records.groupby(
-            [records['call_start_time'].dt.date]).agg({'call_start_time': min, 'call_end_time': max})
-        daily_call_history_by_date['hours_worked'] = (
-                daily_call_history_by_date['call_end_time'] - daily_call_history_by_date['call_start_time']
+            [records["call_start_time"].dt.date]
+        ).agg({"call_start_time": min, "call_end_time": max})
+        daily_call_history_by_date["hours_worked"] = (
+            daily_call_history_by_date["call_end_time"]
+            - daily_call_history_by_date["call_start_time"]
         )
 
-        return daily_call_history_by_date['hours_worked'].sum().total_seconds()
+        return daily_call_history_by_date["hours_worked"].sum().total_seconds()
     except Exception as err:
         raise BertException(f"calculate_hours_worked_in_seconds failed: {err}", 400)
 
 
 def calculate_call_time_in_seconds(records: pd.DataFrame) -> int:
     try:
-        return round(records['dial_secs'].sum())
+        return round(records["dial_secs"].sum())
     except Exception as err:
         raise BertException(f"calculate_call_time_in_seconds failed: {err}", 400)
 
@@ -155,11 +188,11 @@ def number_of_records_which_has_status(records: pd.DataFrame, status: str) -> in
         raise BertException(f"number_of_records_which_has_status failed: {err}", 400)
 
 
-def convert_timedelta_to_hhmmss_as_string(td: datetime) -> str:
+def convert_timedelta_to_hhmmss_as_string(td: datetime.timedelta) -> str:
     hours, remainder = divmod(td.total_seconds(), 3600)
     minutes, seconds = divmod(remainder, 60)
-    return f'{int(hours):02}:{int(minutes):02}:{int(seconds):02}'
+    return f"{int(hours):02}:{int(minutes):02}:{int(seconds):02}"
 
 
-def no_valid_records_are_found(records:pd.DataFrame) -> bool:
+def no_valid_records_are_found(records: pd.DataFrame) -> bool:
     return get_valid_records(records).empty

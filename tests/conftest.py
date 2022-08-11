@@ -1,14 +1,16 @@
-import pytest
 import time
-
 from unittest import mock
+
+import pytest
 from google.cloud import datastore
 
 from app.app import app as flask_app
-
 from models.config_model import Config
 from models.interviewer_call_pattern_model import InterviewerCallPattern
-from tests.helpers.interviewer_call_pattern_helpers import interviewer_call_pattern_report_sample_case, datetime_helper
+from tests.helpers.interviewer_call_pattern_helpers import (
+    datetime_helper,
+    interviewer_call_pattern_report_sample_case,
+)
 
 
 @pytest.fixture
@@ -23,7 +25,7 @@ def config():
         deliver_mi_hub_reports_task_queue_id="blah",
         gcloud_project="blah",
         region="blah",
-        cloud_function_sa="cloud_function_sa_mock"
+        cloud_function_sa="cloud_function_sa_mock",
     )
 
 
@@ -50,19 +52,10 @@ def api_installed_questionnaires_response():
             "dataRecordCount": 1337,
             "hasData": True,
             "nodes": [
-                {
-                    "nodeName": "blaise-gusty-mgmt",
-                    "nodeStatus": "Active"
-                },
-                {
-                    "nodeName": "blaise-gusty-data-entry-1",
-                    "nodeStatus": "Active"
-                },
-                {
-                    "nodeName": "blaise-gusty-data-entry-2",
-                    "nodeStatus": "Active"
-                }
-            ]
+                {"nodeName": "blaise-gusty-mgmt", "nodeStatus": "Active"},
+                {"nodeName": "blaise-gusty-data-entry-1", "nodeStatus": "Active"},
+                {"nodeName": "blaise-gusty-data-entry-2", "nodeStatus": "Active"},
+            ],
         },
         {
             "name": "DST2106Y",
@@ -73,19 +66,10 @@ def api_installed_questionnaires_response():
             "dataRecordCount": 42,
             "hasData": True,
             "nodes": [
-                {
-                    "nodeName": "blaise-gusty-mgmt",
-                    "nodeStatus": "Active"
-                },
-                {
-                    "nodeName": "blaise-gusty-data-entry-1",
-                    "nodeStatus": "Active"
-                },
-                {
-                    "nodeName": "blaise-gusty-data-entry-2",
-                    "nodeStatus": "Active"
-                }
-            ]
+                {"nodeName": "blaise-gusty-mgmt", "nodeStatus": "Active"},
+                {"nodeName": "blaise-gusty-data-entry-1", "nodeStatus": "Active"},
+                {"nodeName": "blaise-gusty-data-entry-2", "nodeStatus": "Active"},
+            ],
         },
         {
             "name": "DST2106Z",
@@ -96,20 +80,11 @@ def api_installed_questionnaires_response():
             "dataRecordCount": 999,
             "hasData": True,
             "nodes": [
-                {
-                    "nodeName": "blaise-gusty-mgmt",
-                    "nodeStatus": "Active"
-                },
-                {
-                    "nodeName": "blaise-gusty-data-entry-1",
-                    "nodeStatus": "Active"
-                },
-                {
-                    "nodeName": "blaise-gusty-data-entry-2",
-                    "nodeStatus": "Active"
-                }
-            ]
-        }
+                {"nodeName": "blaise-gusty-mgmt", "nodeStatus": "Active"},
+                {"nodeName": "blaise-gusty-data-entry-1", "nodeStatus": "Active"},
+                {"nodeName": "blaise-gusty-data-entry-2", "nodeStatus": "Active"},
+            ],
+        },
     ]
 
 
@@ -120,10 +95,7 @@ def questionnaire_name():
 
 @pytest.fixture
 def questionnaire_fields_to_get():
-    return [
-        "QID.Serial_Number",
-        "QHAdmin.HOut"
-    ]
+    return ["QID.Serial_Number", "QHAdmin.HOut"]
 
 
 @pytest.fixture
@@ -132,20 +104,10 @@ def api_reporting_data_response():
         "instrumentName": "DST2106Z",
         "instrumentId": "12345-12345-12345-12345-12345",
         "reportingData": [
-            {
-                "qiD.Serial_Number": "10010",
-                "qhAdmin.HOut": "110"
-            },
-            {
-                "qiD.Serial_Number": "10020",
-                "qhAdmin.HOut": "110"
-            },
-            {
-                "qiD.Serial_Number": "10030",
-                "qhAdmin.HOut": "110"
-
-            }
-        ]
+            {"qiD.Serial_Number": "10010", "qhAdmin.HOut": "110"},
+            {"qiD.Serial_Number": "10020", "qhAdmin.HOut": "110"},
+            {"qiD.Serial_Number": "10030", "qhAdmin.HOut": "110"},
+        ],
     }
 
 
@@ -216,7 +178,8 @@ def call_history_records_status_sample():
             call_end_time=datetime_helper(day=7, hour=11),
             dial_secs=1800,
             status="Finished (Appointment made)",
-        )]
+        ),
+    ]
 
 
 @pytest.fixture
@@ -265,7 +228,7 @@ class RecordsInDatastore:
         record_copy = record.copy()
         key = self.datastore_client.key(self.DATASTORE_KIND, record_copy["name"])
         entity = datastore.Entity(key=key)
-        del record_copy['name']
+        del record_copy["name"]
         entity.update(record_copy)
         self.datastore_client.put(entity)
         self.keys.append(key)
@@ -274,7 +237,9 @@ class RecordsInDatastore:
     def _assert_datastore_is_empty(self):
         count = self._number_of_records_in_datastore()
         if count > 0:
-            raise Exception(f"Expected datastore to be empty, found {count} entities. Try restarting the DataStore emulator.")
+            raise Exception(
+                f"Expected datastore to be empty, found {count} entities. Try restarting the DataStore emulator."
+            )
 
     def _wait_for_record_to_be_available(self, key):
         retries = self.MAX_RETRIES
@@ -292,7 +257,9 @@ class RecordsInDatastore:
             time.sleep(self.RETRY_WAIT_SECONDS)
             retries -= 1
             if retries < 1:
-                raise Exception("Failed to clear datastore. Try restarting the DataStore emulator.")
+                raise Exception(
+                    "Failed to clear datastore. Try restarting the DataStore emulator."
+                )
 
     def _entity_is_not_available(self, key):
         return self.datastore_client.get(key) is None

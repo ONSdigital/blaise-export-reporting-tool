@@ -1,6 +1,7 @@
 import json
 import math
 from dataclasses import asdict, dataclass
+from typing import Union
 
 
 @dataclass
@@ -15,12 +16,12 @@ class InterviewerCallPattern:
     completed_successfully: int
     appointments_for_contacts: int
     web_nudge: int
-    no_contact_answer_service: int = math.nan
-    no_contact_busy: int = math.nan
-    no_contact_disconnect: int = math.nan
-    no_contact_no_answer: int = math.nan
-    no_contact_other: int = math.nan
-    discounted_invalid_cases: int = math.nan
+    no_contact_answer_service: Union[int, float] = math.nan
+    no_contact_busy: Union[int, float] = math.nan
+    no_contact_disconnect: Union[int, float] = math.nan
+    no_contact_no_answer: Union[int, float] = math.nan
+    no_contact_other: Union[int, float] = math.nan
+    discounted_invalid_cases: Union[int, float] = math.nan
     invalid_fields: str = "n/a"
 
     def json(self):

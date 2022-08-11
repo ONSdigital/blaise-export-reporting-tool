@@ -25,7 +25,9 @@ class CatiAppointmentLanguageSummaryTable(DataBaseBase):
         if questionnaires is None or len(questionnaires) == 0:
             questionnaire_filter = f"cf.InstrumentName LIKE '{str(survey_tla or '')}%'"
         else:
-            questionnaire_filter = ', '.join("'" + item + "'" for item in questionnaires)
+            questionnaire_filter = ", ".join(
+                "'" + item + "'" for item in questionnaires
+            )
             questionnaire_filter = f"cf.InstrumentName IN({questionnaire_filter})"
         print(f"Questionnaire filter = {questionnaire_filter}")
 

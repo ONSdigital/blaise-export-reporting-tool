@@ -1,5 +1,6 @@
 from dataclasses import dataclass, fields
 from datetime import datetime
+from typing import Optional, Union
 
 from models.database_base_model import DataBaseBase
 
@@ -7,19 +8,19 @@ from models.database_base_model import DataBaseBase
 @dataclass
 class MiHubCallHistory:
     questionnaire_name: str = ""
-    questionnaire_id: str = None
-    serial_number: str = None
+    questionnaire_id: Optional[str] = None
+    serial_number: Optional[str] = None
     dial_date: str = ""
     dial_time: str = ""
     end_time: str = ""
-    seconds_interview: int = None
-    call_number: int = None
-    dial_number: int = None
-    interviewer: str = None
-    dial_result: int = None
-    dial_line_number: int = None
+    seconds_interview: Optional[int] = None
+    call_number: Optional[int] = None
+    dial_number: Optional[int] = None
+    interviewer: Optional[str] = None
+    dial_result: Optional[int] = None
+    dial_line_number: Optional[int] = None
     appointment_type: str = ""
-    outcome_code: int = ""
+    outcome_code: Union[int, str] = ""
 
     def generate_dial_date_and_time_fields(self, start_datetime, end_datetime):
         self.dial_date = start_datetime.strftime("%Y%m%d")
@@ -57,4 +58,7 @@ class CatiMiHubCallHistoryTable(DataBaseBase):
 
     @classmethod
     def extra_fields(cls):
-        return ["ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dial_secs", cls.get_outcome_code()]
+        return [
+            "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dial_secs",
+            cls.get_outcome_code(),
+        ]
