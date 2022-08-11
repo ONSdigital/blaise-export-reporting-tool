@@ -1,10 +1,7 @@
 import csv
 from dataclasses import dataclass, fields
 
-from functions.csv_functions import (
-    get_fieldnames,
-    write_csv,
-)
+from functions.csv_functions import get_fieldnames, write_csv
 
 
 @dataclass

@@ -1,6 +1,6 @@
-import pytest
-
 from datetime import datetime
+
+import pytest
 
 from functions.date_functions import parse_date_string_to_datetime
 
@@ -43,7 +43,9 @@ def test_parse_date_string_to_datetime_returns_valid_date(date_string, expected)
         ("1997-12-24", [1997, 12, 24]),
     ],
 )
-def test_parse_date_string_to_datetime_returns_valid_date_with_end_of_day_true(date_string, expected):
+def test_parse_date_string_to_datetime_returns_valid_date_with_end_of_day_true(
+    date_string, expected
+):
     expected = datetime(*expected, 23, 59, 59)
     date_time = parse_date_string_to_datetime(date_string, True)
     assert date_time == expected

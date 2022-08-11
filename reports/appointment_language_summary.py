@@ -1,8 +1,5 @@
 from data_sources import cati_data
-from models.appointment_language_summary_model import (
-    AppointmentLanguageSummary,
-)
-
+from models.appointment_language_summary_model import AppointmentLanguageSummary
 from models.config_model import Config
 
 

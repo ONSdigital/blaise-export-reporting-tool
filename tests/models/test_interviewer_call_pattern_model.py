@@ -1,4 +1,7 @@
-from models.interviewer_call_pattern_model import InterviewerCallPattern, InterviewerCallPatternWithNoValidData
+from models.interviewer_call_pattern_model import (
+    InterviewerCallPattern,
+    InterviewerCallPatternWithNoValidData,
+)
 
 
 def test_interviewer_call_pattern_mandatory_fields():
