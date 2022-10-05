@@ -23,6 +23,7 @@ def get_call_history_records(
         interviewer_name, start_date, end_date, survey_tla, questionnaires
     )
     results = identify_webnudge_cases(records)
+    results = identify_invalid_phone_number_cases(results)
     return results
 
 
@@ -86,4 +87,12 @@ def identify_webnudge_cases(records):
         if record["outcome_code"] == "120":
             record["call_result"] = "WebNudge"
             record["status"] = "WebNudge"
+    return records
+
+
+def identify_invalid_phone_number_cases(records):
+    for record in records:
+        if record["outcome_code"] == "320":
+            record["call_result"] = "InvalidPhoneNumber"
+            record["status"] = "InvalidPhoneNumber"
     return records
