@@ -1,11 +1,6 @@
-from unittest.mock import patch
-
-import pandas as pd
 import pytest
 
-from models.error_capture import BertException
 from reports.interviewer_call_pattern_report import *
-from tests.helpers.interviewer_call_history_helpers import entity_builder
 from tests.helpers.interviewer_call_pattern_helpers import (
     datetime_helper,
     get_list_of_percentages,
@@ -887,6 +882,62 @@ def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with
     assert result.no_contact_no_answer == 1
 
 
+def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_InvalidPhoneNumber(
+    mocker, interviewer_name, start_date_as_string, end_date_as_string, survey_tla
+):
+    datastore_records = [
+        interviewer_call_pattern_report_sample_case(
+            call_start_time=datetime_helper(day=7, hour=10),
+            call_end_time=datetime_helper(day=7, hour=11),
+            status="Finished (No contact)",
+            call_result="InvalidPhoneNumber",
+        ),
+    ]
+
+    mocker.patch(
+        "reports.interviewer_call_pattern_report.get_call_history_records",
+        return_value=pd.DataFrame(datastore_records),
+    )
+
+    result = get_call_pattern_report(
+        interviewer_name, start_date_as_string, end_date_as_string, survey_tla
+    )
+    assert result.no_contact_invalid_phone_number == 1
+
+
+def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_InvalidPhoneNumber_when_multiple_records_are_found(
+    mocker, interviewer_name, start_date_as_string, end_date_as_string, survey_tla
+):
+    datastore_records = [
+        interviewer_call_pattern_report_sample_case(
+            call_start_time=datetime_helper(day=7, hour=10),
+            call_end_time=datetime_helper(day=7, hour=11),
+            status="Finished (No contact)",
+            call_result="InvalidPhoneNumber",
+        ),
+        interviewer_call_pattern_report_sample_case(
+            call_start_time=datetime_helper(day=7, hour=12),
+            call_end_time=datetime_helper(day=7, hour=13),
+            status="Finished (No contact)",
+            call_result="Busy",
+        ),
+        interviewer_call_pattern_report_sample_case(
+            call_start_time=datetime_helper(day=7, hour=14),
+            call_end_time=datetime_helper(day=7, hour=15),
+        ),
+    ]
+
+    mocker.patch(
+        "reports.interviewer_call_pattern_report.get_call_history_records",
+        return_value=pd.DataFrame(datastore_records),
+    )
+
+    result = get_call_pattern_report(
+        interviewer_name, start_date_as_string, end_date_as_string, survey_tla
+    )
+    assert result.no_contact_invalid_phone_number == 1
+
+
 def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Other(
     mocker, interviewer_name, start_date_as_string, end_date_as_string, survey_tla
 ):
@@ -1045,6 +1096,7 @@ def test_get_call_pattern_report_returns_expected_output_when_all_data_is_valid(
     assert result.no_contact_busy == 0
     assert result.no_contact_disconnect == 0
     assert result.no_contact_no_answer == 0
+    assert result.no_contact_invalid_phone_number == 0
     assert result.no_contact_other == 0
     assert result.discounted_invalid_cases == 0
     assert result.invalid_fields == ""
@@ -1164,6 +1216,7 @@ def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_f
     assert result.no_contact_busy == 0
     assert result.no_contact_disconnect == 0
     assert result.no_contact_no_answer == 0
+    assert result.no_contact_invalid_phone_number == 0
     assert result.no_contact_other == 0
     assert result.discounted_invalid_cases == 4
 
