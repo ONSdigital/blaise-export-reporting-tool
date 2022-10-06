@@ -20,6 +20,7 @@ class InterviewerCallPattern:
     no_contact_busy: Union[int, float] = math.nan
     no_contact_disconnect: Union[int, float] = math.nan
     no_contact_no_answer: Union[int, float] = math.nan
+    no_contact_invalid_phone_number: Union[int, float] = math.nan
     no_contact_other: Union[int, float] = math.nan
     discounted_invalid_cases: Union[int, float] = math.nan
     invalid_fields: str = "n/a"
