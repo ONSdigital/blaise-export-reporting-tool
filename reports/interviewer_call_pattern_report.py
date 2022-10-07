@@ -61,6 +61,7 @@ def get_call_pattern_report(
         no_contact_no_answer=total_no_contact_records_with_call_result(
             records, "NoAnswer"
         ),
+        no_contact_invalid_phone_number=total_no_contact_records_with_call_result(records, "InvalidPhoneNumber"),
         no_contact_other=total_no_contact_records_with_call_result(records, "Others"),
         discounted_invalid_cases=percentage_of_invalid_records(records),
         invalid_fields=", ".join(provide_reasons_for_invalid_records(records)),
