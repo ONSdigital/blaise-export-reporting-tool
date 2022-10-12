@@ -1592,7 +1592,7 @@ class TestBreakdownOfNoContactCalls:
                 call_start_time=datetime_helper(day=7, hour=10),
                 call_end_time=datetime_helper(day=7, hour=11),
                 status="Finished (No contact)",
-                call_result="InvalidPhoneNumber",
+                call_result="NoAnswer",
                 outcome_code=320,
             ),
             interviewer_call_pattern_report_sample_case(
@@ -1600,12 +1600,12 @@ class TestBreakdownOfNoContactCalls:
                 call_end_time=datetime_helper(day=7, hour=13),
                 status="Finished (No contact)",
                 call_result="Busy",
-                outcome_code=320,
+                outcome_code=400,
             ),
             interviewer_call_pattern_report_sample_case(
                 call_start_time=datetime_helper(day=7, hour=14),
                 call_end_time=datetime_helper(day=7, hour=15),
-                outcome_code=320,
+                outcome_code=400,
             ),
         ]
 
