@@ -1565,7 +1565,7 @@ class TestBreakdownOfNoContactCalls:
                 call_end_time=datetime_helper(day=7, hour=11),
                 status="Finished (No contact)",
                 call_result="NoAnswer",
-                outcome_code=320,
+                outcome_code="320",
             ),
         ]
 
