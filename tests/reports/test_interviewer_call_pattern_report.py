@@ -292,7 +292,7 @@ def test_get_call_pattern_report_returns_expected_output_when_all_data_is_valid(
     assert result.no_contact_busy == 0
     assert result.no_contact_disconnect == 0
     assert result.no_contact_no_answer == 0
-    assert result.no_contact_invalid_phone_number == 0
+    assert result.no_contact_invalid_telephone_number == 0
     assert result.no_contact_other == 0
     assert result.discounted_invalid_cases == 0
     assert result.invalid_fields == ""
@@ -412,7 +412,7 @@ def test_get_call_pattern_report_returns_expected_output_when_invalid_data_are_f
     assert result.no_contact_busy == 0
     assert result.no_contact_disconnect == 0
     assert result.no_contact_no_answer == 0
-    assert result.no_contact_invalid_phone_number == 0
+    assert result.no_contact_invalid_telephone_number == 0
     assert result.no_contact_other == 0
     assert result.discounted_invalid_cases == 4
 
@@ -1564,7 +1564,8 @@ class TestBreakdownOfNoContactCalls:
                 call_start_time=datetime_helper(day=7, hour=10),
                 call_end_time=datetime_helper(day=7, hour=11),
                 status="Finished (No contact)",
-                call_result="InvalidPhoneNumber",
+                call_result="NoAnswer",
+                outcome_code="320",
             ),
         ]
 
@@ -1576,7 +1577,7 @@ class TestBreakdownOfNoContactCalls:
         result = get_call_pattern_report(
             interviewer_name, start_date_as_string, end_date_as_string, survey_tla
         )
-        assert result.no_contact_invalid_phone_number == 1
+        assert result.no_contact_invalid_telephone_number == 1
 
     def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_InvalidPhoneNumber_when_multiple_records_are_found(
         self,
@@ -1591,17 +1592,21 @@ class TestBreakdownOfNoContactCalls:
                 call_start_time=datetime_helper(day=7, hour=10),
                 call_end_time=datetime_helper(day=7, hour=11),
                 status="Finished (No contact)",
-                call_result="InvalidPhoneNumber",
+                call_result="NoAnswer",
+                outcome_code="320",
             ),
             interviewer_call_pattern_report_sample_case(
                 call_start_time=datetime_helper(day=7, hour=12),
                 call_end_time=datetime_helper(day=7, hour=13),
                 status="Finished (No contact)",
                 call_result="Busy",
+                outcome_code="400",
             ),
             interviewer_call_pattern_report_sample_case(
                 call_start_time=datetime_helper(day=7, hour=14),
                 call_end_time=datetime_helper(day=7, hour=15),
+                call_result="Busy",
+                outcome_code="400",
             ),
         ]
 
@@ -1613,7 +1618,7 @@ class TestBreakdownOfNoContactCalls:
         result = get_call_pattern_report(
             interviewer_name, start_date_as_string, end_date_as_string, survey_tla
         )
-        assert result.no_contact_invalid_phone_number == 1
+        assert result.no_contact_invalid_telephone_number == 1
 
     def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Other(
         self,
