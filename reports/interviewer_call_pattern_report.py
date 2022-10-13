@@ -129,7 +129,7 @@ def total_no_contact_invalid_phone_number(
         valid_records.loc[
             (valid_records["status"] == "Finished (No contact)")
             & (valid_records["call_result"] == call_result)
-            & (valid_records["outcome_code"] == 320)
+            & (valid_records["outcome_code"] == "320")
             ]
     )
 
