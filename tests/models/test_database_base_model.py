@@ -28,8 +28,8 @@ def test_database_base_model_select_from_calls_query_with_the_correct_parameters
 def test_database_base_model_select_from_returns_the_expected_query_result(query, config):
     # arrange
     query.return_value = [
-        ("value_1_for_field_name_1", 1, False),
-        ("value_2_for_field_name_1", 2, True),
+        ("row_1_value_for_field_name_1", 1, False),
+        ("row_2_value_for_field_name_1", 2, True),
     ]
 
     # act
@@ -37,6 +37,6 @@ def test_database_base_model_select_from_returns_the_expected_query_result(query
 
     # assert
     assert result == [
-        ("value_1_for_field_name_1", 1, False),
-        ("value_2_for_field_name_1", 2, True),
+        ("row_1_value_for_field_name_1", 1, False),
+        ("row_2_value_for_field_name_1", 2, True),
     ]
