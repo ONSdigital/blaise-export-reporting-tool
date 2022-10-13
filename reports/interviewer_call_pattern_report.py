@@ -24,7 +24,7 @@ def get_call_pattern_report(
         interviewer_name, start_date_string, end_date_string, survey_tla, questionnaires
     )
     records = pd.DataFrame(result)
-
+    print(records[["outcome_code", "serial_number", "status"]])
     print(f"Calculating call pattern data for interviewer '{interviewer_name}'")
 
     if records.empty:
@@ -128,7 +128,7 @@ def total_no_contact_invalid_telephone_number(
     number_of_records_with_invalid_telephone_number = len(
         valid_records.loc[valid_records["outcome_code"] == "320"]
     )
-    print(valid_records["outcome_code"])
+
     return number_of_records_with_invalid_telephone_number
 
 
