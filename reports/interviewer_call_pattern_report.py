@@ -61,7 +61,7 @@ def get_call_pattern_report(
         no_contact_no_answer=total_no_contact_records_with_call_result(
             records, "NoAnswer"
         ),
-        no_contact_invalid_phone_number=total_no_contact_invalid_phone_number(records, "NoAnswer"),
+        no_contact_invalid_telephone_number=total_no_contact_invalid_telephone_number(records),
         no_contact_other=total_no_contact_records_with_call_result(records, "Others"),
         discounted_invalid_cases=percentage_of_invalid_records(records),
         invalid_fields=", ".join(provide_reasons_for_invalid_records(records)),
@@ -121,15 +121,15 @@ def total_no_contact_records_with_call_result(
     return number_of_records_with_call_result
 
 
-def total_no_contact_invalid_phone_number(
-        records: pd.DataFrame, call_result: str
+def total_no_contact_invalid_telephone_number(
+        records: pd.DataFrame
 ) -> int:
     valid_records = get_valid_records(records)
-    number_of_records_with_invalid_phone_number = len(
+    number_of_records_with_invalid_telephone_number = len(
         valid_records.loc[valid_records["outcome_code"] == "320"]
     )
-
-    return number_of_records_with_invalid_phone_number
+    print(valid_records["outcome_code"])
+    return number_of_records_with_invalid_telephone_number
 
 
 def percentage_of_invalid_records(records: pd.DataFrame) -> int:

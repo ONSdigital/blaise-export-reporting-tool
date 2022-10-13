@@ -1577,7 +1577,7 @@ class TestBreakdownOfNoContactCalls:
         result = get_call_pattern_report(
             interviewer_name, start_date_as_string, end_date_as_string, survey_tla
         )
-        assert result.no_contact_invalid_phone_number == 1
+        assert result.no_contact_invalid_telephone_number == 1
 
     def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_InvalidPhoneNumber_when_multiple_records_are_found(
         self,
@@ -1618,7 +1618,7 @@ class TestBreakdownOfNoContactCalls:
         result = get_call_pattern_report(
             interviewer_name, start_date_as_string, end_date_as_string, survey_tla
         )
-        assert result.no_contact_invalid_phone_number == 1
+        assert result.no_contact_invalid_telephone_number == 1
 
     def test_get_call_pattern_report_returns_the_number_and_percentage_of_cases_with_a_status_of_Other(
         self,
