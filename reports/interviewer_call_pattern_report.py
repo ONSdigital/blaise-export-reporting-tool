@@ -126,11 +126,7 @@ def total_no_contact_invalid_phone_number(
 ) -> int:
     valid_records = get_valid_records(records)
     number_of_records_with_invalid_phone_number = len(
-        valid_records.loc[
-            (valid_records["status"] == "Finished (No contact)")
-            & (valid_records["call_result"] == call_result)
-            & (valid_records["outcome_code"] == "320")
-            ]
+        valid_records.loc[valid_records["outcome_code"] == 320]
     )
 
     return number_of_records_with_invalid_phone_number
