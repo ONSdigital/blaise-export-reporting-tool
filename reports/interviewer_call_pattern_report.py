@@ -24,7 +24,7 @@ def get_call_pattern_report(
         interviewer_name, start_date_string, end_date_string, survey_tla, questionnaires
     )
     records = pd.DataFrame(result)
-    print(records[["outcome_code", "serial_number", "status"]])
+
     print(f"Calculating call pattern data for interviewer '{interviewer_name}'")
 
     if records.empty:
