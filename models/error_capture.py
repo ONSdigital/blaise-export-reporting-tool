@@ -9,3 +9,8 @@ class BertException(Exception):
 
     def json(self):
         return json.dumps({"error": self.message})
+
+
+class RowNotFound(Exception):
+    pass
+
