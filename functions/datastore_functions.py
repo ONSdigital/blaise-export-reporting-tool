@@ -94,5 +94,4 @@ def identify_invalid_phone_number_cases(records):
     for record in records:
         if record["outcome_code"] == "320":
             record["call_result"] = "InvalidPhoneNumber"
-            record["status"] = "InvalidPhoneNumber"
     return records
