@@ -7,7 +7,6 @@ from google.cloud import datastore
 
 from data_sources.cati_data import get_cati_call_history_from_database
 from data_sources.questionnaire_data import (
-    get_list_of_installed_questionnaires,
     get_questionnaire_name,
 )
 from models.call_history_model import CallHistory
