@@ -13,7 +13,6 @@ def get_appointment_resource_planning_by_date(date, survey_tla, questionnaires):
     )
     config = Config.from_env()
     config.log()
-    installed_questionnaire_list = get_list_of_installed_questionnaires(config)
     results = get_cati_appointment_resource_planning_from_database(
         config, date, survey_tla, questionnaires
     )
@@ -25,7 +24,7 @@ def get_appointment_resource_planning_by_date(date, survey_tla, questionnaires):
             total=item.get("Total"),
         )
         questionnaire_name = get_questionnaire_name(
-            item.get("InstrumentId"), installed_questionnaire_list
+            config, item.get("InstrumentId")
         )
         if questionnaire_name == "":
             print(
