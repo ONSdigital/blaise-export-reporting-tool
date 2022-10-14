@@ -19,5 +19,5 @@ class QuestionnaireConfigurationTable(DataBaseBase):
         if not result:
             raise RowNotFound(f"Could not find configuration with InstrumentId: {questionnaire_id}")
 
-        print("Yo El! This function used the database instead of the API :tada:")
+        print("Yo El: This function used the database instead of the API :tada:")
         return result[0][0]
