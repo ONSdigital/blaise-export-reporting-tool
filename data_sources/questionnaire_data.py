@@ -20,11 +20,6 @@ def get_questionnaire_name(config, questionnaire_id):
     except RowNotFound:
         return ""
 
-    # for questionnaire in questionnaire_list:
-    #     if questionnaire.get("id") == questionnaire_id:
-    #         return questionnaire.get("name", "")
-    # return ""
-
 
 def get_questionnaire_data(questionnaire_name, config, fields):
     fields_to_get = []
