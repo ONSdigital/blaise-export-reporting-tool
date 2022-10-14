@@ -23,7 +23,7 @@ def test_get_questionnaire_name_from_id_executes_as_expected(query, config):
 @patch("models.database_base_model.DataBaseBase.query")
 def test_get_questionnaire_name_from_id_returns_questionnaire_name_when_found(query, config):
     # arrange
-    query.return_value = [("LMS2202A", )]
+    query.return_value = [{'InstrumentName': 'LMS2202A'}]
 
     # act
     result = QuestionnaireConfigurationTable.get_questionnaire_name_from_id(config, "guid_id_example_1")
