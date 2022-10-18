@@ -53,17 +53,27 @@ def test_get_questionnaire_data(
     ]
 
 
-@patch("models.questionnaire_configuration_model.QuestionnaireConfigurationTable.get_questionnaire_name_from_id")
-def test_get_questionnaire_name_from_id_is_called_with_the_correct_parameters(mock_get_questionnaire_name_from_id, config):
+@patch(
+    "models.questionnaire_configuration_model.QuestionnaireConfigurationTable.get_questionnaire_name_from_id"
+)
+def test_get_questionnaire_name_from_id_is_called_with_the_correct_parameters(
+    mock_get_questionnaire_name_from_id, config
+):
     # arrange & act
     get_questionnaire_name(config, "12345-12345-12345-12345-ZZZZZ")
 
     # assert
-    mock_get_questionnaire_name_from_id.assert_called_with(config, "12345-12345-12345-12345-ZZZZZ")
+    mock_get_questionnaire_name_from_id.assert_called_with(
+        config, "12345-12345-12345-12345-ZZZZZ"
+    )
 
 
-@patch("models.questionnaire_configuration_model.QuestionnaireConfigurationTable.get_questionnaire_name_from_id")
-def test_get_questionnaire_name_from_id_returns_questionnaire_name(mock_get_questionnaire_name_from_id, config):
+@patch(
+    "models.questionnaire_configuration_model.QuestionnaireConfigurationTable.get_questionnaire_name_from_id"
+)
+def test_get_questionnaire_name_from_id_returns_questionnaire_name(
+    mock_get_questionnaire_name_from_id, config
+):
     # arrange
     mock_get_questionnaire_name_from_id.return_value = "DST2106Z"
 
@@ -71,11 +81,14 @@ def test_get_questionnaire_name_from_id_returns_questionnaire_name(mock_get_ques
     assert get_questionnaire_name(config, "12345-12345-12345-12345-ZZZZZ") == "DST2106Z"
 
 
-@patch("models.questionnaire_configuration_model.QuestionnaireConfigurationTable.get_questionnaire_name_from_id")
-def test_get_questionnaire_name_from_id_returns_empty_string_when_questionnaire_id_not_found(mock_get_questionnaire_name_from_id, config):
+@patch(
+    "models.questionnaire_configuration_model.QuestionnaireConfigurationTable.get_questionnaire_name_from_id"
+)
+def test_get_questionnaire_name_from_id_returns_empty_string_when_questionnaire_id_not_found(
+    mock_get_questionnaire_name_from_id, config
+):
     # arrange
     mock_get_questionnaire_name_from_id.side_effect = RowNotFound
 
     # act & assert
     assert get_questionnaire_name(config, "12345-12345-12345-12345-ZZZZZ") == ""
-

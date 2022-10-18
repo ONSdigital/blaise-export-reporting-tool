@@ -79,8 +79,12 @@ def test_split_into_batches(list_to_split, number_to_split_by, expected):
     },
 )
 @patch("data_sources.call_history_data.get_cati_call_history_from_database")
-@patch("models.questionnaire_configuration_model.QuestionnaireConfigurationTable.get_questionnaire_name_from_id")
-def test_get_cati_call_history(mock_get_questionnaire_name_from_id, mock_get_cati_call_history_from_database):
+@patch(
+    "models.questionnaire_configuration_model.QuestionnaireConfigurationTable.get_questionnaire_name_from_id"
+)
+def test_get_cati_call_history(
+    mock_get_questionnaire_name_from_id, mock_get_cati_call_history_from_database
+):
     # Arrange
     mock_get_questionnaire_name_from_id.return_value = "OPN2101A"
 
@@ -133,7 +137,9 @@ def test_get_cati_call_history(mock_get_questionnaire_name_from_id, mock_get_cat
             outcome_code=None,
         )
     ]
-    mock_get_questionnaire_name_from_id.assert_called_with(config, "05cf69af-3a4e-47df-819a-928350fdda5a")
+    mock_get_questionnaire_name_from_id.assert_called_with(
+        config, "05cf69af-3a4e-47df-819a-928350fdda5a"
+    )
 
 
 @mock.patch.dict(

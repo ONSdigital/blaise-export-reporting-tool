@@ -13,4 +13,3 @@ class BertException(Exception):
 
 class RowNotFound(Exception):
     pass
-

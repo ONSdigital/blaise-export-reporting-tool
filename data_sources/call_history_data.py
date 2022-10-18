@@ -6,9 +6,7 @@ from dateutil.relativedelta import relativedelta
 from google.cloud import datastore
 
 from data_sources.cati_data import get_cati_call_history_from_database
-from data_sources.questionnaire_data import (
-    get_questionnaire_name,
-)
+from data_sources.questionnaire_data import get_questionnaire_name
 from models.call_history_model import CallHistory
 
 
@@ -56,9 +54,9 @@ class CallHistoryClient:
                 appointment_info=item.get("AppointmentInfo"),
                 outcome_code=item.get("OutcomeCode"),
             )
-            questionnaire_name = get_questionnaire_name(self.config,
-                                                        cati_call_history.questionnaire_id
-                                                        )
+            questionnaire_name = get_questionnaire_name(
+                self.config, cati_call_history.questionnaire_id
+            )
             if questionnaire_name != "":
                 cati_call_history.generate_questionnaire_details(questionnaire_name)
             cati_call_history_list.append(cati_call_history)

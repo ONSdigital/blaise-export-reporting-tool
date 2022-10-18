@@ -12,11 +12,16 @@ class QuestionnaireConfigurationTable(DataBaseBase):
 
     @classmethod
     def get_questionnaire_name_from_id(cls, config, questionnaire_id: str) -> str:
-        result = cls.query(config, "SELECT InstrumentName "
-                                 f"FROM {cls.table_name()} "
-                                 f"WHERE InstrumentId = '{questionnaire_id}'")
+        result = cls.query(
+            config,
+            "SELECT InstrumentName "
+            f"FROM {cls.table_name()} "
+            f"WHERE InstrumentId = '{questionnaire_id}'",
+        )
 
         if not result:
-            raise RowNotFound(f"Could not find configuration with InstrumentId: {questionnaire_id}")
+            raise RowNotFound(
+                f"Could not find configuration with InstrumentId: {questionnaire_id}"
+            )
 
         return result[0]["InstrumentName"]

@@ -16,7 +16,9 @@ def get_list_of_installed_questionnaires(config):
 
 def get_questionnaire_name(config, questionnaire_id):
     try:
-        return QuestionnaireConfigurationTable.get_questionnaire_name_from_id(config, questionnaire_id)
+        return QuestionnaireConfigurationTable.get_questionnaire_name_from_id(
+            config, questionnaire_id
+        )
     except RowNotFound:
         return ""
 

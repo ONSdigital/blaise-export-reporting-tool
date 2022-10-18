@@ -1,11 +1,10 @@
 import abc
 from abc import ABC
-from dataclasses import fields, dataclass
+from dataclasses import dataclass, fields
 
 import mysql.connector
 
 
-@dataclass
 class DataBaseBase(ABC):
     @classmethod
     def connect_to_database(cls, config):

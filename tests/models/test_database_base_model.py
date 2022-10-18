@@ -16,16 +16,22 @@ class ExampleTableModel(DataBaseBase):
 
 
 @patch("models.database_base_model.DataBaseBase.query")
-def test_database_base_model_select_from_calls_query_with_the_correct_parameters(query, config):
+def test_database_base_model_select_from_calls_query_with_the_correct_parameters(
+    query, config
+):
     # arrange & act
     ExampleTableModel.select_from(config)
 
     # assert
-    query.assert_called_with(config, "SELECT field_name_1, field_name_2, field_name_3 FROM foo.bar")
+    query.assert_called_with(
+        config, "SELECT field_name_1, field_name_2, field_name_3 FROM foo.bar"
+    )
 
 
 @patch("models.database_base_model.DataBaseBase.query")
-def test_database_base_model_select_from_returns_the_expected_query_result(query, config):
+def test_database_base_model_select_from_returns_the_expected_query_result(
+    query, config
+):
     # arrange
     query.return_value = [
         ("row_1_value_for_field_name_1", 1, False),
