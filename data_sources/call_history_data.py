@@ -6,10 +6,7 @@ from dateutil.relativedelta import relativedelta
 from google.cloud import datastore
 
 from data_sources.cati_data import get_cati_call_history_from_database
-from data_sources.questionnaire_data import (
-    get_list_of_installed_questionnaires,
-    get_questionnaire_name_from_id,
-)
+from data_sources.questionnaire_data import get_questionnaire_name
 from models.call_history_model import CallHistory
 
 
@@ -37,7 +34,7 @@ class CallHistoryClient:
         status = self.datastore_client.get(key)
         return status
 
-    def get_cati_call_history(self, questionnaire_list):
+    def get_cati_call_history(self):
         results = get_cati_call_history_from_database(self.config)
         cati_call_history_list = []
         for item in results:
@@ -57,8 +54,8 @@ class CallHistoryClient:
                 appointment_info=item.get("AppointmentInfo"),
                 outcome_code=item.get("OutcomeCode"),
             )
-            questionnaire_name = get_questionnaire_name_from_id(
-                cati_call_history.questionnaire_id, questionnaire_list
+            questionnaire_name = get_questionnaire_name(
+                self.config, cati_call_history.questionnaire_id
             )
             if questionnaire_name != "":
                 cati_call_history.generate_questionnaire_details(questionnaire_name)
@@ -111,9 +108,7 @@ class CallHistoryClient:
 
     def __extract_call_history(self):
         print("Getting call history data")
-        installed_questionnaire_list = get_list_of_installed_questionnaires(self.config)
-        cati_call_history = self.get_cati_call_history(installed_questionnaire_list)
-        return cati_call_history
+        return self.get_cati_call_history()
 
     def __upload_call_history_to_datastore(self, call_history_data):
         print("Checking for new call history records to upload to datastore")

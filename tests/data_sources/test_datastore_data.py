@@ -79,11 +79,14 @@ def test_split_into_batches(list_to_split, number_to_split_by, expected):
     },
 )
 @patch("data_sources.call_history_data.get_cati_call_history_from_database")
-def test_get_cati_call_history(mock_get_cati_call_history_from_database):
-    # Setup
-    questionnaire_list = [
-        {"name": "OPN2101A", "id": "05cf69af-3a4e-47df-819a-928350fdda5a"}
-    ]
+@patch(
+    "models.questionnaire_configuration_model.QuestionnaireConfigurationTable.get_questionnaire_name_from_id"
+)
+def test_get_cati_call_history(
+    mock_get_questionnaire_name_from_id, mock_get_cati_call_history_from_database
+):
+    # Arrange
+    mock_get_questionnaire_name_from_id.return_value = "OPN2101A"
 
     mock_get_cati_call_history_from_database.return_value = [
         {
@@ -107,7 +110,7 @@ def test_get_cati_call_history(mock_get_cati_call_history_from_database):
 
     # Execution
     call_history_client = CallHistoryClient(mock.MagicMock, config)
-    dial_history = call_history_client.get_cati_call_history(questionnaire_list)
+    dial_history = call_history_client.get_cati_call_history()
 
     # Assertion
     assert len(dial_history) == 1
@@ -134,6 +137,9 @@ def test_get_cati_call_history(mock_get_cati_call_history_from_database):
             outcome_code=None,
         )
     ]
+    mock_get_questionnaire_name_from_id.assert_called_with(
+        config, "05cf69af-3a4e-47df-819a-928350fdda5a"
+    )
 
 
 @mock.patch.dict(

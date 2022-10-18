@@ -1,7 +1,7 @@
 from dataclasses import dataclass, fields
 from typing import Optional
 
-from models.database_base_model import DataBaseBase
+from models.database_base_model import DatabaseBase
 
 
 @dataclass
@@ -17,7 +17,7 @@ class AppointmentResourcePlanning:
 
 
 @dataclass
-class CatiAppointmentResourcePlanningTable(DataBaseBase):
+class CatiAppointmentResourcePlanningTable(DatabaseBase):
     InstrumentId: str
     AppointmentStartDate: str
     AppointmentStartTime: str
