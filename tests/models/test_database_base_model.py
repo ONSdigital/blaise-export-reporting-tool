@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 from unittest.mock import patch
 
-from models.database_base_model import DataBaseBase
+from models.database_base_model import DatabaseBase
 
 
 @dataclass
-class ExampleTableModel(DataBaseBase):
+class ExampleTableModel(DatabaseBase):
     field_name_1: str
     field_name_2: int
     field_name_3: bool
@@ -15,7 +15,7 @@ class ExampleTableModel(DataBaseBase):
         return "foo.bar"
 
 
-@patch("models.database_base_model.DataBaseBase.query")
+@patch("models.database_base_model.DatabaseBase.query")
 def test_database_base_model_select_from_calls_query_with_the_correct_parameters(
     query, config
 ):
@@ -28,7 +28,7 @@ def test_database_base_model_select_from_calls_query_with_the_correct_parameters
     )
 
 
-@patch("models.database_base_model.DataBaseBase.query")
+@patch("models.database_base_model.DatabaseBase.query")
 def test_database_base_model_select_from_returns_the_expected_query_result(
     query, config
 ):

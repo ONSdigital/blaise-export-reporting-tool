@@ -5,7 +5,7 @@ from dataclasses import dataclass, fields
 import mysql.connector
 
 
-class DataBaseBase(ABC):
+class DatabaseBase(ABC):
     @classmethod
     def connect_to_database(cls, config):
         try:

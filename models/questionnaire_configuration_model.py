@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 
-from models.database_base_model import DataBaseBase
+from models.database_base_model import DatabaseBase
 from models.error_capture import RowNotFound
 
 
 @dataclass
-class QuestionnaireConfigurationTable(DataBaseBase):
+class QuestionnaireConfigurationTable(DatabaseBase):
     @classmethod
     def table_name(cls) -> str:
         return "configuration.Configuration"
