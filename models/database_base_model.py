@@ -1,9 +1,11 @@
-from dataclasses import fields
+import abc
+from abc import ABC
+from dataclasses import dataclass, fields
 
 import mysql.connector
 
 
-class DataBaseBase:
+class DatabaseBase(ABC):
     @classmethod
     def connect_to_database(cls, config):
         try:
@@ -20,13 +22,7 @@ class DataBaseBase:
 
     @classmethod
     def select_from(cls, config):
-        db = cls.connect_to_database(config)
-        cursor = db.cursor(dictionary=True)
-        cursor.execute(f"""SELECT {cls.fields()} FROM {cls.table_name()}""")
-        results = cursor.fetchall()
-        cursor.close()
-        db.close()
-        return results
+        return cls.query(config, f"""SELECT {cls.fields()} FROM {cls.table_name()}""")
 
     @classmethod
     def query(cls, config, query):
@@ -39,6 +35,7 @@ class DataBaseBase:
         return results
 
     @classmethod
+    @abc.abstractmethod
     def table_name(cls):
         pass
 

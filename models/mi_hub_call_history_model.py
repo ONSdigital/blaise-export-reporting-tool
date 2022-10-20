@@ -2,7 +2,7 @@ from dataclasses import dataclass, fields
 from datetime import datetime
 from typing import Optional, Union
 
-from models.database_base_model import DataBaseBase
+from models.database_base_model import DatabaseBase
 
 
 @dataclass
@@ -35,7 +35,7 @@ class MiHubCallHistory:
 
 
 @dataclass
-class CatiMiHubCallHistoryTable(DataBaseBase):
+class CatiMiHubCallHistoryTable(DatabaseBase):
     InstrumentId: str
     PrimaryKeyValue: str
     Id: int

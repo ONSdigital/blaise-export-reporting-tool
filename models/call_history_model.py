@@ -2,7 +2,7 @@ import datetime
 from dataclasses import dataclass
 from typing import Optional
 
-from models.database_base_model import DataBaseBase
+from models.database_base_model import DatabaseBase
 
 
 @dataclass
@@ -36,7 +36,7 @@ class CallHistory:
 
 
 @dataclass
-class CatiCallHistoryTable(DataBaseBase):
+class CatiCallHistoryTable(DatabaseBase):
     InstrumentId: str
     PrimaryKeyValue: str
     CallNumber: int

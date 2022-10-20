@@ -1,5 +1,8 @@
 import requests
 
+from models.error_capture import RowNotFound
+from models.questionnaire_configuration_model import QuestionnaireConfigurationTable
+
 
 def get_list_of_installed_questionnaires(config):
     print("Getting list of installed questionnaires")
@@ -11,11 +14,13 @@ def get_list_of_installed_questionnaires(config):
     return questionnaire_list
 
 
-def get_questionnaire_name_from_id(questionnaire_id, questionnaire_list):
-    for questionnaire in questionnaire_list:
-        if questionnaire.get("id") == questionnaire_id:
-            return questionnaire.get("name", "")
-    return ""
+def get_questionnaire_name(config, questionnaire_id):
+    try:
+        return QuestionnaireConfigurationTable.get_questionnaire_name_from_id(
+            config, questionnaire_id
+        )
+    except RowNotFound:
+        return ""
 
 
 def get_questionnaire_data(questionnaire_name, config, fields):
