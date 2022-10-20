@@ -14,11 +14,11 @@ columns_to_check_for_nulls = ["call_start_time", "call_end_time"]
 
 
 def get_call_pattern_report(
-        interviewer_name: str,
-        start_date_string: str,
-        end_date_string: str,
-        survey_tla: str,
-        questionnaires=None,
+    interviewer_name: str,
+    start_date_string: str,
+    end_date_string: str,
+    survey_tla: str,
+    questionnaires=None,
 ) -> object:
     result = get_call_history_records(
         interviewer_name, start_date_string, end_date_string, survey_tla, questionnaires
@@ -61,7 +61,9 @@ def get_call_pattern_report(
         no_contact_no_answer=total_no_contact_records_with_call_result(
             records, "NoAnswer"
         ),
-        no_contact_invalid_telephone_number=total_no_contact_invalid_telephone_number(records),
+        no_contact_invalid_telephone_number=total_no_contact_invalid_telephone_number(
+            records
+        ),
         no_contact_other=total_no_contact_records_with_call_result(records, "Others"),
         discounted_invalid_cases=percentage_of_invalid_records(records),
         invalid_fields=", ".join(provide_reasons_for_invalid_records(records)),
@@ -87,7 +89,7 @@ def calculate_call_time_as_datetime(records: pd.DataFrame) -> str:
 
 
 def calculate_hours_on_call_percentage(
-        records: pd.DataFrame,
+    records: pd.DataFrame,
 ) -> float:
     valid_records = get_valid_records(records)
 
@@ -108,22 +110,20 @@ def calculate_average_calls_per_hour(records: pd.DataFrame) -> float:
 
 
 def total_no_contact_records_with_call_result(
-        records: pd.DataFrame, call_result: str
+    records: pd.DataFrame, call_result: str
 ) -> int:
     valid_records = get_valid_records(records)
     number_of_records_with_call_result = len(
         valid_records.loc[
             (valid_records["status"] == "Finished (No contact)")
             & (valid_records["call_result"] == call_result)
-            ]
+        ]
     )
 
     return number_of_records_with_call_result
 
 
-def total_no_contact_invalid_telephone_number(
-        records: pd.DataFrame
-) -> int:
+def total_no_contact_invalid_telephone_number(records: pd.DataFrame) -> int:
     valid_records = get_valid_records(records)
     number_of_records_with_invalid_telephone_number = len(
         valid_records.loc[valid_records["outcome_code"] == "320"]
@@ -177,8 +177,8 @@ def calculate_hours_worked_in_seconds(records: pd.DataFrame) -> int:
             [records["call_start_time"].dt.date]
         ).agg({"call_start_time": min, "call_end_time": max})
         daily_call_history_by_date["hours_worked"] = (
-                daily_call_history_by_date["call_end_time"]
-                - daily_call_history_by_date["call_start_time"]
+            daily_call_history_by_date["call_end_time"]
+            - daily_call_history_by_date["call_start_time"]
         )
 
         return daily_call_history_by_date["hours_worked"].sum().total_seconds()

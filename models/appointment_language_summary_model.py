@@ -1,6 +1,6 @@
 from dataclasses import dataclass, fields
 
-from models.database_base_model import DataBaseBase
+from models.database_base_model import DatabaseBase
 
 
 @dataclass
@@ -14,7 +14,7 @@ class AppointmentLanguageSummary:
 
 
 @dataclass
-class CatiAppointmentLanguageSummaryTable(DataBaseBase):
+class CatiAppointmentLanguageSummaryTable(DatabaseBase):
     AppointmentStartDate: str
     GroupName: str
     DialResult: str
