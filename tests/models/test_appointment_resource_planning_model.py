@@ -1,16 +1,17 @@
-from unittest.mock import patch
-
-from data_sources.cati_data import get_cati_appointment_resource_planning_from_database
 from models.appointment_resource_planning_model import (
     AppointmentResourcePlanning,
     CatiAppointmentResourcePlanningTable,
 )
-from models.config_model import Config
 
 
 def test_appointment_resource_planning():
     appointment_resource_planning = AppointmentResourcePlanning(
-        questionnaire_name="", appointment_time="", appointment_language="", total=""
+        questionnaire_name="",
+        appointment_time="",
+        appointment_language="",
+        case_reference="",
+        respondent_name="",
+        telephone_number=""
     )
     assert appointment_resource_planning is not None
 
