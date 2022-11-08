@@ -52,20 +52,20 @@ class CatiAppointmentResourcePlanningTable(DatabaseBase):
     
             SELECT dbci.InstrumentId,
                    dh.PrimaryKeyValue AS CaseReference,
-                   ExtractValue(dh.AdditionalData, "//Field[@Name=''CATIAppointment.WhoFor'']/@Value") AS RespondentName,
-                   ExtractValue(dh.AdditionalData, "//Field[@Name=''CATIAppointment.ClctNun'']/@Value") AS TelephoneNumber,
+                   ExtractValue(dh.AdditionalData, "//Field[@Name='CATIAppointment.WhoFor']/@Value") AS RespondentName,
+                   ExtractValue(dh.AdditionalData, "//Field[@Name='CATIAppointment.ClctNun']/@Value") AS TelephoneNumber,
                    TIME_FORMAT(dbci.AppointmentStartTime, "%H:%i") AS AppointmentTime,
                    CASE
                        WHEN
                                dbci.GroupName = "TNS"
                                OR ExtractValue(dbci.SelectFields, "//QDataBag.IntGroup") = "TNS"
-                               OR ExtractValue(dh.AdditionalData, "//Field[@Name=''QDataBag.IntGroup'']/@Value") = "TNS"
+                               OR ExtractValue(dh.AdditionalData, "//Field[@Name='QDataBag.IntGroup']/@Value") = "TNS"
                            THEN
                                   "Other"
                                WHEN
                                   dbci.GroupName = "WLS"
                                        OR ExtractValue(dbci.SelectFields, "//QDataBag.IntGroup") = "WLS"
-                                       OR ExtractValue(dh.AdditionalData, "//Field[@Name=''QDataBag.IntGroup'']/@Value") = "WLS"
+                                       OR ExtractValue(dh.AdditionalData, "//Field[@Name='QDataBag.IntGroup']/@Value") = "WLS"
                                THEN
                                   "Welsh"
                                ELSE
