@@ -53,7 +53,7 @@ class CatiAppointmentResourcePlanningTable(DatabaseBase):
             SELECT dbci.InstrumentId,
                    dh.PrimaryKeyValue AS CaseReference,
                    ExtractValue(dh.AdditionalData, "//Field[@Name='CATIAppointment.WhoFor']/@Value") AS RespondentName,
-                   ExtractValue(dh.AdditionalData, "//Field[@Name='CATIAppointment.ClctNun']/@Value") AS TelephoneNumber,
+                   ExtractValue(dh.AdditionalData, "//Field[@Name='CATIAppointment.ClctNum']/@Value") AS TelephoneNumber,
                    TIME_FORMAT(dbci.AppointmentStartTime, "%H:%i") AS AppointmentTime,
                    CASE
                        WHEN
