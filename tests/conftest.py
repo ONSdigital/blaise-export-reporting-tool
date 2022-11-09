@@ -1,8 +1,9 @@
-import time
-from unittest import mock
-
 import pytest
+import time
+
 from google.cloud import datastore
+from typing import List
+from unittest import mock
 
 from app.app import app as flask_app
 from models.config_model import Config
@@ -206,7 +207,7 @@ def interviewer_call_pattern_report():
     )
 
 @pytest.fixture
-def mock_mi_hub_call_history(questionnaire_name: str) -> [MiHubCallHistory]:
+def mock_mi_hub_call_history(questionnaire_name: str) -> List[MiHubCallHistory]:
     return [
         MiHubCallHistory(
             questionnaire_name="LMS2222Z",
