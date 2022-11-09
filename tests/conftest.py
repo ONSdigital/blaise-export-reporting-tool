@@ -216,13 +216,11 @@ def mock_mi_hub_call_history(questionnaire_name: str) -> List[MiHubCallHistory]:
             dial_date="20221017",
             dial_time="10:31:36",
             end_time="10:32:06",
-            seconds_interview="30",
-            call_number="1",
-            dial_number="1",
+            seconds_interview=30,
+            call_number=1,
+            dial_number=1,
             interviewer="thorne1",
-            dial_result="NonRespons",
             dial_line_number=None,
-            appointment_type=None,
             outcome_code="461"
         ),
         MiHubCallHistory(
@@ -232,13 +230,11 @@ def mock_mi_hub_call_history(questionnaire_name: str) -> List[MiHubCallHistory]:
             dial_date="20221017",
             dial_time="10:33:36",
             end_time="10:34:36",
-            seconds_interview="60",
-            call_number="1",
-            dial_number="1",
+            seconds_interview=60,
+            call_number=1,
+            dial_number=1,
             interviewer="thorne1",
-            dial_result="NonRespons",
             dial_line_number=None,
-            appointment_type=None,
             outcome_code="461"
         ),
         MiHubCallHistory(
@@ -248,13 +244,11 @@ def mock_mi_hub_call_history(questionnaire_name: str) -> List[MiHubCallHistory]:
             dial_date="20221017",
             dial_time="10:35:36",
             end_time="10:35:46",
-            seconds_interview="10",
-            call_number="1",
-            dial_number="1",
+            seconds_interview=10,
+            call_number=1,
+            dial_number=1,
             interviewer="thorne1",
-            dial_result="NonRespons",
             dial_line_number=None,
-            appointment_type=None,
             outcome_code="461"
         )
     ]

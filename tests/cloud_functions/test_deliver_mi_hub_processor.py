@@ -2,7 +2,7 @@ import flask
 import pytest
 
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, Any
 from unittest import mock
 
 from cloud_functions.deliver_mi_hub_reports import deliver_mi_hub_reports_cloud_function_processor
@@ -13,7 +13,7 @@ QUESTIONNAIRE_ID = "s0me-r7nd0m-gu1d"
 
 @dataclass
 class FakeGoogleStorage:
-    bucket: str = None
+    bucket: Any = None
     nifi_staging_bucket: str = ""
     log: str = ""
     storage_client: str = ""
@@ -116,7 +116,7 @@ def test_deliver_mi_hub_reports_cloud_function_processor_calls_get_mi_hub_respon
 @mock.patch("cloud_functions.deliver_mi_hub_reports.get_mi_hub_call_history")
 @mock.patch("cloud_functions.deliver_mi_hub_reports.get_mi_hub_respondent_data")
 @mock.patch("cloud_functions.deliver_mi_hub_reports.DeliverMiHubReportsService.upload_mi_hub_reports_to_gcp")
-def test_deliver_mi_hub_reports_cloud_function_processor_calls_get_mi_hub_respondent_data_with_the_correct_parameters(
+def test_deliver_mi_hub_reports_cloud_function_processor_calls_upload_mi_hub_reports_to_gcp_with_the_correct_parameters(
         _mock_upload_mi_hub_reports_to_gcp,
         _mock_get_mi_hub_respondent_data,
         _mock_get_mi_hub_call_history,
