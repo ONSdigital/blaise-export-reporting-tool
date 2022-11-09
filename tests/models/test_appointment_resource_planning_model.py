@@ -11,7 +11,7 @@ def test_appointment_resource_planning():
         appointment_language="",
         case_reference="",
         respondent_name="",
-        telephone_number=""
+        telephone_number="",
     )
     assert appointment_resource_planning is not None
 

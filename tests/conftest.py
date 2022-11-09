@@ -1,9 +1,9 @@
-import pytest
 import time
-
-from google.cloud import datastore
 from typing import List
 from unittest import mock
+
+import pytest
+from google.cloud import datastore
 
 from app.app import app as flask_app
 from models.config_model import Config
@@ -206,6 +206,7 @@ def interviewer_call_pattern_report():
         invalid_fields="n/a",
     )
 
+
 @pytest.fixture
 def mock_mi_hub_call_history(questionnaire_name: str) -> List[MiHubCallHistory]:
     return [
@@ -221,7 +222,7 @@ def mock_mi_hub_call_history(questionnaire_name: str) -> List[MiHubCallHistory]:
             dial_number=1,
             interviewer="thorne1",
             dial_line_number=None,
-            outcome_code="461"
+            outcome_code="461",
         ),
         MiHubCallHistory(
             questionnaire_name="LMS2222Z",
@@ -235,7 +236,7 @@ def mock_mi_hub_call_history(questionnaire_name: str) -> List[MiHubCallHistory]:
             dial_number=1,
             interviewer="thorne1",
             dial_line_number=None,
-            outcome_code="461"
+            outcome_code="461",
         ),
         MiHubCallHistory(
             questionnaire_name="LMS2222Z",
@@ -249,8 +250,8 @@ def mock_mi_hub_call_history(questionnaire_name: str) -> List[MiHubCallHistory]:
             dial_number=1,
             interviewer="thorne1",
             dial_line_number=None,
-            outcome_code="461"
-        )
+            outcome_code="461",
+        ),
     ]
 
 
@@ -278,7 +279,7 @@ def mock_mi_hub_respondent_data():
             gender="",
             date_of_birth="",
             age="",
-        )
+        ),
     ]
 
 

@@ -6,11 +6,18 @@ from functions.zip_functions import create_zip
 
 class DeliverMiHubReportsService:
     @staticmethod
-    def upload_mi_hub_reports_to_gcp(questionnaire_name: str, mi_hub_call_history, mi_hub_respondent_data, google_storage) -> str:
+    def upload_mi_hub_reports_to_gcp(
+        questionnaire_name: str,
+        mi_hub_call_history,
+        mi_hub_respondent_data,
+        google_storage,
+    ) -> str:
         zip_data = []
         if mi_hub_call_history:
             call_history_csv = write_csv(mi_hub_call_history)
-            zip_data.append({"filename": "call_history.csv", "content": call_history_csv})
+            zip_data.append(
+                {"filename": "call_history.csv", "content": call_history_csv}
+            )
         else:
             print(f"No call history for {questionnaire_name}")
 
