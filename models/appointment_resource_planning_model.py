@@ -39,17 +39,20 @@ class CatiAppointmentResourcePlanningTable(DatabaseBase):
 
         query = f"""
             with UniqueDialHistoryIdTable as
-            (SELECT max(Id) as id,
+            (SELECT 
+                max(Id) as id,
                 dh.InstrumentId,
                 dh.PrimaryKeyValue
             FROM DialHistory dh
                 INNER JOIN configuration.Configuration cf
                    ON dh.InstrumentId = cf.InstrumentId
             WHERE {questionnaire_filter}
-            GROUP BY dh.PrimaryKeyValue,
+            GROUP BY 
+                dh.PrimaryKeyValue,
                 dh.InstrumentId)
     
-            SELECT dbci.InstrumentId,
+            SELECT 
+                dbci.InstrumentId,
                 dh.PrimaryKeyValue AS CaseReference,
                 ExtractValue(dh.AdditionalData, "//Field[@Name='CATIAppointment.WhoFor']/@Value") AS RespondentName,
                 ExtractValue(dh.AdditionalData, "//Field[@Name='CATIAppointment.ClctNum']/@Value") AS TelephoneNumber,
@@ -72,16 +75,14 @@ class CatiAppointmentResourcePlanningTable(DatabaseBase):
                 END
             AS AppointmentLanguage
         
-            FROM
-                cati.DaybatchCaseInfo AS dbci
+            FROM cati.DaybatchCaseInfo AS dbci
                 LEFT JOIN DialHistory dh
-            ON dh.InstrumentId = dbci.InstrumentId
-                AND dh.PrimaryKeyValue = dbci.PrimaryKeyValue
-                AND dh.DialResult = "Appointment"
+                    ON dh.InstrumentId = dbci.InstrumentId
+                    AND dh.PrimaryKeyValue = dbci.PrimaryKeyValue
+                    AND dh.DialResult = "Appointment"
                 INNER JOIN UniqueDialHistoryIdTable uid
-                ON dh.id = uid.id
-            WHERE
-                dbci.AppointmentType != "0"
+                    ON dh.id = uid.id
+            WHERE dbci.AppointmentType != "0"
             AND dbci.AppointmentStartDate LIKE "{date}%"
             GROUP BY
                 dbci.InstrumentId,
