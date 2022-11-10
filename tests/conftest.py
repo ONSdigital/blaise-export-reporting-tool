@@ -1,4 +1,5 @@
 import time
+from typing import List
 from unittest import mock
 
 import pytest
@@ -7,6 +8,8 @@ from google.cloud import datastore
 from app.app import app as flask_app
 from models.config_model import Config
 from models.interviewer_call_pattern_model import InterviewerCallPattern
+from models.mi_hub_call_history_model import MiHubCallHistory
+from models.mi_hub_respondent_data_model import MiHubRespondentData
 from tests.helpers.interviewer_call_pattern_helpers import (
     datetime_helper,
     interviewer_call_pattern_report_sample_case,
@@ -202,6 +205,82 @@ def interviewer_call_pattern_report():
         web_nudge=10,
         invalid_fields="n/a",
     )
+
+
+@pytest.fixture
+def mock_mi_hub_call_history(questionnaire_name: str) -> List[MiHubCallHistory]:
+    return [
+        MiHubCallHistory(
+            questionnaire_name="LMS2222Z",
+            questionnaire_id="s0me-r7nd0m-gu1d",
+            serial_number="900001",
+            dial_date="20221017",
+            dial_time="10:31:36",
+            end_time="10:32:06",
+            seconds_interview=30,
+            call_number=1,
+            dial_number=1,
+            interviewer="thorne1",
+            dial_line_number=None,
+            outcome_code="461",
+        ),
+        MiHubCallHistory(
+            questionnaire_name="LMS2222Z",
+            questionnaire_id="s0me-r7nd0m-gu1d",
+            serial_number="900002",
+            dial_date="20221017",
+            dial_time="10:33:36",
+            end_time="10:34:36",
+            seconds_interview=60,
+            call_number=1,
+            dial_number=1,
+            interviewer="thorne1",
+            dial_line_number=None,
+            outcome_code="461",
+        ),
+        MiHubCallHistory(
+            questionnaire_name="LMS2222Z",
+            questionnaire_id="s0me-r7nd0m-gu1d",
+            serial_number="900003",
+            dial_date="20221017",
+            dial_time="10:35:36",
+            end_time="10:35:46",
+            seconds_interview=10,
+            call_number=1,
+            dial_number=1,
+            interviewer="thorne1",
+            dial_line_number=None,
+            outcome_code="461",
+        ),
+    ]
+
+
+@pytest.fixture
+def mock_mi_hub_respondent_data():
+    return [
+        MiHubRespondentData(
+            serial_number="900001",
+            outcome_code="310",
+            date_completed="2-11-2022_9:20",
+            interviewer="",
+            mode="",
+            postcode="PO57 2OD",
+            gender="",
+            date_of_birth="",
+            age="",
+        ),
+        MiHubRespondentData(
+            serial_number="900002",
+            outcome_code="461",
+            date_completed="5-11-2022_9:20",
+            interviewer="",
+            mode="",
+            postcode="PO57 2OD",
+            gender="",
+            date_of_birth="",
+            age="",
+        ),
+    ]
 
 
 class RecordsInDatastore:

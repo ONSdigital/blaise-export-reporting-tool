@@ -18,7 +18,9 @@ def get_appointment_resource_planning_by_date(date, survey_tla, questionnaires):
         cati_appointment_resource_planning = AppointmentResourcePlanning(
             appointment_time=item.get("AppointmentTime"),
             appointment_language=item.get("AppointmentLanguage"),
-            total=item.get("Total"),
+            case_reference=item.get("CaseReference"),
+            respondent_name=item.get("RespondentName"),
+            telephone_number=item.get("TelephoneNumber"),
         )
         questionnaire_name = get_questionnaire_name(config, item.get("InstrumentId"))
         if questionnaire_name == "":
