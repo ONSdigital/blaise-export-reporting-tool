@@ -38,9 +38,9 @@ class CatiAppointmentResourcePlanningTable(DatabaseBase):
         print(f"Questionnaire filter = {questionnaire_filter}")
 
         query = f"""
-            with UniqueDialHistoryIdTable as
+            WITH UniqueDialHistoryIdTable AS
             (SELECT 
-                max(Id) as id,
+                MAX(Id) AS id,
                 dh.InstrumentId,
                 dh.PrimaryKeyValue
             FROM DialHistory dh
@@ -50,7 +50,6 @@ class CatiAppointmentResourcePlanningTable(DatabaseBase):
             GROUP BY 
                 dh.PrimaryKeyValue,
                 dh.InstrumentId)
-    
             SELECT 
                 dbci.InstrumentId,
                 dh.PrimaryKeyValue AS CaseReference,
@@ -74,7 +73,6 @@ class CatiAppointmentResourcePlanningTable(DatabaseBase):
                     "English"
                 END
             AS AppointmentLanguage
-        
             FROM cati.DaybatchCaseInfo AS dbci
                 LEFT JOIN DialHistory dh
                     ON dh.InstrumentId = dbci.InstrumentId
@@ -84,12 +82,6 @@ class CatiAppointmentResourcePlanningTable(DatabaseBase):
                     ON dh.id = uid.id
             WHERE dbci.AppointmentType != "0"
             AND dbci.AppointmentStartDate LIKE "{date}%"
-            GROUP BY
-                dbci.InstrumentId,
-                AppointmentTime,
-                AppointmentLanguage,
-                dh.PrimaryKeyValue,
-                dh.AdditionalData
             ORDER BY
                 AppointmentTime ASC,
                 AppointmentLanguage ASC       
