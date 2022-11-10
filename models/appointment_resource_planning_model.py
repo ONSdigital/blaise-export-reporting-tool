@@ -39,39 +39,38 @@ class CatiAppointmentResourcePlanningTable(DatabaseBase):
 
         query = f"""
             with UniqueDialHistoryIdTable as
-             (SELECT max(Id) as id,
-                     dh.InstrumentId,
-                     dh.PrimaryKeyValue
-              FROM DialHistory dh
-                       INNER JOIN
-                   configuration.Configuration cf
+            (SELECT max(Id) as id,
+                dh.InstrumentId,
+                dh.PrimaryKeyValue
+            FROM DialHistory dh
+                INNER JOIN configuration.Configuration cf
                    ON dh.InstrumentId = cf.InstrumentId
-              WHERE {questionnaire_filter}
-              GROUP BY dh.PrimaryKeyValue,
-                       dh.InstrumentId)
+            WHERE {questionnaire_filter}
+            GROUP BY dh.PrimaryKeyValue,
+                dh.InstrumentId)
     
             SELECT dbci.InstrumentId,
-                   dh.PrimaryKeyValue AS CaseReference,
-                   ExtractValue(dh.AdditionalData, "//Field[@Name='CATIAppointment.WhoFor']/@Value") AS RespondentName,
-                   ExtractValue(dh.AdditionalData, "//Field[@Name='CATIAppointment.ClctNum']/@Value") AS TelephoneNumber,
-                   TIME_FORMAT(dbci.AppointmentStartTime, "%H:%i") AS AppointmentTime,
-                   CASE
-                       WHEN
-                               dbci.GroupName = "TNS"
-                               OR ExtractValue(dbci.SelectFields, "//QDataBag.IntGroup") = "TNS"
-                               OR ExtractValue(dh.AdditionalData, "//Field[@Name='QDataBag.IntGroup']/@Value") = "TNS"
-                           THEN
-                                  "Other"
-                               WHEN
-                                  dbci.GroupName = "WLS"
-                                       OR ExtractValue(dbci.SelectFields, "//QDataBag.IntGroup") = "WLS"
-                                       OR ExtractValue(dh.AdditionalData, "//Field[@Name='QDataBag.IntGroup']/@Value") = "WLS"
-                               THEN
-                                  "Welsh"
-                               ELSE
-                                  "English"
-                            END
-                            AS AppointmentLanguage
+                dh.PrimaryKeyValue AS CaseReference,
+                ExtractValue(dh.AdditionalData, "//Field[@Name='CATIAppointment.WhoFor']/@Value") AS RespondentName,
+                ExtractValue(dh.AdditionalData, "//Field[@Name='CATIAppointment.ClctNum']/@Value") AS TelephoneNumber,
+                TIME_FORMAT(dbci.AppointmentStartTime, "%H:%i") AS AppointmentTime,
+            CASE
+                WHEN
+                    dbci.GroupName = "TNS"
+                    OR ExtractValue(dbci.SelectFields, "//QDataBag.IntGroup") = "TNS"
+                    OR ExtractValue(dh.AdditionalData, "//Field[@Name='QDataBag.IntGroup']/@Value") = "TNS"
+                THEN
+                    "Other"
+                WHEN
+                    dbci.GroupName = "WLS"
+                    OR ExtractValue(dbci.SelectFields, "//QDataBag.IntGroup") = "WLS"
+                    OR ExtractValue(dh.AdditionalData, "//Field[@Name='QDataBag.IntGroup']/@Value") = "WLS"
+                THEN
+                    "Welsh"
+                ELSE
+                    "English"
+                END
+            AS AppointmentLanguage
         
             FROM
                 cati.DaybatchCaseInfo AS dbci
@@ -83,14 +82,14 @@ class CatiAppointmentResourcePlanningTable(DatabaseBase):
                 ON dh.id = uid.id
             WHERE
                 dbci.AppointmentType != "0"
-              AND dbci.AppointmentStartDate LIKE "{date}%"
+            AND dbci.AppointmentStartDate LIKE "{date}%"
             GROUP BY
                 dbci.InstrumentId,
                 AppointmentTime,
                 AppointmentLanguage,
                 dh.PrimaryKeyValue,
                 dh.AdditionalData
-        ORDER BY
+            ORDER BY
                 AppointmentTime ASC,
                 AppointmentLanguage ASC       
         """
