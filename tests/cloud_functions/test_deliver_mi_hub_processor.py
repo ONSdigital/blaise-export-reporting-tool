@@ -82,9 +82,8 @@ def test_deliver_mi_hub_reports_cloud_function_processor_calls_get_mi_hub_call_h
 ):
     # arrange
     mock_request = flask.Request.from_values(json=mock_request_values)
-    mock_google_storage_object = fake_google_storage
-    mock_google_storage_object.bucket = "not-none"
-    _mock_init_google_storage.return_value = mock_google_storage_object
+    fake_google_storage.bucket = "not-none"
+    _mock_init_google_storage.return_value = fake_google_storage
 
     # act
     deliver_mi_hub_reports_cloud_function_processor(mock_request, config)
@@ -112,9 +111,8 @@ def test_deliver_mi_hub_reports_cloud_function_processor_calls_get_mi_hub_respon
 ):
     # arrange
     mock_request = flask.Request.from_values(json=mock_request_values)
-    mock_google_storage_object = fake_google_storage
-    mock_google_storage_object.bucket = "not-none"
-    _mock_init_google_storage.return_value = mock_google_storage_object
+    fake_google_storage.bucket = "not-none"
+    _mock_init_google_storage.return_value = fake_google_storage
 
     # act
     deliver_mi_hub_reports_cloud_function_processor(mock_request, config)
@@ -142,9 +140,8 @@ def test_deliver_mi_hub_reports_cloud_function_processor_calls_upload_mi_hub_rep
 ):
     # arrange
     mock_request = flask.Request.from_values(json=mock_request_values)
-    mock_google_storage_object = fake_google_storage
-    mock_google_storage_object.bucket = "not-none"
-    _mock_init_google_storage.return_value = mock_google_storage_object
+    fake_google_storage.bucket = "not-none"
+    _mock_init_google_storage.return_value = fake_google_storage
     _mock_get_mi_hub_call_history.return_value = mock_mi_hub_call_history
     _mock_get_mi_hub_respondent_data.return_value = mock_mi_hub_respondent_data
 
