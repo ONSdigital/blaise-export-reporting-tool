@@ -144,15 +144,15 @@ http://localhost:5011/api/reports/call-history-status
 ```
 
 ```http
-http://localhost:5011/api/reports/call-history/rich?start-date=2021-01-01&end-date=2022-01-01
+http://localhost:5011/api/reports/call-history/rich?start-date=2022-12-30&end-date=2022-12-31
 ```
 
 ```http
-http://localhost:5011/api/reports/call-pattern/rich?start-date=2021-01-01&end-date=2022-01-01
+http://localhost:5011/api/reports/call-pattern/rich?start-date=2022-12-30&end-date=2022-12-31
 ```
 
 ```http
-http://localhost:5011/api/reports/appointment-resource-planning/2021-01-01
+http://localhost:5011/api/reports/appointment-resource-planning/2022-12-31
 ```
 
 Run the "upload_call_history" Cloud Function:
