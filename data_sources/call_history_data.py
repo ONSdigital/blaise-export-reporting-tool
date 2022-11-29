@@ -35,7 +35,9 @@ class CallHistoryClient:
         return status
 
     def get_cati_call_history(self):
+        print(f"Obtaining the call history records in the CATI database")
         results = get_cati_call_history_from_database(self.config)
+        print(f"Obtained {len(results)} call history records in the CATI database")
         cati_call_history_list = []
         for item in results:
             cati_call_history = CallHistory(
@@ -60,7 +62,7 @@ class CallHistoryClient:
             if questionnaire_name != "":
                 cati_call_history.generate_questionnaire_details(questionnaire_name)
             cati_call_history_list.append(cati_call_history)
-        print(f"Found {len(results)} call history records in the CATI database")
+        print(f"Created {len(cati_call_history_list)} call history models for processing")
         return cati_call_history_list
 
     @staticmethod
