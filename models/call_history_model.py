@@ -67,13 +67,13 @@ class CatiCallHistoryTable(DatabaseBase):
 
     @classmethod
     def get_cati_history_records(cls, config):
-        cati_history_records = cls.query(
-            config,
-            "SELECT {cls.fields()} "
-            f"FROM {cls.table_name()} DH "
-            f"JOIN {QuestionnaireConfigurationTable.table_name()} CF"
-            "ON DH.InstrumentId = CF.InstrumentId "
-        )
+        query = f"""
+            SELECT {cls.fields()}
+            FROM {cls.table_name()} DH
+                JOIN {QuestionnaireConfigurationTable.table_name()} CF
+                ON DH.InstrumentId = CF.InstrumentId
+        """
+        cati_history_records = cls.query(config,query)
 
         return cati_history_records
 
