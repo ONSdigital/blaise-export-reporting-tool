@@ -79,18 +79,13 @@ def test_split_into_batches(list_to_split, number_to_split_by, expected):
     },
 )
 @patch("data_sources.call_history_data.get_cati_call_history_from_database")
-@patch(
-    "models.questionnaire_configuration_model.QuestionnaireConfigurationTable.get_questionnaire_name_from_id"
-)
 def test_get_cati_call_history(
-    mock_get_questionnaire_name_from_id, mock_get_cati_call_history_from_database
+    mock_get_cati_call_history_from_database
 ):
     # Arrange
-    mock_get_questionnaire_name_from_id.return_value = "OPN2101A"
-
     mock_get_cati_call_history_from_database.return_value = [
         {
-            "InstrumentId": "05cf69af-3a4e-47df-819a-928350fdda5a",
+            "InstrumentName": "OPN2101A",
             "PrimaryKeyValue": "1001011",
             "CallNumber": 1,
             "DialNumber": 1,
@@ -116,7 +111,6 @@ def test_get_cati_call_history(
     assert len(dial_history) == 1
     assert dial_history == [
         CallHistory(
-            questionnaire_id="05cf69af-3a4e-47df-819a-928350fdda5a",
             serial_number="1001011",
             call_number=1,
             dial_number=1,
@@ -137,9 +131,6 @@ def test_get_cati_call_history(
             outcome_code=None,
         )
     ]
-    mock_get_questionnaire_name_from_id.assert_called_with(
-        config, "05cf69af-3a4e-47df-819a-928350fdda5a"
-    )
 
 
 @mock.patch.dict(
@@ -161,7 +152,6 @@ def test_filter_out_existing_call_history_records(
 
     call_history_data = [
         CallHistory(
-            questionnaire_id="05cf69af-3a4e-47df-819a-928350fdda5a",
             serial_number="1001011",
             call_number=1,
             dial_number=1,
