@@ -41,7 +41,7 @@ class CallHistoryClient:
         cati_call_history_list = []
         for item in results:
             cati_call_history = CallHistory(
-                questionnaire_id=item.get("InstrumentId"),
+                questionnaire_name=item.get("InstrumentName"),
                 serial_number=item.get("PrimaryKeyValue"),
                 call_number=item.get("CallNumber"),
                 dial_number=item.get("DialNumber"),
@@ -56,11 +56,8 @@ class CallHistoryClient:
                 appointment_info=item.get("AppointmentInfo"),
                 outcome_code=item.get("OutcomeCode"),
             )
-            questionnaire_name = get_questionnaire_name(
-                self.config, cati_call_history.questionnaire_id
-            )
-            if questionnaire_name != "":
-                cati_call_history.generate_questionnaire_details(questionnaire_name)
+            if cati_call_history.questionnaire_name != "":
+                cati_call_history.generate_questionnaire_details()
             cati_call_history_list.append(cati_call_history)
         print(f"Created {len(cati_call_history_list)} call history models for processing")
         return cati_call_history_list
