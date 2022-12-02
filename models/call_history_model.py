@@ -3,11 +3,11 @@ from dataclasses import dataclass
 from typing import Optional
 
 from models.database_base_model import DatabaseBase
+from models.questionnaire_configuration_model import QuestionnaireConfigurationTable
 
 
 @dataclass
 class CallHistory:
-    questionnaire_id: str
     serial_number: int
     call_number: str
     dial_number: str
@@ -27,17 +27,16 @@ class CallHistory:
     number_of_interviews: Optional[int] = None
     outcome_code: Optional[int] = None
 
-    def generate_questionnaire_details(self, questionnaire_name):
-        self.questionnaire_name = questionnaire_name
-        self.survey = questionnaire_name[0:3]
-        if self.survey == "LMS" and questionnaire_name[-1:].isnumeric():
-            self.wave = int(questionnaire_name[-1:])
-            self.cohort = questionnaire_name[-3:-1]
+    def generate_questionnaire_details(self):
+        self.survey = self.questionnaire_name[0:3]
+        if self.survey == "LMS" and self.questionnaire_name[-1:].isnumeric():
+            self.wave = int(self.questionnaire_name[-1:])
+            self.cohort = self.questionnaire_name[-3:-1]
 
 
 @dataclass
 class CatiCallHistoryTable(DatabaseBase):
-    InstrumentId: str
+    InstrumentName: str
     PrimaryKeyValue: str
     CallNumber: int
     DialNumber: int
@@ -65,3 +64,16 @@ class CatiCallHistoryTable(DatabaseBase):
     @classmethod
     def extra_fields(cls):
         return [cls.dial_secs(), cls.get_outcome_code()]
+
+    @classmethod
+    def get_cati_history_records(cls, config):
+        query = f"""
+            SELECT {cls.fields()}
+            FROM {cls.table_name()} DH
+                JOIN {QuestionnaireConfigurationTable.table_name()} CF
+                ON DH.InstrumentId = CF.InstrumentId
+        """
+        cati_history_records = cls.query(config,query)
+
+        return cati_history_records
+

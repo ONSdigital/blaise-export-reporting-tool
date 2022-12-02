@@ -9,7 +9,7 @@ from models.mi_hub_call_history_model import CatiMiHubCallHistoryTable
 
 
 def get_cati_call_history_from_database(config):
-    return CatiCallHistoryTable.select_from(config)
+    return CatiCallHistoryTable.get_cati_history_records(config)
 
 
 def get_cati_mi_hub_call_history_from_database(config):
