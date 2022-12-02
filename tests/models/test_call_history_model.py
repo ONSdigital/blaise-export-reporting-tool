@@ -3,7 +3,6 @@ from models.call_history_model import CallHistory, CatiCallHistoryTable
 
 def test_generate_questionnaire_details_lms():
     call_history = CallHistory(
-        "896c4038-2b07-40bf-a853-ab07305ca3eb",
         "1001041",
         1,
         1,
@@ -16,10 +15,10 @@ def test_generate_questionnaire_details_lms():
         "Busy",
         None,
         None,
+        "LMS2101_AA1"
     )
-    call_history.generate_questionnaire_details("LMS2101_AA1")
+    call_history.generate_questionnaire_details()
 
-    assert call_history.questionnaire_name == "LMS2101_AA1"
     assert call_history.survey == "LMS"
     assert call_history.wave == 1
     assert call_history.cohort == "AA"
@@ -27,7 +26,6 @@ def test_generate_questionnaire_details_lms():
 
 def test_generate_questionnaire_details_opn():
     call_history = CallHistory(
-        "896c4038-2b07-40bf-a853-ab07305ca3eb",
         "1001041",
         1,
         1,
@@ -40,10 +38,10 @@ def test_generate_questionnaire_details_opn():
         "Busy",
         None,
         None,
+        "OPN2101A"
     )
-    call_history.generate_questionnaire_details("OPN2101A")
+    call_history.generate_questionnaire_details()
 
-    assert call_history.questionnaire_name == "OPN2101A"
     assert call_history.survey == "OPN"
     assert call_history.wave is None
     assert call_history.cohort is None
@@ -53,7 +51,7 @@ def test_cati_call_history_table_fields():
     fields = CatiCallHistoryTable.fields()
     assert fields == ", ".join(
         [
-            "InstrumentId",
+            "InstrumentName",
             "PrimaryKeyValue",
             "CallNumber",
             "DialNumber",
@@ -77,7 +75,6 @@ def test_cati_call_history_table_table_name():
 
 def test_generate_questionnaire_details_lms_dodgy_iterations():
     call_history = CallHistory(
-        "896c4038-2b07-40bf-a853-ab07305ca3eb",
         "1001041",
         1,
         1,
@@ -90,10 +87,10 @@ def test_generate_questionnaire_details_lms_dodgy_iterations():
         "Busy",
         None,
         None,
+        "LMS2202_TST",
     )
-    call_history.generate_questionnaire_details("LMS2202_TST")
+    call_history.generate_questionnaire_details()
 
-    assert call_history.questionnaire_name == "LMS2202_TST"
     assert call_history.survey == "LMS"
     assert call_history.wave is None
     assert call_history.cohort is None
