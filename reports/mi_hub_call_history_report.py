@@ -18,6 +18,7 @@ def get_mi_hub_call_history(config, questionnaire_name, questionnaire_id):
                 dial_line_number=item.get("DialedNumber"),
                 seconds_interview=item.get("dial_secs"),
                 outcome_code=item.get("OutcomeCode"),
+                cofort=item.get("Cohort"),
             )
             cati_mi_hub_call_history.generate_dial_date_and_time_fields(
                 item.get("StartTime"), item.get("EndTime")
