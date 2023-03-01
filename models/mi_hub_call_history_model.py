@@ -21,7 +21,7 @@ class MiHubCallHistory:
     dial_line_number: Optional[int] = None
     appointment_type: str = ""
     outcome_code: Union[int, str] = ""
-    cohort: Optional[int] = None
+    cohort: Optional[str] = ""
 
     def generate_dial_date_and_time_fields(self, start_datetime, end_datetime):
         self.dial_date = start_datetime.strftime("%Y%m%d")
@@ -52,12 +52,10 @@ class CatiMiHubCallHistoryTable(DatabaseBase):
     @staticmethod
     def get_outcome_code():
         return """ExtractValue(`AdditionalData`, '/Fields/Field[@Name="QHAdmin.HOut"]/@Value') AS OutcomeCode"""
+
     @staticmethod
     def get_cohort():
-        try:
-            return """ExtractValue(`AdditionalData`, '/Fields/Field[@Name="qDataBag.Cohort"]/@Value') AS Cohort"""
-        except:
-            return
+        return """ExtractValue(`AdditionalData`, '/Fields/Field[@Name="qDataBag.Cohort"]/@Value') AS Cohort"""
 
     @classmethod
     def table_name(cls):
