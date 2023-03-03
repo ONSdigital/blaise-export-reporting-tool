@@ -39,3 +39,23 @@ def test_cati_mi_hub_call_history_table_fields():
 
 def test_cati_mi_hub_call_history_table_table_name():
     assert CatiMiHubCallHistoryTable.table_name() == "cati.DialHistory"
+
+
+def test_csv_doesnt_include_cohort_field_when_cohort_field_is_not_present():
+    fields = CatiMiHubCallHistoryTable.fields()
+    assert fields == ", ".join(
+        [
+            "InstrumentId",
+            "PrimaryKeyValue",
+            "Id",
+            "StartTime",
+            "CallNumber",
+            "DialNumber",
+            "Interviewer",
+            "DialResult",
+            "DialedNumber",
+            "AppointmentInfo",
+            "EndTime",
+            "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dial_secs",
+            "ExtractValue(`AdditionalData`, '/Fields/Field[@Name=\"QHAdmin.HOut\"]/@Value') AS OutcomeCode",
+        ])
