@@ -32,6 +32,7 @@ def test_cati_mi_hub_call_history_table_fields():
             "EndTime",
             "ABS(TIME_TO_SEC(TIMEDIFF(EndTime, StartTime))) as dial_secs",
             "ExtractValue(`AdditionalData`, '/Fields/Field[@Name=\"QHAdmin.HOut\"]/@Value') AS OutcomeCode",
+            "ExtractValue(`AdditionalData`, '/Fields/Field[@Name=\"qDataBag.Cohort\"]/@Value') AS Cohort",
         ]
     )
 
