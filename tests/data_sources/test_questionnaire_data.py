@@ -1,9 +1,12 @@
 from unittest.mock import patch
 
+import pytest
+
 from data_sources.questionnaire_data import (
     get_list_of_installed_questionnaires,
     get_questionnaire_data,
     get_questionnaire_name,
+    BlaiseAPIException,
 )
 from models.error_capture import RowNotFound
 
@@ -18,6 +21,18 @@ def test_get_list_of_installed_questionnaires(
     questionnaire_list = get_list_of_installed_questionnaires(config)
     assert questionnaire_list == api_installed_questionnaires_response
     assert len(questionnaire_list) == 3
+
+
+def test_get_list_of_installed_questionnaires_when_nonJSON_response_is_returned(
+    config, requests_mock, api_installed_questionnaires_response
+):
+    requests_mock.get(
+        f"http://{config.blaise_api_url}/api/V2/serverparks/gusty/questionnaires",
+        text="Is not JSON!",
+        status_code=404,
+    )
+    with pytest.raises(BlaiseAPIException, match="Status = 404. Expected JSON, received 'Is not JSON!'"):
+        get_list_of_installed_questionnaires(config)
 
 
 def test_get_questionnaire_data(
