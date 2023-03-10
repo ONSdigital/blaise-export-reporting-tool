@@ -2,7 +2,6 @@ from json import JSONDecodeError
 
 import requests
 
-
 from models.error_capture import RowNotFound
 from models.questionnaire_configuration_model import QuestionnaireConfigurationTable
 
@@ -19,7 +18,9 @@ def get_list_of_installed_questionnaires(config):
     try:
         questionnaire_list = response.json()
     except JSONDecodeError:
-        raise BlaiseAPIException(f"Status = {response.status_code}. Expected JSON, received '{response.text}'")
+        raise BlaiseAPIException(
+            f"Status = {response.status_code}. Expected JSON, received '{response.text}'"
+        )
     print(f"Found {len(questionnaire_list)} questionnaires installed")
     return questionnaire_list
 
