@@ -59,7 +59,9 @@ class CallHistoryClient:
             if cati_call_history.questionnaire_name != "":
                 cati_call_history.generate_questionnaire_details()
             cati_call_history_list.append(cati_call_history)
-        print(f"Created {len(cati_call_history_list)} call history models for processing")
+        print(
+            f"Created {len(cati_call_history_list)} call history models for processing"
+        )
         return cati_call_history_list
 
     @staticmethod

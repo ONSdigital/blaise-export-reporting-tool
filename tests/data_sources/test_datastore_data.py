@@ -79,9 +79,7 @@ def test_split_into_batches(list_to_split, number_to_split_by, expected):
     },
 )
 @patch("data_sources.call_history_data.get_cati_call_history_from_database")
-def test_get_cati_call_history(
-    mock_get_cati_call_history_from_database
-):
+def test_get_cati_call_history(mock_get_cati_call_history_from_database):
     # Arrange
     mock_get_cati_call_history_from_database.return_value = [
         {

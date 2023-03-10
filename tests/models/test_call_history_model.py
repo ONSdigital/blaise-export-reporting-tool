@@ -15,7 +15,7 @@ def test_generate_questionnaire_details_lms():
         "Busy",
         None,
         None,
-        "LMS2101_AA1"
+        "LMS2101_AA1",
     )
     call_history.generate_questionnaire_details()
 
@@ -38,7 +38,7 @@ def test_generate_questionnaire_details_opn():
         "Busy",
         None,
         None,
-        "OPN2101A"
+        "OPN2101A",
     )
     call_history.generate_questionnaire_details()
 
