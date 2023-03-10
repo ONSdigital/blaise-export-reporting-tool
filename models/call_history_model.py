@@ -73,7 +73,6 @@ class CatiCallHistoryTable(DatabaseBase):
                 JOIN {QuestionnaireConfigurationTable.table_name()} CF
                 ON DH.InstrumentId = CF.InstrumentId
         """
-        cati_history_records = cls.query(config,query)
+        cati_history_records = cls.query(config, query)
 
         return cati_history_records
-

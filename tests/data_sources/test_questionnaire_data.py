@@ -3,10 +3,10 @@ from unittest.mock import patch
 import pytest
 
 from data_sources.questionnaire_data import (
+    BlaiseAPIException,
     get_list_of_installed_questionnaires,
     get_questionnaire_data,
     get_questionnaire_name,
-    BlaiseAPIException,
 )
 from models.error_capture import RowNotFound
 
@@ -31,7 +31,9 @@ def test_get_list_of_installed_questionnaires_when_nonJSON_response_is_returned(
         text="Is not JSON!",
         status_code=404,
     )
-    with pytest.raises(BlaiseAPIException, match="Status = 404. Expected JSON, received 'Is not JSON!'"):
+    with pytest.raises(
+        BlaiseAPIException, match="Status = 404. Expected JSON, received 'Is not JSON!'"
+    ):
         get_list_of_installed_questionnaires(config)
 
 
