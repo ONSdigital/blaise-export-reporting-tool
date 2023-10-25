@@ -1,9 +1,10 @@
 from dataclasses import dataclass, fields
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, Union
 
 from models.database_base_model import DatabaseBase
 
+import pytz
 
 @dataclass
 class MiHubCallHistory:
@@ -24,6 +25,12 @@ class MiHubCallHistory:
     cohort: str = ""
 
     def generate_dial_date_and_time_fields(self, start_datetime, end_datetime):
+        is_bst = pytz.timezone('Europe/London').localize(start_datetime).dst() != timedelta(0)
+        if is_bst:
+            start_datetime = start_datetime + timedelta(hours=1)
+            if end_datetime is not None:
+                end_datetime = end_datetime + timedelta(hours=1)
+
         self.dial_date = start_datetime.strftime("%Y%m%d")
         self.dial_time = start_datetime.strftime("%H:%M:%S")
         if end_datetime is not None:
