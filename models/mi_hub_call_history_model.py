@@ -2,6 +2,8 @@ from dataclasses import dataclass, fields
 from datetime import datetime, timedelta
 from typing import Optional, Union
 
+import pytz
+
 from models.database_base_model import DatabaseBase
 
 
