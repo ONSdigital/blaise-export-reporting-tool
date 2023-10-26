@@ -1,10 +1,10 @@
 from datetime import datetime
+from unittest import mock
 
 import pytest
 
 from models.mi_hub_call_history_model import MiHubCallHistory
 from reports.mi_hub_call_history_report import get_mi_hub_call_history
-from unittest import mock
 
 
 @pytest.fixture
@@ -25,7 +25,9 @@ def mock_get_mi_hub_call_history_record():
     }
 
 
-@mock.patch("reports.mi_hub_call_history_report.get_cati_mi_hub_call_history_from_database")
+@mock.patch(
+    "reports.mi_hub_call_history_report.get_cati_mi_hub_call_history_from_database"
+)
 def test_mi_hub_call_history_returns_something(mock_mi_hub_call_history):
     mock_mi_hub_call_history.return_value = [
         {
@@ -64,18 +66,24 @@ def test_mi_hub_call_history_returns_something(mock_mi_hub_call_history):
     ]
 
 
-@mock.patch("reports.mi_hub_call_history_report.get_cati_mi_hub_call_history_from_database")
-def test_mi_hub_call_history_returns_cohort_field_without_quotes_when_quotes_are_present(mock_mi_hub_call_history, mock_get_mi_hub_call_history_record):
-    mock_get_mi_hub_call_history_record["Cohort"]="'AA'"
-    mock_mi_hub_call_history.return_value = [
-        mock_get_mi_hub_call_history_record
-    ]
+@mock.patch(
+    "reports.mi_hub_call_history_report.get_cati_mi_hub_call_history_from_database"
+)
+def test_mi_hub_call_history_returns_cohort_field_without_quotes_when_quotes_are_present(
+    mock_mi_hub_call_history, mock_get_mi_hub_call_history_record
+):
+    mock_get_mi_hub_call_history_record["Cohort"] = "'AA'"
+    mock_mi_hub_call_history.return_value = [mock_get_mi_hub_call_history_record]
     result = get_mi_hub_call_history("foo", "LMS2101_AA1", "1234")
     assert result[0].cohort == "AA"
 
 
-@mock.patch("reports.mi_hub_call_history_report.get_cati_mi_hub_call_history_from_database")
-def test_mi_hub_call_history_returns_correct_time_when_timezone_is_bst(mock_mi_hub_call_history):
+@mock.patch(
+    "reports.mi_hub_call_history_report.get_cati_mi_hub_call_history_from_database"
+)
+def test_mi_hub_call_history_returns_correct_time_when_timezone_is_bst(
+    mock_mi_hub_call_history,
+):
     mock_mi_hub_call_history.return_value = [
         {
             "InstrumentId": "1234",
@@ -113,8 +121,12 @@ def test_mi_hub_call_history_returns_correct_time_when_timezone_is_bst(mock_mi_h
     ]
 
 
-@mock.patch("reports.mi_hub_call_history_report.get_cati_mi_hub_call_history_from_database")
-def test_mi_hub_call_history_returns_correct_time_when_timezone_is_not_bst(mock_mi_hub_call_history):
+@mock.patch(
+    "reports.mi_hub_call_history_report.get_cati_mi_hub_call_history_from_database"
+)
+def test_mi_hub_call_history_returns_correct_time_when_timezone_is_not_bst(
+    mock_mi_hub_call_history,
+):
     mock_mi_hub_call_history.return_value = [
         {
             "InstrumentId": "1234",
