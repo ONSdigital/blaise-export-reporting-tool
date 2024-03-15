@@ -12,9 +12,10 @@ env_variables:
   BLAISE_API_URL: _BLAISE_API_URL
   NIFI_STAGING_BUCKET: _NIFI_STAGING_BUCKET
 
-basic_scaling:
-  idle_timeout: 10m
-  max_instances: 10
+automatic_scaling:
+  min_instances: _MAX_INSTANCES
+  max_instances: _MAX_INSTANCES
+  target_cpu_utilization: _TARGET_CPU_UTILIZATION
 
 handlers:
 - url: /.*
