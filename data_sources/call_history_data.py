@@ -150,7 +150,7 @@ class CallHistoryClient:
             task1 = datastore.Entity(
                 client.key(
                     "CallHistory",
-                    f"{call_history_record.questionnaire_name}-{call_history_record.serial_number}-{call_history_record.call_start_time}",
+                    f"{call_history_record.call_number}-{call_history_record.dial_number}-{call_history_record.busy_dials}-{call_history_record.questionnaire_name}-{call_history_record.serial_number}-{call_history_record.call_start_time}",
                 )
             )
             task1.update(asdict(call_history_record))
@@ -176,6 +176,6 @@ class CallHistoryClient:
         call_history_record, current_call_history_in_datastore
     ):
         return (
-            f"{call_history_record.questionnaire_name}-{call_history_record.serial_number}-{call_history_record.call_start_time}"
+            f"{call_history_record.call_number}-{call_history_record.dial_number}-{call_history_record.busy_dials}-{call_history_record.questionnaire_name}-{call_history_record.serial_number}-{call_history_record.call_start_time}"
             in current_call_history_in_datastore
         )
