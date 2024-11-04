@@ -22,7 +22,7 @@ def delete_old_call_history(_event, _context):
     call_history_client.delete_historical_call_history()
 
 
-def upload_call_history(_event, _context):
+def upload_call_history(request):
     print("Running Cloud Function - upload_call_history")
     config = Config.from_env()
     config.log()
