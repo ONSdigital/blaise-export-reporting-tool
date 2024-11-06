@@ -29,7 +29,7 @@ def upload_call_history(request):
     datastore_client = datastore.Client()
     call_history_client = CallHistoryClient(datastore_client, config)
     call_history_client.call_history_extraction_process()
-    return "done"
+    return "Done"
 
 
 def deliver_mi_hub_reports_trigger(_event, _context):
