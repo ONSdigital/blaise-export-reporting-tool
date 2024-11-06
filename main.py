@@ -22,13 +22,14 @@ def delete_old_call_history(_event, _context):
     call_history_client.delete_historical_call_history()
 
 
-def upload_call_history(_event, _context):
+def upload_call_history(request):
     print("Running Cloud Function - upload_call_history")
     config = Config.from_env()
     config.log()
     datastore_client = datastore.Client()
     call_history_client = CallHistoryClient(datastore_client, config)
     call_history_client.call_history_extraction_process()
+    return "Done"
 
 
 def deliver_mi_hub_reports_trigger(_event, _context):
