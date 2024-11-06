@@ -146,7 +146,9 @@ def test_get_cati_call_history(mock_get_cati_call_history_from_database):
 def test_filter_out_existing_call_history_records(
     mock_call_history_keys,
 ):
-    mock_call_history_keys.return_value = {"1-1-0-OPN2101A-1001011-2021/05/19 14:59:01": None}
+    mock_call_history_keys.return_value = {
+        "1-1-0-OPN2101A-1001011-2021/05/19 14:59:01": None
+    }
 
     call_history_data = [
         CallHistory(
