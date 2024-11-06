@@ -1,16 +1,19 @@
 from data_sources.questionnaire_data import get_questionnaire_data
 from models.mi_hub_respondent_data_model import MiHubRespondentData
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Optional
 
 questionnaire_fields_to_get = [
     {
         "QID.Serial_Number",
         "QHAdmin.HOut",
         "QHAdmin.Interviewer[1]",
-        "Mode",
+        # "Mode",
         "QDataBag.PostCode",
-        "QHousehold.QHHold.Person[1].Sex",
-        "QHousehold.QHHold.Person[1].tmpDoB",
-        "QHousehold.QHHold.Person[1].DVAge",
+        # "QHousehold.QHHold.Person[1].Sex",
+        # "QHousehold.QHHold.Person[1].tmpDoB",
+        # "QHousehold.QHHold.Person[1].DVAge",
         "DateTimeStamp",
     }
 ]
@@ -28,11 +31,11 @@ def get_mi_hub_respondent_data(config, questionnaire_name):
             outcome_code=item.get("qhAdmin.HOut"),
             date_completed=item.get("dateTimeStamp"),
             interviewer=item.get("qhAdmin.Interviewer[1]"),
-            mode=item.get("mode"),
+            # mode=item.get("mode"),
             postcode=item.get("qDataBag.PostCode"),
-            gender=item.get("qHousehold.QHHold.Person[1].Sex"),
-            date_of_birth=item.get("qHousehold.QHHold.Person[1].tmpDoB"),
-            age=item.get("qHousehold.QHHold.Person[1].DVAge"),
+            # gender=item.get("qHousehold.QHHold.Person[1].Sex"),
+            # date_of_birth=item.get("qHousehold.QHHold.Person[1].tmpDoB"),
+            # age=item.get("qHousehold.QHHold.Person[1].DVAge"),
         )
         mi_hub_respondent_data_list.append(mi_hub_respondent_data_record)
     return mi_hub_respondent_data_list
