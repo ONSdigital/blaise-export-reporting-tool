@@ -8,6 +8,7 @@ import pytest
 from cloud_functions.deliver_mi_hub_reports import (
     deliver_mi_hub_reports_cloud_function_processor,
 )
+from models.mi_hub_respondent_data_model import MiHubRespondentData
 
 QUESTIONNAIRE_NAME = "LMS2222Z"
 QUESTIONNAIRE_ID = "s0me-r7nd0m-gu1d"
@@ -153,5 +154,217 @@ def test_deliver_mi_hub_reports_cloud_function_processor_calls_upload_mi_hub_rep
         QUESTIONNAIRE_NAME,
         mock_mi_hub_call_history,
         mock_mi_hub_respondent_data,
+        fake_google_storage,
+    )
+
+
+@pytest.fixture
+def mock_mi_hub_respondent_data_complete():
+    return [
+        MiHubRespondentData(
+            serial_number="900002",
+            outcome_code="310",
+            date_completed="2-11-2022_9:20",
+            interviewer="testuser",
+            mode="testmode",
+            postcode="PO57 2OD",
+            gender="Male",
+            date_of_birth="2-11-2022_3:08",
+            age="2",
+        ),
+    ]
+
+
+@mock.patch("cloud_functions.deliver_mi_hub_reports.init_google_storage")
+@mock.patch("cloud_functions.deliver_mi_hub_reports.get_mi_hub_call_history")
+@mock.patch("cloud_functions.deliver_mi_hub_reports.get_mi_hub_respondent_data")
+@mock.patch(
+    "cloud_functions.deliver_mi_hub_reports.DeliverMiHubReportsService.upload_mi_hub_reports_to_gcp"
+)
+def test_deliver_mi_hub_reports_cloud_function_processor_calls_upload_mi_hub_reports_to_gcp_with_complete_data(
+    _mock_upload_mi_hub_reports_to_gcp,
+    _mock_get_mi_hub_respondent_data,
+    _mock_get_mi_hub_call_history,
+    _mock_init_google_storage,
+    mock_request_values,
+    config,
+    fake_google_storage,
+    mock_mi_hub_call_history,
+    mock_mi_hub_respondent_data_complete,
+):
+    # arrange
+    mock_request = flask.Request.from_values(json=mock_request_values)
+    fake_google_storage.bucket = "not-none"
+    _mock_init_google_storage.return_value = fake_google_storage
+    _mock_get_mi_hub_call_history.return_value = mock_mi_hub_call_history
+    _mock_get_mi_hub_respondent_data.return_value = mock_mi_hub_respondent_data_complete
+
+    # act
+    deliver_mi_hub_reports_cloud_function_processor(mock_request, config)
+
+    # assert
+    _mock_upload_mi_hub_reports_to_gcp.assert_called_with(
+        QUESTIONNAIRE_NAME,
+        mock_mi_hub_call_history,
+        mock_mi_hub_respondent_data_complete,
+        fake_google_storage,
+    )
+
+
+@pytest.fixture
+def mock_mi_hub_respondent_data_empty():
+    return [
+        MiHubRespondentData(
+            serial_number="",
+            outcome_code="",
+            date_completed="",
+            interviewer="",
+            mode="",
+            postcode="",
+            gender="",
+            date_of_birth="",
+            age="",
+        ),
+    ]
+
+
+@mock.patch("cloud_functions.deliver_mi_hub_reports.init_google_storage")
+@mock.patch("cloud_functions.deliver_mi_hub_reports.get_mi_hub_call_history")
+@mock.patch("cloud_functions.deliver_mi_hub_reports.get_mi_hub_respondent_data")
+@mock.patch(
+    "cloud_functions.deliver_mi_hub_reports.DeliverMiHubReportsService.upload_mi_hub_reports_to_gcp"
+)
+def test_deliver_mi_hub_reports_cloud_function_processor_calls_upload_mi_hub_reports_to_gcp_with_empty_data(
+    _mock_upload_mi_hub_reports_to_gcp,
+    _mock_get_mi_hub_respondent_data,
+    _mock_get_mi_hub_call_history,
+    _mock_init_google_storage,
+    mock_request_values,
+    config,
+    fake_google_storage,
+    mock_mi_hub_call_history,
+    mock_mi_hub_respondent_data_empty,
+):
+    # arrange
+    mock_request = flask.Request.from_values(json=mock_request_values)
+    fake_google_storage.bucket = "not-none"
+    _mock_init_google_storage.return_value = fake_google_storage
+    _mock_get_mi_hub_call_history.return_value = mock_mi_hub_call_history
+    _mock_get_mi_hub_respondent_data.return_value = mock_mi_hub_respondent_data_empty
+
+    # act
+    deliver_mi_hub_reports_cloud_function_processor(mock_request, config)
+
+    # assert
+    _mock_upload_mi_hub_reports_to_gcp.assert_called_with(
+        QUESTIONNAIRE_NAME,
+        mock_mi_hub_call_history,
+        mock_mi_hub_respondent_data_empty,
+        fake_google_storage,
+    )
+
+
+@pytest.fixture
+def mock_mi_hub_respondent_data_partially_complete():
+    return [
+        MiHubRespondentData(
+            serial_number="01210",
+            outcome_code="310",
+            date_completed="2-11-2022_9:20",
+            interviewer="testuser",
+            mode="testmode",
+            postcode="",
+            gender="Female",
+            date_of_birth="",
+            age="22",
+        ),
+    ]
+
+
+@mock.patch("cloud_functions.deliver_mi_hub_reports.init_google_storage")
+@mock.patch("cloud_functions.deliver_mi_hub_reports.get_mi_hub_call_history")
+@mock.patch("cloud_functions.deliver_mi_hub_reports.get_mi_hub_respondent_data")
+@mock.patch(
+    "cloud_functions.deliver_mi_hub_reports.DeliverMiHubReportsService.upload_mi_hub_reports_to_gcp"
+)
+def test_deliver_mi_hub_reports_cloud_function_processor_calls_upload_mi_hub_reports_to_gcp_with_empty_data(
+    _mock_upload_mi_hub_reports_to_gcp,
+    _mock_get_mi_hub_respondent_data,
+    _mock_get_mi_hub_call_history,
+    _mock_init_google_storage,
+    mock_request_values,
+    config,
+    fake_google_storage,
+    mock_mi_hub_call_history,
+    mock_mi_hub_respondent_data_partially_complete,
+):
+    # arrange
+    mock_request = flask.Request.from_values(json=mock_request_values)
+    fake_google_storage.bucket = "not-none"
+    _mock_init_google_storage.return_value = fake_google_storage
+    _mock_get_mi_hub_call_history.return_value = mock_mi_hub_call_history
+    _mock_get_mi_hub_respondent_data.return_value = mock_mi_hub_respondent_data_partially_complete
+
+    # act
+    deliver_mi_hub_reports_cloud_function_processor(mock_request, config)
+
+    # assert
+    _mock_upload_mi_hub_reports_to_gcp.assert_called_with(
+        QUESTIONNAIRE_NAME,
+        mock_mi_hub_call_history,
+        mock_mi_hub_respondent_data_partially_complete,
+        fake_google_storage,
+    )
+
+
+@pytest.fixture
+def mock_mi_hub_respondent_data_missing():
+    return [
+        MiHubRespondentData(
+            serial_number="01210",
+            outcome_code="310",
+            date_completed="2-11-2022_9:20",
+            interviewer="testuser",
+            mode="testmode",
+            postcode=None,
+            gender=None,
+            date_of_birth="",
+            age=None,
+        ),
+    ]
+
+
+@mock.patch("cloud_functions.deliver_mi_hub_reports.init_google_storage")
+@mock.patch("cloud_functions.deliver_mi_hub_reports.get_mi_hub_call_history")
+@mock.patch("cloud_functions.deliver_mi_hub_reports.get_mi_hub_respondent_data")
+@mock.patch(
+    "cloud_functions.deliver_mi_hub_reports.DeliverMiHubReportsService.upload_mi_hub_reports_to_gcp"
+)
+def test_deliver_mi_hub_reports_cloud_function_processor_calls_upload_mi_hub_reports_to_gcp_with_missing_data(
+    _mock_upload_mi_hub_reports_to_gcp,
+    _mock_get_mi_hub_respondent_data,
+    _mock_get_mi_hub_call_history,
+    _mock_init_google_storage,
+    mock_request_values,
+    config,
+    fake_google_storage,
+    mock_mi_hub_call_history,
+    mock_mi_hub_respondent_data_missing,
+):
+    # arrange
+    mock_request = flask.Request.from_values(json=mock_request_values)
+    fake_google_storage.bucket = "not-none"
+    _mock_init_google_storage.return_value = fake_google_storage
+    _mock_get_mi_hub_call_history.return_value = mock_mi_hub_call_history
+    _mock_get_mi_hub_respondent_data.return_value = mock_mi_hub_respondent_data_missing
+
+    # act
+    deliver_mi_hub_reports_cloud_function_processor(mock_request, config)
+
+    # assert
+    _mock_upload_mi_hub_reports_to_gcp.assert_called_with(
+        QUESTIONNAIRE_NAME,
+        mock_mi_hub_call_history,
+        mock_mi_hub_respondent_data_missing,
         fake_google_storage,
     )
