@@ -150,3 +150,38 @@ def test_deliver_mi_hub_reports_with_no_data_returns_expected_string(
 
     # assert
     assert result == f"Done - {QUESTIONNAIRE_NAME}"
+
+
+@pytest.fixture
+def mock_mi_hub_respondent_data_empty_data():
+    return [
+        MiHubRespondentData(
+            serial_number=None,
+            outcome_code="310",
+            date_completed="2-11-2022_9:20",
+            interviewer="testuser",
+            mode="default",
+            postcode="PO57 2OD",
+            gender=None,
+            date_of_birth=None,
+            age=None,
+        ),
+    ]
+
+
+def test_deliver_mi_hub_reports_with_some_data_empty_returns_expected_string(
+    mock_mi_hub_call_history, mock_mi_hub_respondent_data_empty_data
+):
+    # arrange
+    mock_google_storage = create_autospec(GoogleStorage)
+
+    # act
+    result = DeliverMiHubReportsService.upload_mi_hub_reports_to_gcp(
+        questionnaire_name=QUESTIONNAIRE_NAME,
+        mi_hub_call_history=mock_mi_hub_call_history,
+        mi_hub_respondent_data=mock_mi_hub_respondent_data_empty_data,
+        google_storage=mock_google_storage,
+    )
+
+    # assert
+    assert result == f"Done - {QUESTIONNAIRE_NAME}"
