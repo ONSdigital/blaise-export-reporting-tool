@@ -15,14 +15,14 @@ from data_sources.questionnaire_data import get_list_of_installed_questionnaires
 from models.config_model import Config
 
 
-def delete_old_call_history(_event, _context):
+def delete_old_call_history(_request: flask.Request):
     print("Running Cloud Function - delete_old_call_history")
     datastore_client = datastore.Client()
     call_history_client = CallHistoryClient(datastore_client)
     call_history_client.delete_historical_call_history()
 
 
-def upload_call_history(request):
+def upload_call_history(_request: flask.Request):
     print("Running Cloud Function - upload_call_history")
     config = Config.from_env()
     config.log()
