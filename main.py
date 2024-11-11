@@ -20,6 +20,7 @@ def delete_old_call_history(_request: flask.Request):
     datastore_client = datastore.Client()
     call_history_client = CallHistoryClient(datastore_client)
     call_history_client.delete_historical_call_history()
+    return "Done"
 
 
 def upload_call_history(_request: flask.Request):
