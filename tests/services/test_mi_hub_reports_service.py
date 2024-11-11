@@ -1,6 +1,7 @@
 from unittest.mock import create_autospec
 
 import pytest
+from py._code.code import ExceptionInfo
 
 from functions.google_storage_functions import GoogleStorage
 from models.mi_hub_call_history_model import MiHubCallHistory
@@ -180,6 +181,42 @@ def test_deliver_mi_hub_reports_with_some_data_empty_returns_expected_string(
         questionnaire_name=QUESTIONNAIRE_NAME,
         mi_hub_call_history=mock_mi_hub_call_history,
         mi_hub_respondent_data=mock_mi_hub_respondent_data_empty_data,
+        google_storage=mock_google_storage,
+    )
+
+    # assert
+    assert result == f"Done - {QUESTIONNAIRE_NAME}"
+
+
+
+@pytest.fixture
+def mock_mi_hub_respondent_data_missing():
+    return [
+        MiHubRespondentData(
+            serial_number=None,
+            outcome_code=None,
+            date_completed=None,
+            interviewer=None,
+            mode=None,
+            postcode=None,
+            gender=None,
+            date_of_birth=None,
+            age=None,
+        ),
+    ]
+
+
+def test_deliver_mi_hub_reports_with_no_respondent_data(
+    mock_mi_hub_call_history, mock_mi_hub_respondent_data_missing
+):
+    # arrange
+    mock_google_storage = create_autospec(GoogleStorage)
+
+    # act
+    result = DeliverMiHubReportsService.upload_mi_hub_reports_to_gcp(
+        questionnaire_name=QUESTIONNAIRE_NAME,
+        mi_hub_call_history=mock_mi_hub_call_history,
+        mi_hub_respondent_data=mock_mi_hub_respondent_data_missing,
         google_storage=mock_google_storage,
     )
 
