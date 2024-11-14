@@ -287,7 +287,7 @@ def mock_mi_hub_respondent_data_partially_complete():
 @mock.patch(
     "cloud_functions.deliver_mi_hub_reports.DeliverMiHubReportsService.upload_mi_hub_reports_to_gcp"
 )
-def test_deliver_mi_hub_reports_cloud_function_processor_calls_upload_mi_hub_reports_to_gcp_with_empty_data(
+def test_deliver_mi_hub_reports_cloud_function_processor_calls_upload_mi_hub_reports_to_gcp_partially_complete(
     _mock_upload_mi_hub_reports_to_gcp,
     _mock_get_mi_hub_respondent_data,
     _mock_get_mi_hub_call_history,
