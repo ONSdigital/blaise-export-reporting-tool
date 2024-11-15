@@ -1,10 +1,12 @@
 from typing import List
+from unittest.mock import create_autospec
+
 import pytest
 from werkzeug.security import generate_password_hash
+
 from app.app import setup_app
-from models.mi_hub_call_history_model import MiHubCallHistory
-from unittest.mock import create_autospec
 from functions.google_storage_functions import GoogleStorage
+from models.mi_hub_call_history_model import MiHubCallHistory
 
 
 def mock_mi_hub_call_history() -> List[MiHubCallHistory]:

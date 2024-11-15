@@ -4,11 +4,12 @@ import logging
 from dataclasses import fields
 
 from behave import given, then, when
+
 from models.mi_hub_respondent_data_model import MiHubRespondentData
 from services.deliver_mi_hub_reports_service import DeliverMiHubReportsService
 
 
-@given('all of the following fields are available for the Respondent Data report')
+@given("all of the following fields are available for the Respondent Data report")
 def step_impl(context):
     if context.table:
         fields = {row["field_name"]: row["value"] for row in context.table}
@@ -28,7 +29,7 @@ def step_impl(context):
         ]
 
 
-@when('the report generation is triggered')
+@when("the report generation is triggered")
 def step_impl(context):
     response = DeliverMiHubReportsService.upload_mi_hub_reports_to_gcp(
         questionnaire_name=context.questionnaire_name,
@@ -40,70 +41,68 @@ def step_impl(context):
     context.response = response
 
 
-@given('data is present in all fields')
+@given("data is present in all fields")
 def step_impl(context):
     for respondent_data in context.mi_hub_respondent_data:
-        assert (
-                not all(value is None for value in vars(respondent_data).values())
+        assert not all(
+            value is None for value in vars(respondent_data).values()
         ), f"Fields are not all present"
 
 
 @given('the field "{field}" is missing')
 def step_impl(context, field):
     for respondent_data in context.mi_hub_respondent_data:
-        assert (
-            getattr(respondent_data, field) is None
-        ), f"Field {field} is present"
+        assert getattr(respondent_data, field) is None, f"Field {field} is present"
 
 
 @given('there is no data present in "{field}"')
 def step_impl(context, field):
     for respondent_data in context.mi_hub_respondent_data:
-        assert (
-            getattr(respondent_data, field) == ""
-        ), f"Field {field} has data present"
+        assert getattr(respondent_data, field) == "", f"Field {field} has data present"
 
 
-@given('there is no data present in any of the fields')
+@given("there is no data present in any of the fields")
 def step_impl(context):
     for respondent_data in context.mi_hub_respondent_data:
         for field in fields(respondent_data):
             field_name = field.name
             field_value = getattr(respondent_data, field_name)
-            assert (
-                    field_value == ""
-            ), f"Field {field_value} has data present"
+            assert field_value == "", f"Field {field_value} has data present"
 
 
-@given('none of the following fields are available for the report')
+@given("none of the following fields are available for the report")
 def step_impl(context):
     context.mi_hub_respondent_data = []
 
 
-@then('the report should be generated and delivered with the available fields')
+@then("the report should be generated and delivered with the available fields")
 def step_impl(context):
     assert (
         context.response == "Done - " + context.questionnaire_name
     ), f"No report is generated"
 
 
-@then('no warnings should be logged')
+@then("no warnings should be logged")
 def step_impl(context):
-    assert (
-            True
-    ), f"Warnings should not be generated"
+    assert True, f"Warnings should not be generated"
 
 
-@then('the report should not be generated')
+@then("the report should not be generated")
 def step_impl(context):
     messages = [
         (record.levelno, record.getMessage()) for record in context.log_capture.buffer
     ]
-    mappings = {"information": logging.INFO, "error": logging.ERROR, "warning": logging.WARNING}
+    mappings = {
+        "information": logging.INFO,
+        "error": logging.ERROR,
+        "warning": logging.WARNING,
+    }
     assert (
-               mappings["warning"],
-               "No respondent data for LMS2222Z",
-           ) in messages, f"Could not find warning, No respondent data for LMS2222Z in {messages}"
+        mappings["warning"],
+        "No respondent data for LMS2222Z",
+    ) in messages, (
+        f"Could not find warning, No respondent data for LMS2222Z in {messages}"
+    )
 
 
 @then('"{message}" is logged as an {error_level} message')
@@ -111,8 +110,12 @@ def step_impl(context, message, error_level):
     messages = [
         (record.levelno, record.getMessage()) for record in context.log_capture.buffer
     ]
-    mappings = {"information": logging.INFO, "error": logging.ERROR, "warning": logging.WARNING}
+    mappings = {
+        "information": logging.INFO,
+        "error": logging.ERROR,
+        "warning": logging.WARNING,
+    }
     assert (
-               mappings[error_level],
-               message,
-           ) in messages, f"Could not find {mappings[error_level]}, {message} in {messages}"
+        mappings[error_level],
+        message,
+    ) in messages, f"Could not find {mappings[error_level]}, {message} in {messages}"

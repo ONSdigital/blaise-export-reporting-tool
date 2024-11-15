@@ -34,6 +34,9 @@ def get_mi_hub_respondent_data(config, questionnaire_name):
             date_of_birth=item.get("qHousehold.QHHold.Person[1].tmpDoB"),
             age=item.get("qHousehold.QHHold.Person[1].DVAge"),
         )
-        if not all(value in ("", None) for value in vars(mi_hub_respondent_data_record).values()):
+        if not all(
+            value in ("", None)
+            for value in vars(mi_hub_respondent_data_record).values()
+        ):
             mi_hub_respondent_data_list.append(mi_hub_respondent_data_record)
     return mi_hub_respondent_data_list
