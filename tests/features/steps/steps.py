@@ -1,6 +1,8 @@
 # type: ignore[no-redef]
 
 import logging
+from dataclasses import fields
+
 from behave import given, then, when
 from models.mi_hub_respondent_data_model import MiHubRespondentData
 from services.deliver_mi_hub_reports_service import DeliverMiHubReportsService
@@ -11,17 +13,19 @@ def step_impl(context):
     if context.table:
         fields = {row["field_name"]: row["value"] for row in context.table}
 
-        context.mi_hub_respondent_data = [MiHubRespondentData(
-            serial_number=str(fields["QID.Serial_Number"]),
-            outcome_code=str(fields["QHAdmin.HOut"]),
-            date_completed=str(fields["DateTimeStamp"]),
-            interviewer=str(fields["QHAdmin.Interviewer[1]"]),
-            mode=str(fields["Mode"]),
-            postcode=str(fields["QDataBag.PostCode"]),
-            gender=str(fields["QHousehold.QHHold.Person[1].Sex"]),
-            date_of_birth=str(fields["QHousehold.QHHold.Person[1].tmpDoB"]),
-            age=str(fields["QHousehold.QHHold.Person[1].DVAge"]),
-        )]
+        context.mi_hub_respondent_data = [
+            MiHubRespondentData(
+                serial_number=fields.get("QID.Serial_Number", None),
+                outcome_code=fields.get("QHAdmin.HOut", None),
+                date_completed=fields.get("DateTimeStamp", None),
+                interviewer=fields.get("QHAdmin.Interviewer[1]", None),
+                mode=fields.get("Mode", None),
+                postcode=fields.get("QDataBag.PostCode", None),
+                gender=fields.get("QHousehold.QHHold.Person[1].Sex", None),
+                date_of_birth=fields.get("QHousehold.QHHold.Person[1].tmpDoB", None),
+                age=fields.get("QHousehold.QHHold.Person[1].DVAge", None),
+            )
+        ]
 
 
 @when('the report generation is triggered')
@@ -36,20 +40,39 @@ def step_impl(context):
     context.response = response
 
 
-@then('data is present in all fields')
+@given('data is present in all fields')
 def step_impl(context):
     for respondent_data in context.mi_hub_respondent_data:
         assert (
-                not all(value in ("", None) for value in vars(respondent_data).values())
+                not all(value is None for value in vars(respondent_data).values())
         ), f"Fields are not all present"
 
 
-@then('the field "{field}" is missing')
+@given('the field "{field}" is missing')
+def step_impl(context, field):
+    for respondent_data in context.mi_hub_respondent_data:
+        assert (
+            getattr(respondent_data, field) is None
+        ), f"Field {field} is present"
+
+
+@given('there is no data present in "{field}"')
 def step_impl(context, field):
     for respondent_data in context.mi_hub_respondent_data:
         assert (
             getattr(respondent_data, field) == ""
-        ), f"Field {field} is present"
+        ), f"Field {field} has data present"
+
+
+@given('there is no data present in any of the fields')
+def step_impl(context):
+    for respondent_data in context.mi_hub_respondent_data:
+        for field in fields(respondent_data):
+            field_name = field.name
+            field_value = getattr(respondent_data, field_name)
+            assert (
+                    field_value == ""
+            ), f"Field {field_value} has data present"
 
 
 @given('none of the following fields are available for the report')
@@ -57,7 +80,7 @@ def step_impl(context):
     context.mi_hub_respondent_data = []
 
 
-@then('the report should be generated and delivered')
+@then('the report should be generated and delivered with the available fields')
 def step_impl(context):
     assert (
         context.response == "Done - " + context.questionnaire_name
@@ -69,6 +92,18 @@ def step_impl(context):
     assert (
             True
     ), f"Warnings should not be generated"
+
+
+@then('the report should not be generated')
+def step_impl(context):
+    messages = [
+        (record.levelno, record.getMessage()) for record in context.log_capture.buffer
+    ]
+    mappings = {"information": logging.INFO, "error": logging.ERROR, "warning": logging.WARNING}
+    assert (
+               mappings["warning"],
+               "No respondent data for LMS2222Z",
+           ) in messages, f"Could not find warning, No respondent data for LMS2222Z in {messages}"
 
 
 @then('"{message}" is logged as an {error_level} message')

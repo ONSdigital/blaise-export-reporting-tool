@@ -1,5 +1,7 @@
 import datetime
 import logging
+from dataclasses import fields
+
 from functions.csv_functions import write_csv
 from functions.zip_functions import create_zip
 
@@ -21,7 +23,7 @@ class DeliverMiHubReportsService:
         else:
             logging.warning(f"No call history for {questionnaire_name}")
 
-        if mi_hub_respondent_data:
+        if mi_hub_respondent_data and all(getattr(mi_hub_respondent_data[0], field.name) != "" for field in fields(mi_hub_respondent_data[0])):
             respondent_data_csv = write_csv(mi_hub_respondent_data)
             zip_data.append(
                 {"filename": "respondent_data.csv", "content": respondent_data_csv}
