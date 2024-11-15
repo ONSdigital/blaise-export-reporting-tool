@@ -191,3 +191,8 @@ to run the unit tests without the Datastore emulator (i.e. integration tests)
 ```shell
 make test-unit
 ```
+
+Run behave tests:
+```shell
+poetry run python -m behave tests/features
+```
