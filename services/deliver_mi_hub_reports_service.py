@@ -23,9 +23,9 @@ class DeliverMiHubReportsService:
         else:
             logging.warning(f"No call history for {questionnaire_name}")
 
-        if mi_hub_respondent_data and all(
-            getattr(mi_hub_respondent_data[0], field.name) != ""
-            for field in fields(mi_hub_respondent_data[0])
+        if mi_hub_respondent_data and not all(
+            all(getattr(obj, field.name) == "" for field in fields(obj))
+            for obj in mi_hub_respondent_data
         ):
             respondent_data_csv = write_csv(mi_hub_respondent_data)
             zip_data.append(

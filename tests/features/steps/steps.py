@@ -29,6 +29,38 @@ def step_impl(context):
         ]
 
 
+@given("all of the following fields are available for the both Respondent Data reports")
+def step_impl(context):
+    if context.table:
+        fields_1 = {row["field_name_1"]: row["value_1"] for row in context.table}
+        fields_2 = {row["field_name_2"]: row["value_2"] for row in context.table}
+
+        context.mi_hub_respondent_data = [
+            MiHubRespondentData(
+                serial_number=fields_1.get("QID.Serial_Number", None),
+                outcome_code=fields_1.get("QHAdmin.HOut", None),
+                date_completed=fields_1.get("DateTimeStamp", None),
+                interviewer=fields_1.get("QHAdmin.Interviewer[1]", None),
+                mode=fields_1.get("Mode", None),
+                postcode=fields_1.get("QDataBag.PostCode", None),
+                gender=fields_1.get("QHousehold.QHHold.Person[1].Sex", None),
+                date_of_birth=fields_1.get("QHousehold.QHHold.Person[1].tmpDoB", None),
+                age=fields_1.get("QHousehold.QHHold.Person[1].DVAge", None),
+            ),
+            MiHubRespondentData(
+                serial_number=fields_2.get("QID.Serial_Number", None),
+                outcome_code=fields_2.get("QHAdmin.HOut", None),
+                date_completed=fields_2.get("DateTimeStamp", None),
+                interviewer=fields_2.get("QHAdmin.Interviewer[1]", None),
+                mode=fields_2.get("Mode", None),
+                postcode=fields_2.get("QDataBag.PostCode", None),
+                gender=fields_2.get("QHousehold.QHHold.Person[1].Sex", None),
+                date_of_birth=fields_2.get("QHousehold.QHHold.Person[1].tmpDoB", None),
+                age=fields_2.get("QHousehold.QHHold.Person[1].DVAge", None),
+            ),
+        ]
+
+
 @when("the report generation is triggered")
 def step_impl(context):
     response = DeliverMiHubReportsService.upload_mi_hub_reports_to_gcp(
@@ -84,7 +116,18 @@ def step_impl(context):
 
 @then("no warnings should be logged")
 def step_impl(context):
-    assert True, f"Warnings should not be generated"
+    messages = [
+        (record.levelno, record.getMessage()) for record in context.log_capture.buffer
+    ]
+    mappings = {
+        "information": logging.INFO,
+        "error": logging.ERROR,
+        "warning": logging.WARNING,
+    }
+    assert (
+        mappings["warning"],
+        "No respondent data for LMS2222Z",
+    ) not in messages, f"Warnings present"
 
 
 @then("the report should not be generated")
