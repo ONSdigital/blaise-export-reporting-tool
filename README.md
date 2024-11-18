@@ -191,3 +191,23 @@ to run the unit tests without the Datastore emulator (i.e. integration tests)
 ```shell
 make test-unit
 ```
+
+Run behave tests:
+```shell
+poetry run python -m behave tests/features
+```
+
+Run check-types tests:
+```shell
+poetry run mypy .
+```
+
+Run black refactoring:
+```shell
+poetry run black .
+```
+
+Run isort refactoring:
+```shell
+poetry run isort .
+```

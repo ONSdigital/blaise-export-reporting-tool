@@ -109,3 +109,20 @@ def test_get_questionnaire_name_from_id_returns_empty_string_when_questionnaire_
 
     # act & assert
     assert get_questionnaire_name(config, "12345-12345-12345-12345-ZZZZZ") == ""
+
+
+def test_get_questionnaire_data_empty(
+    questionnaire_name,
+    config,
+    questionnaire_fields_to_get,
+    requests_mock,
+    api_reporting_data_response_empty,
+):
+    requests_mock.get(
+        f"http://{config.blaise_api_url}/api/v2/serverparks/gusty/questionnaires/{questionnaire_name}/report",
+        json=api_reporting_data_response_empty,
+    )
+    reporting_data = get_questionnaire_data(
+        questionnaire_name, config, questionnaire_fields_to_get
+    )
+    assert reporting_data == []
