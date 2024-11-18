@@ -115,6 +115,15 @@ def api_reporting_data_response():
 
 
 @pytest.fixture
+def api_reporting_data_response_empty():
+    return {
+        "instrumentName": "",
+        "instrumentId": "",
+        "reportingData": [],
+    }
+
+
+@pytest.fixture
 def interviewer_name():
     return "ricer"
 
