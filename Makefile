@@ -47,3 +47,12 @@ test-integration:
 .PHONY: test
 ## Run the full suite of unit tests
 test: test-unit test-integration
+
+## Run behave tests
+behave:
+	@poetry run python -m behave tests/features
+
+.PHONY: behave-stop
+## Run behave tests and stop at failing test
+behave-stop:
+	@poetry run python -m behave tests/features --stop

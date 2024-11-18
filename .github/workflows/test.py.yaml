@@ -83,3 +83,5 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
+      - name: Run behave
+        run: poetry run python -m behave tests/features
