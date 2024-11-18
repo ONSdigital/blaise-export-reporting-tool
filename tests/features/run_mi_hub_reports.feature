@@ -161,3 +161,25 @@ Scenario Outline: Some fields are missing and all data is available
     Examples:
       | field_name   |
       | 0            |
+
+
+
+Scenario Outline: All fields are present for both reports
+  Given all of the following fields are available for the both Respondent Data reports
+    | field_name_1                      | value_1         | field_name_2                      | value_2         |
+    | QID.Serial_Number                 | 900001          | QID.Serial_Number                 | 900002          |
+    | QHAdmin.HOut                      | 310             | QHAdmin.HOut                      | 310             |
+    | QHAdmin.Interviewer[1]            | testuser        | QHAdmin.Interviewer[1]            | testuser        |
+    | Mode                              | testmode        | Mode                              | testuser        |
+    | QDataBag.PostCode                 | 90210           | QDataBag.PostCode                 | 90210           |
+    | QHousehold.QHHold.Person[1].Sex   | Male            | QHousehold.QHHold.Person[1].Sex   | Male            |
+    | QHousehold.QHHold.Person[1].tmpDoB| 2-11-2022_9:20  | QHousehold.QHHold.Person[1].tmpDoB| 2-11-2022_9:20  |
+    | QHousehold.QHHold.Person[1].DVAge | 2               | QHousehold.QHHold.Person[1].DVAge | 2               |
+    | DateTimeStamp                     | 2-11-2022_9:20  | DateTimeStamp                     | 2-11-2022_9:20  |
+  When the report generation is triggered
+  Then the report should be generated and delivered with the available fields
+  And no warnings should be logged
+  And "Done - LMS2222Z" is logged as an information message
+  Examples:
+    | field_name   |
+    | 0            |
