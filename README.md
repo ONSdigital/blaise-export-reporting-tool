@@ -155,7 +155,7 @@ http://localhost:5011/api/reports/call-pattern/rich?start-date=2022-12-30&end-da
 http://localhost:5011/api/reports/appointment-resource-planning/2022-12-31
 ```
 
-Run the "upload_call_history" Cloud Function:
+Run the 'upload_call_history' Cloud Function:
 
 ```shell
 poetry run python -c "from main import upload_call_history; upload_call_history(None, None)"
