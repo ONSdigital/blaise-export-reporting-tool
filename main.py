@@ -33,7 +33,7 @@ def upload_call_history(_request: flask.Request):
     return "Done"
 
 
-def deliver_mi_hub_reports_trigger(_event, _context):
+def deliver_mi_hub_reports_trigger(_request: flask.Request):
     print("Running Cloud Function - deliver_mi_hub_reports_trigger")
     config = Config.from_env()
     config.log()
@@ -61,6 +61,7 @@ def deliver_mi_hub_reports_trigger(_event, _context):
             ),
         )
         task_client.create_task(request)
+    return "Done"
 
 
 def deliver_mi_hub_reports_processor(request: flask.Request) -> str:
