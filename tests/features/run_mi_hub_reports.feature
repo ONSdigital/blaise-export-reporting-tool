@@ -92,6 +92,51 @@ Scenario Outline: Some fields are missing and all data is available
       | QHousehold.QHHold.Person[1].tmpDoB|                 |
       | QHousehold.QHHold.Person[1].DVAge |                 |
       | DateTimeStamp                     |                 |
+      | qiD.Case_ID                       |                 |
+      | qiD.ShiftNo                       |                 |
+      | qiD.Interv                        |                 |
+      | notes.CaseNotes                   |                 |
+      | flightList.Flight1                |                 |
+      | flightList.Flight2                |                 |
+      | flightList.Flight3                |                 |
+      | flightList.Flight4                |                 |
+      | flightList.Flight5                |                 |
+      | flightList.Flight6                |                 |
+      | flightList.Flight7                |                 |
+      | flightList.Flight8                |                 |
+      | qShift.IntDate                    |                 |
+      | qShift.SelectionTime              |                 |
+      | dmExitTime                        |                 |
+      | qShiftSetup.QShftDet.IntType      |                 |
+      | qShift.SampInterval               |                 |
+      | qShift.ShiftType                  |                 |
+      | qShift.Portroute                  |                 |
+      | qShift.Baseport                   |                 |
+      | qShift.Linecode                   |                 |
+      | qShift.FlightNum                  |                 |
+      | qShift.DVFlightNum                |                 |
+      | qShift.PortCode                   |                 |
+      | qShift.PortDestination            |                 |
+      | qShift.Shuttle                    |                 |
+      | qShift.CrossShut                  |                 |
+      | qShift.Vehicle                    |                 |
+      | qShift.IsElig                     |                 |
+      | qShift.FerryTime                  |                 |
+      | qIndiv.QNationality.Flow          |                 |
+      | qAdmin.DVRespnse                  |                 |
+      | qAdmin.proportion                 |                 |
+      | qAdmin.response_visitbritain      |                 |
+      | qAdmin.response_age_sex           |                 |
+      | qAdmin.response_student           |                 |
+      | qAdmin.response_fe_trailer        |                 |
+      | qAdmin.response_migration_trailer |                 |
+      | dmTimeIsElig                      |                 |
+      | dmTimeAgeSex                      |                 |
+      | qIndiv.QNationality.UKForeign     |                 |
+      | qIndiv.QBStudent.StudyCheck       |                 |
+      | qIndiv.QExpend.DVExpend           |                 |
+      | qIndiv.QAgeSex.Age                |                 |
+      | qIndiv.QAgeSex.Sex                |                 |
     And there is no data present in any of the fields
     When the report generation is triggered
     Then the report should not be generated
