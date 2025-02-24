@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "blasie-export-reporting-tool"
+name = "blaise_export_reporting_tool"
 version = "0.1.0"
 description = ""
 authors = ["Matthew Palmer <38406765+matthewandrewpalmer@users.noreply.github.com>"]
