@@ -34,7 +34,7 @@ def test_mi_hub_respondent_data():
         Baseport="",
         Linecode="",
         FlightNum="",
-        DVFlightNum="",
+        BShift="",
         PortCode="",
         PortDestination="",
         Shuttle="",
