@@ -299,7 +299,7 @@ def mock_mi_hub_respondent_data():
             Baseport="",
             Linecode="",
             FlightNum="",
-            BShift="",
+            SelectFlight="",
             PortCode="",
             PortDestination="",
             Shuttle="",
@@ -355,7 +355,7 @@ def mock_mi_hub_respondent_data():
             Baseport="",
             Linecode="",
             FlightNum="",
-            BShift="",
+            SelectFlight="",
             PortCode="",
             PortDestination="",
             Shuttle="",
@@ -377,7 +377,7 @@ def mock_mi_hub_respondent_data():
             StudyCheck="",
             Expenditure="",
             Age="",
-            Sex=""
+            Sex="",
         ),
     ]
 
