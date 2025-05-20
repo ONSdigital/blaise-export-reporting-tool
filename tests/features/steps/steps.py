@@ -47,7 +47,7 @@ def step_impl(context):
                 Baseport=fields.get("qShift.Baseport", None),
                 Linecode=fields.get("qShift.Linecode", None),
                 FlightNum=fields.get("qShift.FlightNum", None),
-                SelectFlight=fields.get("qShift.BShift", None),
+                SelectFlight=fields.get("qShift.SelectFlight", None),
                 PortCode=fields.get("qShift.PortCode", None),
                 PortDestination=fields.get("qShift.PortDestination", None),
                 Shuttle=fields.get("qShift.Shuttle", None),
