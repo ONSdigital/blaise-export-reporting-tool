@@ -34,7 +34,7 @@ def test_mi_hub_respondent_data():
         Baseport="",
         Linecode="",
         FlightNum="",
-        BShift="",
+        SelectFlight="",
         PortCode="",
         PortDestination="",
         Shuttle="",
@@ -56,6 +56,6 @@ def test_mi_hub_respondent_data():
         StudyCheck="",
         Expenditure="",
         Age="",
-        Sex=""
+        Sex="",
     )
     assert mi_hub_respondent_data is not None

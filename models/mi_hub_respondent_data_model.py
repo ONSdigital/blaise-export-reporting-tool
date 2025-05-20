@@ -34,7 +34,6 @@ class MiHubRespondentData:
     Baseport: str
     Linecode: str
     FlightNum: str
-    BShift: str
     SelectFlight: str
     PortCode: str
     PortDestination: str
