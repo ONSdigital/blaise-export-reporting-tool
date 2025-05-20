@@ -114,7 +114,7 @@ Scenario Outline: Some fields are missing and all data is available
       | qShift.Baseport                   |                 |
       | qShift.Linecode                   |                 |
       | qShift.FlightNum                  |                 |
-      | qShift.BShift                     |                 |
+      | qShift.SelectFlight               |                 |
       | qShift.PortCode                   |                 |
       | qShift.PortDestination            |                 |
       | qShift.Shuttle                    |                 |
