@@ -34,7 +34,7 @@ questionnaire_fields_to_get = [
         "qShift.Baseport",
         "qShift.Linecode",
         "qShift.FlightNum",
-        "qShift.DVFlightNum",
+        "qShift.SelectFlight",
         "qShift.PortCode",
         "qShift.PortDestination",
         "qShift.Shuttle",
@@ -56,7 +56,7 @@ questionnaire_fields_to_get = [
         "qIndiv.QBStudent.StudyCheck",
         "qIndiv.QExpend.DVExpend",
         "qIndiv.QAgeSex.Age",
-        "qIndiv.QAgeSex.Sex"
+        "qIndiv.QAgeSex.Sex",
     }
 ]
 
@@ -100,7 +100,7 @@ def get_mi_hub_respondent_data(config, questionnaire_name):
             Baseport=item.get("qShift.Baseport"),
             Linecode=item.get("qShift.Linecode"),
             FlightNum=item.get("qShift.FlightNum"),
-            DVFlightNum=item.get("qShift.DVFlightNum"),
+            SelectFlight=item.get("qShift.SelectFlight"),
             PortCode=item.get("qShift.PortCode"),
             PortDestination=item.get("qShift.PortDestination"),
             Shuttle=item.get("qShift.Shuttle"),
@@ -122,7 +122,7 @@ def get_mi_hub_respondent_data(config, questionnaire_name):
             StudyCheck=item.get("qIndiv.QBStudent.StudyCheck"),
             Expenditure=item.get("qIndiv.QExpend.DVExpend"),
             Age=item.get("qIndiv.QAgeSex.Age"),
-            Sex=item.get("qIndiv.QAgeSex.Sex")
+            Sex=item.get("qIndiv.QAgeSex.Sex"),
         )
         if not all(
             value in ("", None)
