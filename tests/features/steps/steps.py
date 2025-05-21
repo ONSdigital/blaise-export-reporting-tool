@@ -47,7 +47,7 @@ def step_impl(context):
                 Baseport=fields.get("qShift.Baseport", None),
                 Linecode=fields.get("qShift.Linecode", None),
                 FlightNum=fields.get("qShift.FlightNum", None),
-                DVFlightNum=fields.get("qShift.DVFlightNum", None),
+                SelectFlight=fields.get("qShift.SelectFlight", None),
                 PortCode=fields.get("qShift.PortCode", None),
                 PortDestination=fields.get("qShift.PortDestination", None),
                 Shuttle=fields.get("qShift.Shuttle", None),
@@ -62,7 +62,9 @@ def step_impl(context):
                 response_age_sex=fields.get("qAdmin.response_age_sex", None),
                 response_student=fields.get("qAdmin.response_student", None),
                 response_fe_trailer=fields.get("qAdmin.response_fe_trailer", None),
-                response_migration_trailer=fields.get("qAdmin.response_migration_trailer", None),
+                response_migration_trailer=fields.get(
+                    "qAdmin.response_migration_trailer", None
+                ),
                 DMTimeIsElig=fields.get("dmTimeIsElig", None),
                 DMTimeAgeSex=fields.get("dmTimeAgeSex", None),
                 UKForeign=fields.get("qIndiv.QNationality.UKForeign", None),
