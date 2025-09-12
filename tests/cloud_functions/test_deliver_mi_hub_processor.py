@@ -43,8 +43,7 @@ def test_deliver_mi_hub_reports_cloud_function_processor_raises_exception_when_t
 
     assert (
         str(err.value)
-        == "400 Bad Request: The browser (or proxy) sent a request that this server "
-        "could not understand."
+        == "415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'."
     )
 
 
