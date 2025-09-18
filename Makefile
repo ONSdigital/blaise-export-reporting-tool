@@ -9,15 +9,13 @@ show-help:
 .PHONY: format
 ## Apply styling fixes for python
 format:
-	@poetry run black .
 	@poetry run isort .
+	@poetry run black .
 
 .PHONY: lint
 ## Run styling checks for python
-lint:
-	@poetry run black --check .
-	@poetry run isort --check .
-	@poetry run mypy .
+lint:  format
+	@poetry run mypy --config-file ${mkfile_dir}mypy.ini .
 
 .PHONY: install-datastore-emulator
 ## Install Datastore emulator
@@ -33,13 +31,13 @@ start-datastore-emulator: install-datastore-emulator
 
 .PHONY: test-unit
 ## Run unit tests without integration tests
-test-unit:
+test-unit: lint
 	@echo "Running unit tests"
 	@poetry run python -m pytest -m "not integration_test"
 
 .PHONY: test-integration
 ## Run the integration tests
-test-integration:
+test-integration: lint
 	@echo "Running integration tests"
 	@echo "Please ensure that you have run 'make start-datastore-emulator' in a separate terminal window before running 'make test-integration'"
 	@$$(gcloud beta emulators datastore env-init) && poetry run python -m pytest -m "integration_test"
@@ -48,11 +46,12 @@ test-integration:
 ## Run the full suite of unit tests
 test: test-unit test-integration
 
+.PHONY: behave
 ## Run behave tests
-behave:
+behave: lint
 	@poetry run python -m behave tests/features
 
 .PHONY: behave-stop
 ## Run behave tests and stop at failing test
-behave-stop:
+behave-stop: lint
 	@poetry run python -m behave tests/features --stop
