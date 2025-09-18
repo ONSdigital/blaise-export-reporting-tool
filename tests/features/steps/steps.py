@@ -1,4 +1,4 @@
-# type: ignore[no-redef]
+# mypy: disable-error-code="no-redef"
 
 import logging
 from dataclasses import fields

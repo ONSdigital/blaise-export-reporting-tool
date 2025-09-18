@@ -1,5 +1,5 @@
 service: bert
-runtime: python39
+runtime: python313
 
 vpc_access_connector:
   name: projects/_PROJECT_ID/locations/europe-west2/connectors/vpcconnect
