@@ -1,11 +1,6 @@
 from unittest.mock import create_autospec
 
-import pytest
-from py._code.code import ExceptionInfo
-
 from functions.google_storage_functions import GoogleStorage
-from models.mi_hub_call_history_model import MiHubCallHistory
-from models.mi_hub_respondent_data_model import MiHubRespondentData
 from services.deliver_mi_hub_reports_service import DeliverMiHubReportsService
 
 QUESTIONNAIRE_NAME = "LMS2222Z"

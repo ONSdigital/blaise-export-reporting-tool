@@ -1,12 +1,19 @@
+import logging
 from typing import List
 from unittest.mock import create_autospec
-
-import pytest
-from werkzeug.security import generate_password_hash
 
 from app.app import setup_app
 from functions.google_storage_functions import GoogleStorage
 from models.mi_hub_call_history_model import MiHubCallHistory
+
+
+class LogCapture(logging.Handler):
+    def __init__(self):
+        super().__init__()
+        self.buffer = []
+
+    def emit(self, record):
+        self.buffer.append(record)
 
 
 def mock_mi_hub_call_history() -> List[MiHubCallHistory]:
@@ -61,3 +68,12 @@ def before_scenario(context, _scenario):
     context.mi_hub_respondent_data = []
     context.mi_hub_call_history = mock_mi_hub_call_history()
     context.mock_google_storage = create_autospec(GoogleStorage)
+    # Add log capture for each scenario
+    context.log_capture = LogCapture()
+    logging.getLogger().addHandler(context.log_capture)
+
+
+def after_scenario(context, _scenario):
+    # Remove log capture after each scenario
+    if hasattr(context, "log_capture"):
+        logging.getLogger().removeHandler(context.log_capture)
