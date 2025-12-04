@@ -25,10 +25,13 @@ class DatabaseBase(ABC):
         return cls.query(config, f"""SELECT {cls.fields()} FROM {cls.table_name()}""")
 
     @classmethod
-    def query(cls, config, query):
+    def query(cls, config, query, params=None):
         db = cls.connect_to_database(config)
         cursor = db.cursor(dictionary=True)
-        cursor.execute(query)
+        if params is not None:
+            cursor.execute(query, params)
+        else:
+            cursor.execute(query)
         results = cursor.fetchall()
         cursor.close()
         db.close()
