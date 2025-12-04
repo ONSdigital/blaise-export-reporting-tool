@@ -225,10 +225,14 @@ def test_deliver_mi_hub_reports_cloud_function_processor_skips_calling_get_mi_hu
     _mock_init_google_storage.return_value = fake_google_storage
 
     # act
-    deliver_mi_hub_reports_cloud_function_processor(mock_request, config)
+    return_value = deliver_mi_hub_reports_cloud_function_processor(mock_request, config)
 
     # assert
     _mock_get_mi_hub_call_history.assert_not_called()
+    assert (
+        return_value
+        == f"Skipping '{QUESTIONNAIRE_NAME_DIA_B}' as do not process version B or ContactInfo questionnaires"
+    )
 
 
 @mock.patch("cloud_functions.deliver_mi_hub_reports.init_google_storage")
@@ -252,7 +256,11 @@ def test_deliver_mi_hub_reports_cloud_function_processor_skips_calling_get_mi_hu
     _mock_init_google_storage.return_value = fake_google_storage
 
     # act
-    deliver_mi_hub_reports_cloud_function_processor(mock_request, config)
+    return_value = deliver_mi_hub_reports_cloud_function_processor(mock_request, config)
 
     # assert
     _mock_get_mi_hub_call_history.assert_not_called()
+    assert (
+        return_value
+        == f"Skipping '{QUESTIONNAIRE_NAME_CONTACT_INFO}' as do not process version B or ContactInfo questionnaires"
+    )
