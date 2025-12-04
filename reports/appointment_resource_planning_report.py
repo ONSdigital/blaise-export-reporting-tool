@@ -24,8 +24,11 @@ def get_appointment_resource_planning_by_date(date, survey_tla, questionnaires):
         )
         questionnaire_name = get_questionnaire_name(config, item.get("InstrumentId"))
         if questionnaire_name == "":
+            instrument_id = str(item.get("InstrumentId", "Unknown"))
+            # Keep the first 4 characters, hide the rest
+            masked_id = f"{instrument_id[:4]}..."
             print(
-                f"Appointment with unknown questionnaire_name for InstrumentId: {item.get('InstrumentId')}"
+                f"Appointment with unknown questionnaire_name for InstrumentId: {masked_id}"
             )
         else:
             cati_appointment_resource_planning.questionnaire_name = questionnaire_name
