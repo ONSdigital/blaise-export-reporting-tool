@@ -37,7 +37,7 @@ def deliver_mi_hub_reports_cloud_function_processor(
     pattern = re.compile(r"^(DIA.*B|.*_ContactInfo)$")
 
     if pattern.match(questionnaire_name):
-        return f"Skipping - {questionnaire_name}"
+        return f"Skipping '{questionnaire_name}' as do not process version B or ContactInfo questionnaires"
 
     mi_hub_call_history = get_mi_hub_call_history(
         config, questionnaire_name, questionnaire_id
