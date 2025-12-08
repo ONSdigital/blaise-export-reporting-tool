@@ -1,3 +1,5 @@
+import hashlib
+
 from data_sources.cati_data import get_cati_appointment_resource_planning_from_database
 from data_sources.questionnaire_data import get_questionnaire_name
 from models.appointment_resource_planning_model import AppointmentResourcePlanning
@@ -25,10 +27,11 @@ def get_appointment_resource_planning_by_date(date, survey_tla, questionnaires):
         questionnaire_name = get_questionnaire_name(config, item.get("InstrumentId"))
         if questionnaire_name == "":
             instrument_id = str(item.get("InstrumentId", "Unknown"))
-            # Keep the first 4 characters, hide the rest
-            masked_id = f"{instrument_id[:4]}..."
+            # Hash the instrument_id before logging to avoid exposing sensitive identifiers.
+            # We take the first 10 characters of the SHA-256 hash for a short, deterministic, non-reversible reference.
+            masked_id = hashlib.sha256(instrument_id.encode()).hexdigest()[:10]
             print(
-                f"Appointment with unknown questionnaire_name for InstrumentId: {masked_id}"
+                f"Appointment with unknown questionnaire_name for InstrumentId (hashed sha256, first 10 chars):  {masked_id}"
             )
         else:
             cati_appointment_resource_planning.questionnaire_name = questionnaire_name
