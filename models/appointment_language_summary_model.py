@@ -22,19 +22,19 @@ class CatiAppointmentLanguageSummaryTable(DatabaseBase):
 
     @classmethod
     def get_language_summary_for_date(cls, config, date, survey_tla, questionnaires):
+        params = []
         if questionnaires is None or len(questionnaires) == 0:
-            questionnaire_filter = f"cf.InstrumentName LIKE '{str(survey_tla or '')}%'"
+            questionnaire_filter = "cf.InstrumentName LIKE %s"
+            params.append(f"{survey_tla or ''}%")
         else:
-            questionnaire_filter = ", ".join(
-                "'" + item + "'" for item in questionnaires
-            )
-            questionnaire_filter = f"cf.InstrumentName IN({questionnaire_filter})"
-        print(f"Questionnaire filter = {questionnaire_filter}")
+            placeholders = ", ".join(["%s"] * len(questionnaires))
+            questionnaire_filter = f"cf.InstrumentName IN ({placeholders})"
+            params.extend(questionnaires)
 
         query = f"""
-            with UniqueDialHistoryIdTable as
+            WITH UniqueDialHistoryIdTable AS
                 (SELECT
-                    max(Id) as id,
+                    MAX(Id) AS id,
                     dh.PrimaryKeyValue
                 FROM
                     DialHistory dh
@@ -45,7 +45,7 @@ class CatiAppointmentLanguageSummaryTable(DatabaseBase):
                 GROUP BY
                     dh.PrimaryKeyValue, dh.InstrumentId)
 
-                select
+                SELECT
                     CASE
                        WHEN
                           dbci.GroupName = "TNS"
@@ -64,22 +64,26 @@ class CatiAppointmentLanguageSummaryTable(DatabaseBase):
                     END
                     AS AppointmentLanguage,
                     COUNT(*) AS Total
-                from
+                FROM
                     cati.DaybatchCaseInfo AS dbci
-                left join DialHistory dh
+                LEFT JOIN DialHistory dh
                     ON dh.PrimaryKeyValue = dbci.PrimaryKeyValue
                     AND dh.InstrumentId = dbci.InstrumentId
                     AND dh.DialResult = "Appointment"
-                inner join UniqueDialHistoryIdTable uid
+                INNER JOIN UniqueDialHistoryIdTable uid
                     ON dh.id = uid.id
                 WHERE
-                   dbci.AppointmentType != "0"
-                   AND dbci.AppointmentStartDate LIKE "{date}%"
+                    dbci.AppointmentType != "0"
+                    AND dbci.AppointmentStartDate LIKE %s
                 GROUP BY
                    AppointmentLanguage;
 
         """
-        return cls.query(config, query)
+
+        # Last parameter is the date LIKE condition
+        params.append(f"{date}%")
+
+        return cls.query(config, query, params)
 
     @classmethod
     def table_name(cls):
