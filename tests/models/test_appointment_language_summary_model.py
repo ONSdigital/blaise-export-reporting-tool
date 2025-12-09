@@ -36,20 +36,20 @@ def test_mysql_with_questionnaires(mock_query):
     mock_query.assert_called_with(
         config,
         "\n"
-        + "            with UniqueDialHistoryIdTable as\n"
+        + "            WITH UniqueDialHistoryIdTable AS\n"
         + "                (SELECT\n"
-        + "                    max(Id) as id,\n"
+        + "                    MAX(Id) AS id,\n"
         + "                    dh.PrimaryKeyValue\n"
         + "                FROM\n"
         + "                    DialHistory dh\n"
         + "                INNER JOIN\n"
         + "                    configuration.Configuration cf\n"
         + "                ON dh.InstrumentId = cf.InstrumentId\n"
-        + "                WHERE cf.InstrumentName IN('DST2111Z', 'DST2106Z')\n"
+        + "                WHERE cf.InstrumentName IN (%s, %s)\n"
         + "                GROUP BY\n"
         + "                    dh.PrimaryKeyValue, dh.InstrumentId)\n"
         + "\n"
-        + "                select\n"
+        + "                SELECT\n"
         + "                    CASE\n"
         + "                       WHEN\n"
         + '                          dbci.GroupName = "TNS"\n'
@@ -68,21 +68,22 @@ def test_mysql_with_questionnaires(mock_query):
         + "                    END\n"
         + "                    AS AppointmentLanguage,\n"
         + "                    COUNT(*) AS Total\n"
-        + "                from\n"
+        + "                FROM\n"
         + "                    cati.DaybatchCaseInfo AS dbci\n"
-        + "                left join DialHistory dh\n"
+        + "                LEFT JOIN DialHistory dh\n"
         + "                    ON dh.PrimaryKeyValue = dbci.PrimaryKeyValue\n"
         + "                    AND dh.InstrumentId = dbci.InstrumentId\n"
         + '                    AND dh.DialResult = "Appointment"\n'
-        + "                inner join UniqueDialHistoryIdTable uid\n"
+        + "                INNER JOIN UniqueDialHistoryIdTable uid\n"
         + "                    ON dh.id = uid.id\n"
         + "                WHERE\n"
-        + '                   dbci.AppointmentType != "0"\n'
-        + '                   AND dbci.AppointmentStartDate LIKE "1990-06-30%"\n'
+        + '                    dbci.AppointmentType != "0"\n'
+        + "                    AND dbci.AppointmentStartDate LIKE %s\n"
         + "                GROUP BY\n"
         + "                   AppointmentLanguage;\n"
         + "\n"
         + "        ",
+        ["DST2111Z", "DST2106Z", "1990-06-30%"],
     )
 
 
@@ -99,20 +100,20 @@ def test_mysql_without_questionnaires(mock_query):
     mock_query.assert_called_with(
         config,
         "\n"
-        + "            with UniqueDialHistoryIdTable as\n"
+        + "            WITH UniqueDialHistoryIdTable AS\n"
         + "                (SELECT\n"
-        + "                    max(Id) as id,\n"
+        + "                    MAX(Id) AS id,\n"
         + "                    dh.PrimaryKeyValue\n"
         + "                FROM\n"
         + "                    DialHistory dh\n"
         + "                INNER JOIN\n"
         + "                    configuration.Configuration cf\n"
         + "                ON dh.InstrumentId = cf.InstrumentId\n"
-        + "                WHERE cf.InstrumentName LIKE 'DST%'\n"
+        + "                WHERE cf.InstrumentName LIKE %s\n"
         + "                GROUP BY\n"
         + "                    dh.PrimaryKeyValue, dh.InstrumentId)\n"
         + "\n"
-        + "                select\n"
+        + "                SELECT\n"
         + "                    CASE\n"
         + "                       WHEN\n"
         + '                          dbci.GroupName = "TNS"\n'
@@ -131,19 +132,20 @@ def test_mysql_without_questionnaires(mock_query):
         + "                    END\n"
         + "                    AS AppointmentLanguage,\n"
         + "                    COUNT(*) AS Total\n"
-        + "                from\n"
+        + "                FROM\n"
         + "                    cati.DaybatchCaseInfo AS dbci\n"
-        + "                left join DialHistory dh\n"
+        + "                LEFT JOIN DialHistory dh\n"
         + "                    ON dh.PrimaryKeyValue = dbci.PrimaryKeyValue\n"
         + "                    AND dh.InstrumentId = dbci.InstrumentId\n"
         + '                    AND dh.DialResult = "Appointment"\n'
-        + "                inner join UniqueDialHistoryIdTable uid\n"
+        + "                INNER JOIN UniqueDialHistoryIdTable uid\n"
         + "                    ON dh.id = uid.id\n"
         + "                WHERE\n"
-        + '                   dbci.AppointmentType != "0"\n'
-        + '                   AND dbci.AppointmentStartDate LIKE "1990-06-30%"\n'
+        + '                    dbci.AppointmentType != "0"\n'
+        + "                    AND dbci.AppointmentStartDate LIKE %s\n"
         + "                GROUP BY\n"
         + "                   AppointmentLanguage;\n"
         + "\n"
         + "        ",
+        ["DST%", "1990-06-30%"],
     )
