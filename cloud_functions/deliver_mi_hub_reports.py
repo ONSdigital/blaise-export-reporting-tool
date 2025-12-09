@@ -1,4 +1,5 @@
 import logging
+import re
 
 import flask
 
@@ -32,6 +33,11 @@ def deliver_mi_hub_reports_cloud_function_processor(
 
     questionnaire_name = request_json["name"]
     questionnaire_id = request_json["id"]
+
+    pattern = re.compile(r"^(DIA.*B|.*_ContactInfo)$")
+
+    if pattern.match(questionnaire_name):
+        return f"Skipping '{questionnaire_name}' as do not process version B or ContactInfo questionnaires"
 
     mi_hub_call_history = get_mi_hub_call_history(
         config, questionnaire_name, questionnaire_id
