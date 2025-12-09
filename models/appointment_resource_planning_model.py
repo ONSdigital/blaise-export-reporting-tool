@@ -28,13 +28,15 @@ class CatiAppointmentResourcePlanningTable(DatabaseBase):
 
     @classmethod
     def get_appointments_for_date(cls, config, date, survey_tla, questionnaires):
+        params = []
         if questionnaires is None or len(questionnaires) == 0:
-            questionnaire_filter = f"cf.InstrumentName LIKE '{str(survey_tla or '')}%'"
+            questionnaire_filter = "cf.InstrumentName LIKE %s"
+            params.append(f"{str(survey_tla or '')}%")
         else:
-            questionnaire_filter = ", ".join(
-                "'" + item + "'" for item in questionnaires
-            )
-            questionnaire_filter = f"cf.InstrumentName IN({questionnaire_filter})"
+            q_placeholders = ", ".join(["%s" for _ in questionnaires])
+            questionnaire_filter = f"cf.InstrumentName IN ({q_placeholders})"
+            params.extend(questionnaires)
+
         print(f"Questionnaire filter = {questionnaire_filter}")
 
         query = f"""
@@ -81,13 +83,14 @@ class CatiAppointmentResourcePlanningTable(DatabaseBase):
                 INNER JOIN UniqueDialHistoryIdTable uid
                     ON dh.id = uid.id
             WHERE dbci.AppointmentType != "0"
-            AND dbci.AppointmentStartDate LIKE "{date}%"
+            AND dbci.AppointmentStartDate LIKE %s
             ORDER BY
                 AppointmentTime ASC,
                 AppointmentLanguage ASC       
         """
-        print(f"Query = {query}")
-        return cls.query(config, query)
+        params.append(f"{date}%")
+        print(f"Query = {query} | Params = {params}")
+        return cls.query(config, query, params)
 
     @classmethod
     def table_name(cls):
