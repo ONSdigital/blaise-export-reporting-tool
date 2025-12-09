@@ -8,6 +8,9 @@ on:
 
 jobs:
   lint:
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -28,6 +31,9 @@ jobs:
         run: poetry run isort .
 
   check-types:
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -46,6 +52,9 @@ jobs:
         run: poetry run mypy .
 
   test:
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     strategy:
       matrix:
