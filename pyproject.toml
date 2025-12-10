@@ -17,6 +17,7 @@ pandas = "^2.3.3"
 google-cloud-storage = "^3.7.0"
 python-dotenv = "^1.2.1"
 google-cloud-tasks = "^2.20.0"
+requests-mock = "^1.12.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.2"
