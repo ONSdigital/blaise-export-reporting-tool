@@ -31,7 +31,7 @@ def get_appointment_resource_planning_by_date(date, survey_tla, questionnaires):
             # We take the first 10 characters of the SHA-256 hash for a short, deterministic, non-reversible reference.
             masked_id = hashlib.sha256(instrument_id.encode()).hexdigest()[:10]
             print(
-                f"Appointment with unknown questionnaire_name for InstrumentId (hashed sha256, first 10 chars):  {masked_id}"
+                f"Appointment with unknown questionnaire_name for InstrumentId (hashed sha256, first 10 chars): {masked_id}"
             )
         else:
             cati_appointment_resource_planning.questionnaire_name = questionnaire_name
