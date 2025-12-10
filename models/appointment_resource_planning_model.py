@@ -86,7 +86,7 @@ class CatiAppointmentResourcePlanningTable(DatabaseBase):
             AND dbci.AppointmentStartDate LIKE %s
             ORDER BY
                 AppointmentTime ASC,
-                AppointmentLanguage ASC       
+                AppointmentLanguage ASC
         """
         params.append(f"{date}%")
         print(f"Query = {query} | Params = {params}")
