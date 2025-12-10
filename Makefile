@@ -14,7 +14,7 @@ format:
 
 .PHONY: lint
 ## Run styling checks for python
-lint:  format
+lint: format
 	@poetry run mypy --config-file ${mkfile_dir}mypy.ini .
 
 .PHONY: install-datastore-emulator
