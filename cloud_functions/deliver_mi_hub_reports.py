@@ -34,10 +34,10 @@ def deliver_mi_hub_reports_cloud_function_processor(
     questionnaire_name = request_json["name"]
     questionnaire_id = request_json["id"]
 
-    pattern = re.compile(r"^(DIA.*B|.*_ContactInfo)$")
+    pattern = re.compile(r"^(DIT.*|DIA.*B|.*_ContactInfo)$", re.IGNORECASE)
 
     if pattern.match(questionnaire_name):
-        return f"Skipping '{questionnaire_name}' as do not process version B or ContactInfo questionnaires"
+        return f"Skipping '{questionnaire_name}' as do not process DIT, DIA B or ContactInfo questionnaires"
 
     mi_hub_call_history = get_mi_hub_call_history(
         config, questionnaire_name, questionnaire_id
