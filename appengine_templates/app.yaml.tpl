@@ -1,6 +1,8 @@
 service: bert
 runtime: python313
 
+instance_class: F4 
+
 vpc_access_connector:
   name: projects/_PROJECT_ID/locations/europe-west2/connectors/vpcconnect
 
