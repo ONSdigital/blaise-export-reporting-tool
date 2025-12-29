@@ -102,6 +102,10 @@ def health_check(version):
     response = {"healthy": True}
     return jsonify(response)
 
+@app.route("/bert/readiness_check")
+def readiness_check():
+    response = {"ready": True}
+    return jsonify(response)
 
 @app.errorhandler(BertException)
 def bert_error(error):

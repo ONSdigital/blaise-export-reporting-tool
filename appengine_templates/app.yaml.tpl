@@ -12,6 +12,14 @@ env_variables:
   BLAISE_API_URL: _BLAISE_API_URL
   NIFI_STAGING_BUCKET: _NIFI_STAGING_BUCKET
 
+readiness_check:
+  path: "/bert/readiness_check"
+  check_interval_sec: 4
+  timeout_sec: 4
+  failure_threshold: 2
+  success_threshold: 2
+  app_start_timeout_sec: 300
+
 automatic_scaling:
   min_instances: _MIN_INSTANCES
   max_instances: _MAX_INSTANCES
