@@ -2,7 +2,7 @@ service: bert
 runtime: python313
 
 vpc_access_connector:
-  name: projects/_PROJECT_ID/locations/europe-west2/connectors/vpcconnect
+  name: _VPC_CONNECTOR
 
 env_variables:
   MYSQL_HOST: _MYSQL_HOST
