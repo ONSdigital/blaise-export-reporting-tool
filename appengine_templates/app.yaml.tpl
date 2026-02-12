@@ -1,6 +1,8 @@
 service: bert
 runtime: python313
 
+instance_class: F4
+
 vpc_access_connector:
   name: _VPC_CONNECTOR
 
