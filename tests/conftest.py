@@ -322,6 +322,10 @@ def mock_mi_hub_respondent_data():
             Expenditure="",
             Age="",
             Sex="",
+            HomePostcode="",
+            StartPostcode="",
+            Residence="",
+            PassengerCount="",
         ),
         MiHubRespondentData(
             serial_number="900002",
@@ -378,6 +382,10 @@ def mock_mi_hub_respondent_data():
             Expenditure="",
             Age="",
             Sex="",
+            HomePostcode="",
+            StartPostcode="",
+            Residence="",
+            PassengerCount="",
         ),
     ]
 

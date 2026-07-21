@@ -57,6 +57,10 @@ questionnaire_fields_to_get = [
         "qIndiv.QExpend.DVExpend",
         "qIndiv.QAgeSex.Age",
         "qIndiv.QAgeSex.Sex",
+        "qIndiv.QResidence.HomePostcode.Postcode",
+        "qIndiv.QResidence.StartPostcode.Postcode",
+        "qIndiv.QNationality.Residence",
+        "pass_Nums.PassengerCount",
     }
 ]
 
@@ -123,6 +127,10 @@ def get_mi_hub_respondent_data(config, questionnaire_name):
             Expenditure=item.get("qIndiv.QExpend.DVExpend"),
             Age=item.get("qIndiv.QAgeSex.Age"),
             Sex=item.get("qIndiv.QAgeSex.Sex"),
+            HomePostcode=item.get("qIndiv.QResidence.HomePostcode.Postcode"),
+            StartPostcode=item.get("qIndiv.QResidence.StartPostcode.Postcode"),
+            Residence=item.get("qIndiv.QNationality.Residence"),
+            PassengerCount=item.get("pass_Nums.PassengerCount"),
         )
         if not all(
             value in ("", None)

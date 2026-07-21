@@ -57,6 +57,10 @@ class MiHubRespondentData:
     Expenditure: str
     Age: str
     Sex: str
+    HomePostcode: str
+    StartPostcode: str
+    Residence: str
+    PassengerCount: str
 
     @classmethod
     def fields(cls):
