@@ -60,7 +60,14 @@ class MiHubRespondentData:
     HomePostcode: str
     StartPostcode: str
     Residence: str
-    PassengerCount: str
+    PassengerCount1: str
+    PassengerCount2: str
+    PassengerCount3: str
+    PassengerCount4: str
+    PassengerCount5: str
+    PassengerCount6: str
+    PassengerCount7: str
+    PassengerCount8: str
 
     @classmethod
     def fields(cls):

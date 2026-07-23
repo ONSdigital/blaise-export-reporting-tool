@@ -140,7 +140,14 @@ Scenario Outline: Some fields are missing and all data is available
       | qIndiv.QResidence.HomePostcode.Postcode  |                 |
       | qIndiv.QResidence.StartPostcode.Postcode |                 |
       | qIndiv.QNationality.Residence            |                 |
-      | pass_Nums.PassengerCount                 |                 |
+      | pass_Nums.PassengerCount[1]              |                 |
+      | pass_Nums.PassengerCount[2]              |                 |
+      | pass_Nums.PassengerCount[3]              |                 |
+      | pass_Nums.PassengerCount[4]              |                 |
+      | pass_Nums.PassengerCount[5]              |                 |
+      | pass_Nums.PassengerCount[6]              |                 |
+      | pass_Nums.PassengerCount[7]              |                 |
+      | pass_Nums.PassengerCount[8]              |                 |
     And there is no data present in any of the fields
     When the report generation is triggered
     Then the report should not be generated
