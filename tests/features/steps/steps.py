@@ -72,6 +72,21 @@ def step_impl(context):
                 Expenditure=fields.get("qIndiv.QExpend.DVExpend", None),
                 Age=fields.get("qIndiv.QAgeSex.Age", None),
                 Sex=fields.get("qIndiv.QAgeSex.Sex", None),
+                HomePostcode=fields.get(
+                    "qIndiv.QResidence.HomePostcode.Postcode", None
+                ),
+                StartPostcode=fields.get(
+                    "qIndiv.QResidence.StartPostcode.Postcode", None
+                ),
+                Residence=fields.get("qIndiv.QNationality.Residence", None),
+                PassengerCount1=fields.get("pass_Nums.PassengerCount[1]", None),
+                PassengerCount2=fields.get("pass_Nums.PassengerCount[2]", None),
+                PassengerCount3=fields.get("pass_Nums.PassengerCount[3]", None),
+                PassengerCount4=fields.get("pass_Nums.PassengerCount[4]", None),
+                PassengerCount5=fields.get("pass_Nums.PassengerCount[5]", None),
+                PassengerCount6=fields.get("pass_Nums.PassengerCount[6]", None),
+                PassengerCount7=fields.get("pass_Nums.PassengerCount[7]", None),
+                PassengerCount8=fields.get("pass_Nums.PassengerCount[8]", None),
             )
         ]
 
