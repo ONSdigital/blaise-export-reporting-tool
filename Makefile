@@ -27,7 +27,7 @@ install-datastore-emulator:
 ## Start Datastore emulator
 start-datastore-emulator: install-datastore-emulator
 	@echo "Starting Datastore emulator"
-	@gcloud beta emulators datastore start --no-store-on-disk
+	@gcloud beta emulators datastore start --host-port=127.0.0.1:8081 --no-store-on-disk
 
 .PHONY: test-unit
 ## Run unit tests without integration tests
@@ -40,7 +40,7 @@ test-unit: lint
 test-integration: lint
 	@echo "Running integration tests"
 	@echo "Please ensure that you have run 'make start-datastore-emulator' in a separate terminal window before running 'make test-integration'"
-	@$$(gcloud beta emulators datastore env-init) && poetry run python -m pytest -m "integration_test"
+	@$$(gcloud beta emulators datastore env-init | sed -E 's#^export DATASTORE_EMULATOR_HOST=.*#export DATASTORE_EMULATOR_HOST=127.0.0.1:8081#; s#^export DATASTORE_EMULATOR_HOST_PATH=.*#export DATASTORE_EMULATOR_HOST_PATH=127.0.0.1:8081/datastore#; s#^export DATASTORE_HOST=.*#export DATASTORE_HOST=http://127.0.0.1:8081#') && poetry run python -m pytest -m "integration_test"
 
 .PHONY: test
 ## Run the full suite of unit tests
