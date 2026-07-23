@@ -57,5 +57,16 @@ def test_mi_hub_respondent_data():
         Expenditure="",
         Age="",
         Sex="",
+        HomePostcode="",
+        StartPostcode="",
+        Residence="",
+        PassengerCount1="",
+        PassengerCount2="",
+        PassengerCount3="",
+        PassengerCount4="",
+        PassengerCount5="",
+        PassengerCount6="",
+        PassengerCount7="",
+        PassengerCount8="",
     )
     assert mi_hub_respondent_data is not None

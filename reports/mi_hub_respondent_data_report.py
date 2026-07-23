@@ -57,6 +57,17 @@ questionnaire_fields_to_get = [
         "qIndiv.QExpend.DVExpend",
         "qIndiv.QAgeSex.Age",
         "qIndiv.QAgeSex.Sex",
+        "qIndiv.QResidence.HomePostcode.Postcode",
+        "qIndiv.QResidence.StartPostcode.Postcode",
+        "qIndiv.QNationality.Residence",
+        "pass_Nums.PassengerCount[1]",
+        "pass_Nums.PassengerCount[2]",
+        "pass_Nums.PassengerCount[3]",
+        "pass_Nums.PassengerCount[4]",
+        "pass_Nums.PassengerCount[5]",
+        "pass_Nums.PassengerCount[6]",
+        "pass_Nums.PassengerCount[7]",
+        "pass_Nums.PassengerCount[8]",
     }
 ]
 
@@ -123,6 +134,17 @@ def get_mi_hub_respondent_data(config, questionnaire_name):
             Expenditure=item.get("qIndiv.QExpend.DVExpend"),
             Age=item.get("qIndiv.QAgeSex.Age"),
             Sex=item.get("qIndiv.QAgeSex.Sex"),
+            HomePostcode=item.get("qIndiv.QResidence.HomePostcode.Postcode"),
+            StartPostcode=item.get("qIndiv.QResidence.StartPostcode.Postcode"),
+            Residence=item.get("qIndiv.QNationality.Residence"),
+            PassengerCount1=item.get("pass_Nums.PassengerCount[1]"),
+            PassengerCount2=item.get("pass_Nums.PassengerCount[2]"),
+            PassengerCount3=item.get("pass_Nums.PassengerCount[3]"),
+            PassengerCount4=item.get("pass_Nums.PassengerCount[4]"),
+            PassengerCount5=item.get("pass_Nums.PassengerCount[5]"),
+            PassengerCount6=item.get("pass_Nums.PassengerCount[6]"),
+            PassengerCount7=item.get("pass_Nums.PassengerCount[7]"),
+            PassengerCount8=item.get("pass_Nums.PassengerCount[8]"),
         )
         if not all(
             value in ("", None)
