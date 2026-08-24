@@ -301,3 +301,29 @@ def test_deliver_mi_hub_reports_cloud_function_processor_skips_calling_get_mi_hu
         return_value
         == f"Skipping '{QUESTIONNAIRE_NAME_DIT}' as do not process DIT, DIA B or ContactInfo questionnaires"
     )
+
+
+@mock.patch("cloud_functions.deliver_mi_hub_reports.logging.error")
+@mock.patch("cloud_functions.deliver_mi_hub_reports.init_google_storage")
+@mock.patch("cloud_functions.deliver_mi_hub_reports.get_mi_hub_call_history")
+@mock.patch("cloud_functions.deliver_mi_hub_reports.get_mi_hub_respondent_data")
+def test_deliver_mi_hub_reports_cloud_function_processor_raises_and_logs_on_downstream_failure(
+    _mock_get_mi_hub_respondent_data,
+    _mock_get_mi_hub_call_history,
+    _mock_init_google_storage,
+    _mock_logging_error,
+    mock_request_values,
+    config,
+    fake_google_storage,
+):
+    # arrange
+    mock_request = flask.Request.from_values(json=mock_request_values)
+    fake_google_storage.bucket = "not-none"
+    _mock_init_google_storage.return_value = fake_google_storage
+    _mock_get_mi_hub_respondent_data.side_effect = Exception("Gateway Timeout")
+
+    # act/assert
+    with pytest.raises(Exception, match="Gateway Timeout"):
+        deliver_mi_hub_reports_cloud_function_processor(mock_request, config)
+
+    _mock_logging_error.assert_called_once()

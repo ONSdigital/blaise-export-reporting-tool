@@ -39,11 +39,23 @@ def deliver_mi_hub_reports_cloud_function_processor(
     if pattern.match(questionnaire_name):
         return f"Skipping '{questionnaire_name}' as do not process DIT, DIA B or ContactInfo questionnaires"
 
-    mi_hub_call_history = get_mi_hub_call_history(
-        config, questionnaire_name, questionnaire_id
-    )
-    mi_hub_respondent_data = get_mi_hub_respondent_data(config, questionnaire_name)
+    try:
+        mi_hub_call_history = get_mi_hub_call_history(
+            config, questionnaire_name, questionnaire_id
+        )
+        mi_hub_respondent_data = get_mi_hub_respondent_data(config, questionnaire_name)
 
-    return DeliverMiHubReportsService.upload_mi_hub_reports_to_gcp(
-        questionnaire_name, mi_hub_call_history, mi_hub_respondent_data, google_storage
-    )
+        return DeliverMiHubReportsService.upload_mi_hub_reports_to_gcp(
+            questionnaire_name,
+            mi_hub_call_history,
+            mi_hub_respondent_data,
+            google_storage,
+        )
+    except Exception as err:
+        logging.error(
+            "deliver_mi_hub_reports_cloud_function_processor failed for %s (%s): %s",
+            questionnaire_name,
+            questionnaire_id,
+            err,
+        )
+        raise
