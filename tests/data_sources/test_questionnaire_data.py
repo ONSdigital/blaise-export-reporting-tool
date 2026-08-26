@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 import pytest
+import requests
 
 from data_sources.questionnaire_data import (
     BlaiseAPIException,
@@ -126,3 +127,62 @@ def test_get_questionnaire_data_empty(
         questionnaire_name, config, questionnaire_fields_to_get
     )
     assert reporting_data == []
+
+
+def test_get_questionnaire_data_raises_exception_for_non_200_response(
+    questionnaire_name,
+    config,
+    questionnaire_fields_to_get,
+    requests_mock,
+):
+    requests_mock.get(
+        f"http://{config.blaise_api_url}/api/v2/serverparks/gusty/questionnaires/{questionnaire_name}/report",
+        status_code=504,
+        text="Gateway Timeout",
+    )
+
+    with pytest.raises(
+        BlaiseAPIException,
+        match=(
+            "Blaise questionnaire report request failed for "
+            f"{questionnaire_name} with status 504"
+        ),
+    ):
+        get_questionnaire_data(questionnaire_name, config, questionnaire_fields_to_get)
+
+
+def test_get_questionnaire_data_raises_exception_for_non_json_response(
+    questionnaire_name,
+    config,
+    questionnaire_fields_to_get,
+    requests_mock,
+):
+    requests_mock.get(
+        f"http://{config.blaise_api_url}/api/v2/serverparks/gusty/questionnaires/{questionnaire_name}/report",
+        status_code=200,
+        text="Not JSON",
+    )
+
+    with pytest.raises(
+        BlaiseAPIException,
+        match="Blaise questionnaire report request returned non-JSON payload",
+    ):
+        get_questionnaire_data(questionnaire_name, config, questionnaire_fields_to_get)
+
+
+def test_get_questionnaire_data_raises_exception_for_timeout(
+    questionnaire_name,
+    config,
+    questionnaire_fields_to_get,
+    requests_mock,
+):
+    requests_mock.get(
+        f"http://{config.blaise_api_url}/api/v2/serverparks/gusty/questionnaires/{questionnaire_name}/report",
+        exc=requests.exceptions.Timeout,
+    )
+
+    with pytest.raises(
+        BlaiseAPIException,
+        match=f"Blaise questionnaire report request failed for {questionnaire_name}",
+    ):
+        get_questionnaire_data(questionnaire_name, config, questionnaire_fields_to_get)
