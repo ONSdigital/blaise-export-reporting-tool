@@ -80,4 +80,4 @@ def deliver_mi_hub_reports_cloud_function_processor(
             questionnaire_id,
             err,
         )
-        raise
+        return f"Error delivering reports for {questionnaire_name}: {err}"

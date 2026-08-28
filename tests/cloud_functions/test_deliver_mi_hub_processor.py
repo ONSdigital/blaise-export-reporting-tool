@@ -322,11 +322,12 @@ def test_deliver_mi_hub_reports_cloud_function_processor_raises_and_logs_on_down
     _mock_init_google_storage.return_value = fake_google_storage
     _mock_get_mi_hub_respondent_data.side_effect = Exception("Unexpected error")
 
-    # act/assert
-    with pytest.raises(Exception, match="Unexpected error"):
-        deliver_mi_hub_reports_cloud_function_processor(mock_request, config)
+    # act
+    return_value = deliver_mi_hub_reports_cloud_function_processor(mock_request, config)
 
-    _mock_logging_error.assert_called_once()
+    # assert - exception is caught and logged, but function returns error message
+    assert "Error delivering reports" in return_value
+    _mock_logging_error.assert_called()
 
 
 @mock.patch("cloud_functions.deliver_mi_hub_reports.logging.error")
