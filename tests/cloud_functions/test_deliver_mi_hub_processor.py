@@ -320,10 +320,48 @@ def test_deliver_mi_hub_reports_cloud_function_processor_raises_and_logs_on_down
     mock_request = flask.Request.from_values(json=mock_request_values)
     fake_google_storage.bucket = "not-none"
     _mock_init_google_storage.return_value = fake_google_storage
-    _mock_get_mi_hub_respondent_data.side_effect = Exception("Gateway Timeout")
+    _mock_get_mi_hub_respondent_data.side_effect = Exception("Unexpected error")
 
-    # act/assert
-    with pytest.raises(Exception, match="Gateway Timeout"):
-        deliver_mi_hub_reports_cloud_function_processor(mock_request, config)
+    # act
+    return_value = deliver_mi_hub_reports_cloud_function_processor(mock_request, config)
 
-    _mock_logging_error.assert_called_once()
+    # assert - exception is caught and logged, but function returns error message
+    assert "Error delivering reports" in return_value
+    _mock_logging_error.assert_called()
+
+
+@mock.patch("cloud_functions.deliver_mi_hub_reports.logging.error")
+@mock.patch("cloud_functions.deliver_mi_hub_reports.logging.info")
+@mock.patch("cloud_functions.deliver_mi_hub_reports.init_google_storage")
+@mock.patch("cloud_functions.deliver_mi_hub_reports.get_mi_hub_call_history")
+@mock.patch("cloud_functions.deliver_mi_hub_reports.get_mi_hub_respondent_data")
+def test_deliver_mi_hub_reports_cloud_function_processor_handles_blaise_api_exception_gracefully(
+    _mock_get_mi_hub_respondent_data,
+    _mock_get_mi_hub_call_history,
+    _mock_init_google_storage,
+    _mock_logging_info,
+    _mock_logging_error,
+    mock_request_values,
+    config,
+    fake_google_storage,
+):
+    # arrange
+    from data_sources.questionnaire_data import BlaiseAPIException
+
+    mock_request = flask.Request.from_values(json=mock_request_values)
+    fake_google_storage.bucket = "not-none"
+    _mock_init_google_storage.return_value = fake_google_storage
+
+    # Call history fails with API error, respondent data succeeds
+    _mock_get_mi_hub_call_history.side_effect = BlaiseAPIException(
+        "Call history API request failed for test_questionnaire with status 504"
+    )
+    _mock_get_mi_hub_respondent_data.return_value = []
+
+    # act
+    return_value = deliver_mi_hub_reports_cloud_function_processor(mock_request, config)
+
+    # assert - delivery continues with empty data, returns success message
+    assert return_value == f"Done - {QUESTIONNAIRE_NAME}"
+    # Error is logged but doesn't stop delivery
+    _mock_logging_error.assert_called()
