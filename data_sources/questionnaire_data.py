@@ -53,7 +53,6 @@ def get_questionnaire_data(questionnaire_name, config, fields):
         response = requests.get(
             f"http://{config.blaise_api_url}/api/v2/serverparks/gusty/questionnaires/{questionnaire_name}/report",
             params=fields_to_get,
-            timeout=30,
         )
         if response.status_code != 200:
             _raise_for_invalid_response(response, questionnaire_name)
